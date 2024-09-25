@@ -67,6 +67,7 @@ const DefinitionScreen = ({navigation, route}) => {
     const inputRef = useRef(null)
 
     const CHATGPT_KEY = process.env.EXPO_PUBLIC_CHATGPT_KEY
+    const IMAGE_SEARCH_KEY = process.env.EXPO_PUBLIC_IMAGE_SEARCH_KEY
 
     const openai = new OpenAI(
     {
@@ -165,9 +166,8 @@ const DefinitionScreen = ({navigation, route}) => {
     const handleSearchImage = async (urlWord) => {
         setIsLoadingPic(true)
         try {
-            const apiKey = '8373e03e0067b60c26b44b27fd691f5d311507ad2b344d3943873335bdee7511';
             
-            const response = await fetch(`https://serpapi.com/search.json?engine=google_images&q=${urlWord}&api_key=${apiKey}`);
+            const response = await fetch(`https://serpapi.com/search.json?engine=google_images&q=${urlWord}&api_key=${IMAGE_SEARCH_KEY}`);
             const data = await response.json();
             if(data?.images_results)
             {
