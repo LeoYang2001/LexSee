@@ -1,15 +1,33 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import PronunciationButton from './PronunciationButton';
 
-const Meaning = ({ meanings }) => {
+const Meaning = ({ meanings, searchedWord, phonetics, searchNewWord}) => {
+
+
+
+
     return (
-        <View style={styles.container}>
+        <ScrollView className="p-6 rounded-xl shadow-lg overflow-hidden flex-1 bg-white" >
+
+            <View className="flex-row  justify-between items-center">
+                        <View>
+                            <Text className="font-semibold text-xl">{searchedWord}</Text>
+                            <Text  className="font-semibold  text-gray-300 mt-2">{phonetics?.text}</Text>
+                        </View>
+                        {
+                            phonetics?.audio && (
+                                     <PronunciationButton audioUrl={phonetics?.audio} />
+                            )
+                        }
+                    </View>
             {meanings.map((meaning, index) => (
                 <View key={index} style={styles.meaningContainer}>
-                    <Text style={styles.partOfSpeech}>{meaning.partOfSpeech}</Text>
+                    
+                    <Text  className="my-4"  style={styles.partOfSpeech}>{meaning.partOfSpeech}</Text>
                     {meaning.definitions.map((def, defIndex) => (
                         <View key={defIndex} style={styles.definitionContainer}>
-                            <Text style={styles.definition}>{def.definition}</Text>
+                            <Text className="  text-sm text-gray-600" style={styles.definition}>{def.definition}</Text>
                             {def.synonyms?.length > 0 && (
                                 <Text style={styles.synonyms}>
                                     Synonyms: {def.synonyms.join(', ')}
@@ -22,19 +40,41 @@ const Meaning = ({ meanings }) => {
                             )}
                         </View>
                     ))}
+                    <View className="mt-2">
                     {meaning.synonyms.length > 0 && (
                         <Text style={styles.synonyms}>
-                            Overall Synonyms: {meaning.synonyms.join(', ')}
+                            {
+                                meaning.synonyms.map((synonym) => (
+                                    <TouchableOpacity 
+                                    onPress={()=>{
+                                        searchNewWord(synonym)
+                                    }}
+                                    className="border rounded-xl bg-black p-2 mx-2 my-1" key={synonym}>
+                                        <Text className=" text-white">{synonym}</Text>
+                                    </TouchableOpacity>
+                                ))
+                            }
                         </Text>
                     )}
+                    </View>
                     {meaning.antonyms.length > 0 && (
-                        <Text style={styles.antonyms}>
-                            Overall Antonyms: {meaning.antonyms.join(', ')}
-                        </Text>
+                        <Text style={styles.synonyms}>
+                        {
+                            meaning.antonyms.map((antonyms) => (
+                                <TouchableOpacity
+                                onPress={()=>{
+                                    searchNewWord(antonyms  )
+                                }}
+                                className=" rounded-xl bg-white  shadow-sm p-2 mx-2 my-1" key={antonyms}>
+                                    <Text className=" text-black">{antonyms}</Text>
+                                </TouchableOpacity>
+                            ))
+                        }
+                    </Text>
                     )}
                 </View>
             ))}
-        </View>
+        </ScrollView>
     );
 };
 
@@ -57,9 +97,8 @@ const styles = StyleSheet.create({
     definitionContainer: {
         marginBottom: 5,
     },
-    definition: {
-        fontSize: 14,
-        color: '#333',
+    definition:{
+        fontSize:13
     },
     synonyms: {
         fontSize: 12,

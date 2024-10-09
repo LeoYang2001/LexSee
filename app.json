@@ -29,6 +29,16 @@
       "eas": {
         "projectId": "085ce993-cc87-4695-9cfc-95984e8bcf1f"
       }
-    }
+    },
+    "plugins": [
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "leo-team-q0",
+          "project": "react-native",
+          "url": "https://sentry.io/"
+        }
+      ]
+    ]
   }
 }

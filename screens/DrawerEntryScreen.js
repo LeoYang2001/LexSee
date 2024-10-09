@@ -7,17 +7,20 @@ import WordListScreen from './WordListScreen';
 
 const Drawer = createDrawerNavigator();
 
+
 const CustomDrawerContent = (props) => {
   const signOut = () => {
     auth.signOut()
       .then(() => {
         // Navigate back to the SignIn screen after sign out
-        props.navigation.navigate('SignIn');
+        props.navigation.navigate('LoginWelcome');
+        props.navigation.closeDrawer()
       })
       .catch(error => {
         console.error("Sign out error:", error);
       });
   };
+
 
   return (
     <DrawerContentScrollView {...props}>
@@ -39,7 +42,9 @@ const CustomDrawerContent = (props) => {
 
 const DrawerEntryScreen = () => {
   return (
-    <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
+    <Drawer.Navigator screenOptions={{
+      headerShown:false
+    }} drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen name="Main" component={MainScreen} />
       <Drawer.Screen name="WordList" component={WordListScreen} />
     </Drawer.Navigator>

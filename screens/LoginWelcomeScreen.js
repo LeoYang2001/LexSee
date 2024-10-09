@@ -33,15 +33,15 @@ const LoginWelcomeScreen = ({navigation}) => {
         <View></View>
         <View>
             <View>
-                <Text className="text-white font-bold text-5xl">YOUR</Text>
+                <Text className="text-white font-bold text-4xl">YOUR</Text>
                <Animated.View
                 style={{
                     left:offSetLeft
                 }}
                >
-                <Text style={styles.outlinedText} className="text-5xl font-bold text-black">Personal</Text>
+                <Text style={styles.outlinedText} className="text-4xl font-bold text-black">LexSee</Text>
                </Animated.View>
-                <Text className="text-white font-bold text-5xl">VOCABULARY</Text>
+                <Text className="text-white font-bold text-4xl">VOCABULARY</Text>
             </View>
             <View>
                 <Text style={{fontFamily:"Helvetica Neue"}} className="text-white font-semithin mt-10">

@@ -1,313 +1,312 @@
-import { View, Text, TouchableOpacity, ActivityIndicator, TextInput } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  TextInput,
+  SafeAreaView,
+  Dimensions,
+  Pressable,
+  Keyboard,
+} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import OpenAI from "openai";
-import { definitionReturnExample } from '../constants';
-import PronunciationButton from '../components/PronunciationButton';
-import ImageGallery from '../components/ImageGallery';
-import Meaning from '../components/Meanings';
-import { auth, db } from '../firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { definitionReturnExample } from "../constants";
+import PronunciationButton from "../components/PronunciationButton";
+import ImageGallery from "../components/ImageGallery";
+import Meaning from "../components/Meanings";
+import { auth, db } from "../firebase";
+import { doc, setDoc } from "firebase/firestore";
+import {
+  AlignLeft,
+  ArrowDownToLine,
+  ChevronLeft,
+  WandSparkles,
+} from "lucide-react-native";
+import SwipeCardsScreen from "./SwipeCardsScreen";
+import { EXPO_DOT_CHATGPT_KEY, EXPO_DOT_IMAGE_SEARCH_KEY } from "@env";
 
-const tabList = [
-    {
-        id:0,
-        tabName:'DEFINITION'
-    },
+const DefinitionScreen = ({ navigation, route }) => {
+  const iniWord = route.params.searchedWord;
+  const [searchedWord, setSearchedWord] = useState(iniWord);
+  const [definition, setDefinition] = useState(null);
+  const [imagesResult, setImagesResults] = useState([]);
+  const [isLoadingDef, setIsLoadingDef] = useState(false);
+  const [isLoadingPic, setIsLoadingPic] = useState(false);
+  const [searchBarWord, setSearchBarWord] = useState("");
+  //divide the response into different parts
+  const [phonetics, setPhonetics] = useState(null);
+  const [meanings, setMeanings] = useState(null);
 
-    {
-        id:1,
-        tabName:'IMAGE'
+  const [ifPopUpWin, setIfPopUpWin] = useState(false);
+  const [uploadImgUrl, setUploadImgUrl] = useState("");
+
+  useEffect(() => {
+    setUploadImgUrl("");
+  }, [ifPopUpWin]);
+
+  const windowWidth = Dimensions.get("window").width;
+  const windowHeight = Dimensions.get("window").height;
+
+  const Card1 = () => {
+    return (
+      <View className="flex-1 flex   relative">
+        {meanings && !isLoadingDef ? (
+          <Meaning
+            searchNewWord={searchNewWord}
+            phonetics={phonetics}
+            searchedWord={searchedWord}
+            meanings={meanings}
+          />
+        ) : (
+          <View className="flex-1 justify-center items-center">
+            <ActivityIndicator />
+          </View>
+        )}
+      </View>
+    );
+  };
+
+  const Card2 = () => {
+    return (
+      <View className="flex-1 w-full  relative">
+        {imagesResult.length > 0 && !isLoadingPic ? (
+          <ImageGallery
+            onSaveWord={handleSavingWord}
+            images_result={imagesResult}
+          />
+        ) : (
+          <Text>Searching images...</Text>
+        )}
+      </View>
+    );
+  };
+
+  const handleSavingWord = async ({ imgUrl }) => {
+    console.log("imgUrl:");
+    console.log(imgUrl);
+    if (!searchedWord || !meanings) return;
+
+    const user = auth.currentUser;
+
+    if (user) {
+      const userId = user.uid;
+      const wordData = {
+        phonetics: phonetics,
+        meanings: meanings,
+        imgUrl: imgUrl,
+        timeStamp: new Date().toISOString(),
+      };
+
+      try {
+        await setDoc(
+          doc(db, "users", userId, "wordList", searchedWord),
+          wordData
+        );
+        console.log("Word saved successfully!");
+        navigation.navigate("WordList");
+      } catch (error) {
+        console.error("Error saving word:", error);
+      }
     }
-]
+  };
 
+  const handleInputImgUrl = () => {
+    //pop window for user to input imgUrl
+    setIfPopUpWin(true);
+  };
 
-const DefinitionScreen = ({navigation, route}) => {
-    const iniWord = route.params.searchedWord
-    const [searchedWord, setSearchedWord] = useState(iniWord)
-    const [definition, setDefinition] = useState(null)
-    const [imagesResult, setImagesResults] = useState([])
-    const [isLoadingDef, setIsLoadingDef] = useState(false)
-    const [isLoadingPic, setIsLoadingPic] = useState(false)
-    const [searchBarWord, setSearchBarWord] = useState('')
-    //divide the response into different parts
-    const [phonetics, setPhonetics] = useState(null)
-    const [meanings, setMeanings] = useState(null)
-   
-    //the structure of a word for saving will be containing 
-    //phonetics, meanings, imgUrl, timeStamp
-    const handleSavingWord = async ({imgUrl}) => {
-        if (!searchedWord || !meanings) return;
+  const inputRef = useRef(null);
 
-        
-        const user = auth.currentUser
-        
-        if(user){
-            const userId = user.uid
-            const wordData = {
-                phonetics: phonetics,
-                meanings: meanings,
-                imgUrl:imgUrl,
-                timeStamp: new Date().toISOString(),
-            }
+  const CHATGPT_KEY =
+    "sk-proj-zla7u7ibGnm71qylVqb1T3BlbkFJbrzU9Yj0SvhpnPK6T9zl";
+  const IMAGE_SEARCH_KEY =
+    "8373e03e0067b60c26b44b27fd691f5d311507ad2b344d3943873335bdee7511";
 
-            try {
-                await setDoc(doc(db, 'users', userId, 'wordList', searchedWord), wordData)
-                console.log('Word saved successfully!');
-                navigation.navigate('WordList'); 
-            } catch (error) {
-                console.error('Error saving word:', error);
-            }
+  const openai = new OpenAI({
+    apiKey: CHATGPT_KEY,
+    dangerouslyAllowBrowser: true,
+  });
 
-        }
-
-        
-    }
-    
-
-    const inputRef = useRef(null)
-
-    const CHATGPT_KEY = process.env.EXPO_PUBLIC_CHATGPT_KEY
-    const IMAGE_SEARCH_KEY = process.env.EXPO_PUBLIC_IMAGE_SEARCH_KEY
-
-    const openai = new OpenAI(
-    {
-        apiKey: CHATGPT_KEY,
-        dangerouslyAllowBrowser: true,
-    }
+  //Filter the phonetic value
+  function getObjectWithAudio(arr) {
+    // Check for the first object with a non-empty audio property
+    const objWithAudio = arr.find(
+      (item) => item.audio && item.audio.trim() !== ""
     );
 
+    // If found, return that object, otherwise return the first object in the array
+    return objWithAudio || arr[0];
+  }
 
-    
-    const [tabId, setTabId] = useState(0)
-
-
-    //Filter the phonetic value
-    function getObjectWithAudio(arr) {
-        // Check for the first object with a non-empty audio property
-        const objWithAudio = arr.find(item => item.audio && item.audio.trim() !== '');
-      
-        // If found, return that object, otherwise return the first object in the array
-        return objWithAudio || arr[0];
+  //Update each part once the definition has been updated
+  useEffect(() => {
+    if (definition?.meanings) {
+      setMeanings(definition.meanings);
     }
-
-    
-    
-
-    //Update each part once the definition has been updated 
-    useEffect(() => {
-
-    if(definition?.meanings)
-    {
-        setMeanings(definition.meanings)
+    if (definition?.phonetics) {
+      const phoneticVal = getObjectWithAudio(definition.phonetics);
+      setPhonetics(phoneticVal);
     }
-    if(definition?.phonetics)
-    {
-        const phoneticVal = getObjectWithAudio(definition.phonetics)
-        setPhonetics(phoneticVal)
+  }, [definition]);
 
+  const searchNewWord = (word) => {
+    navigation.replace("Definition", {
+      searchedWord: word,
+    });
+  };
+
+  //Alternative way to fetchWord, implementing openai api
+  const fetchWordDefinitionFromAi = async (word) => {
+    setIsLoadingDef(true);
+    try {
+      const completion = await openai.chat.completions.create({
+        messages: [
+          { role: "system", content: "You are an English teacher." },
+          {
+            role: "user",
+            content: `define word ${word}. return me in this format ${JSON.stringify(
+              definitionReturnExample
+            )}`,
+          },
+        ],
+        model: "gpt-4o-mini",
+      });
+
+      const response = completion.choices[0].message.content;
+      console.log("OpenAI Response:", response); // Debugging line
+
+      // Attempt to clean the response if necessary
+      const cleanedResponse = response.trim();
+
+      console.log("cleanedResponse.meanings");
+      setMeanings(JSON.parse(cleanedResponse).meanings);
+    } catch (error) {
+      console.error("Error in handleAISearch:", error);
+    } finally {
+      setIsLoadingDef(false); // Ensure loading state is reset
     }
+  };
 
-    }, [definition])
-    
-    
-    
-    //Alternative way to fetchWord, implementing openai api
-    const fetchWordDefinitionFromAi = async (word) => {
-        setIsLoadingDef(true);
-        try {
-            const completion = await openai.chat.completions.create({
-                messages: [
-                    { "role": "system", "content": "You are an English teacher." },
-                    {
-                        "role": "user",
-                        "content": `define word ${word}. return me in this format ${JSON.stringify(definitionReturnExample)}`,
-                    },
-                ],
-                model: "gpt-4o-mini",
-            });
-    
-            const response = completion.choices[0].message.content;
-            console.log("OpenAI Response:", response); // Debugging line
-    
-            // Attempt to clean the response if necessary
-            const cleanedResponse = response.trim();
-    
-            // Check if the cleaned response looks like JSON
-            if (cleanedResponse.startsWith('{') && cleanedResponse.endsWith('}')) {
-                const responseParsed = JSON.parse(cleanedResponse);
-                setMeanings(responseParsed?.meanings);
-            } else {
-                console.error('Invalid JSON format:', cleanedResponse);
-                // Handle invalid JSON format as needed
-            }
-        } catch (error) {
-            console.error('Error in handleAISearch:', error);
-        } finally {
-            setIsLoadingDef(false); // Ensure loading state is reset
-        }
-    };
-
-    
-    const fetchWordDefinition = async ()=>{
-        setIsLoadingDef(true)
-        const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${searchedWord}`)
-        const rs = await res.json()
-        if(rs.length > 0)
-        {
-            setDefinition(rs[0])
-            setIsLoadingDef(false)
-
-        }  
-        else{
-            fetchWordDefinitionFromAi(searchedWord)
-        }
+  const fetchWordDefinition = async () => {
+    setIsLoadingDef(true);
+    const res = await fetch(
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${searchedWord}`
+    );
+    const rs = await res.json();
+    if (rs.length > 0) {
+      setDefinition(rs[0]);
+      setIsLoadingDef(false);
+    } else {
+      fetchWordDefinitionFromAi(searchedWord);
     }
+  };
 
-    const handleSearchImage = async (urlWord) => {
-        setIsLoadingPic(true)
-        try {
-            
-            const response = await fetch(`https://serpapi.com/search.json?engine=google_images&q=${urlWord}&api_key=${IMAGE_SEARCH_KEY}`);
-            const data = await response.json();
-            if(data?.images_results)
-            {
-                // setImagesResults(data?.images_results)
-                setImagesResults(data.images_results)
-                setIsLoadingPic(false)
-            }
-    
-            
-        } catch (error) {
-            console.log(error);
-        }
+  const handleSearchImage = async (urlWord) => {
+    setIsLoadingPic(true);
+    //find an alternative api
+    // return
+    try {
+      const response = await fetch(
+        `https://serpapi.com/search.json?engine=google_images&q=${urlWord}&api_key=${IMAGE_SEARCH_KEY}`
+      );
+      const data = await response.json();
+      if (data?.images_results) {
+        // setImagesResults(data?.images_results)
+        setImagesResults(data.images_results);
+        setIsLoadingPic(false);
+      }
+    } catch (error) {
+      console.log(error);
     }
-    
-    
+  };
 
-    useEffect(() => {
-        fetchWordDefinition()
-        handleSearchImage(searchedWord)
-    }, [searchedWord])
+  useEffect(() => {
+    fetchWordDefinition();
+    handleSearchImage(searchedWord);
+  }, [searchedWord]);
 
-    const handleSearch = () => {
-        if (searchBarWord.trim()) {
-            setSearchedWord(searchBarWord)
-            setSearchBarWord('')
-            if(inputRef?.current){
-                inputRef.current.blur()
-            }
-        }
-    };
-    
+  const handleSearch = () => {
+    if (searchBarWord.trim()) {
+      setSearchedWord(searchBarWord);
+      setSearchBarWord("");
+      if (inputRef?.current) {
+        inputRef.current.blur();
+      }
+    }
+  };
 
-    return (
-    <View className="flex-1 p-6 py-12">
-
-        
-
-       <View className="flex-row justify-between">
-        <TouchableOpacity 
-                onPress={()=>{
-                    navigation.goBack()
-                }}
-            >
-                <Text>BACK</Text>
-            </TouchableOpacity>
-        <TouchableOpacity 
-            onPress={()=>{
-               fetchWordDefinitionFromAi(searchedWord)
-            }}
+  return (
+    <SafeAreaView className="flex-1 relative overflow-hidden">
+      {ifPopUpWin && (
+        <Pressable
+          onPress={() => {
+            Keyboard.dismiss();
+          }}
+          style={{
+            width: windowWidth,
+            height: windowHeight,
+            backgroundColor: "rgba(0,0,0,0.3)",
+          }}
+          className="absolute  flex justify-center items-center z-30"
         >
-            <Text>AI Search</Text>
-        </TouchableOpacity>
-       </View>
-
-       {/* Search Bar */}
-       <View className="flex-row mb-4">
-                <TextInput
-                ref={inputRef}
-                    style={{ flex: 1, borderWidth: 1, borderColor: '#ccc', borderRadius: 5, padding: 10 }}
-                    placeholder="Search for a word..."
-                    value={searchBarWord}
-                    onChangeText={setSearchBarWord}
-                />
-                <TouchableOpacity onPress={handleSearch} style={{ marginLeft: 10 }}>
-                    <View className="bg-blue-500 p-3 rounded">
-                        <Text className="text-white font-semibold">Search</Text>
-                    </View>
-                </TouchableOpacity>
+          <View className=" w-60 h-40 rounded-xl bg-white p-4 flex flex-col justify-start items-center">
+            <Text className=" font-semibold">Save the word</Text>
+            <View className={`  w-full mt-4    bg-gray-200  ${"rounded-xl"}`}>
+              <TextInput
+                className=" p-2 "
+                placeholder="upload your imgUrl here"
+                value={uploadImgUrl}
+                onChangeText={setUploadImgUrl}
+              />
             </View>
-
-        <View className=" flex-row justify-between">
-            <Text className="text-2xl font-bold">
-                {searchedWord}
-            </Text>
-            {
-                phonetics && (
-                    <View className=" ">
-                        <Text>{phonetics.text}</Text>
-                        <PronunciationButton audioUrl={phonetics?.audio} />
-                    </View>
-                )
-            }
+            <View className="flex flex-row justify-between mt-auto w-full">
+              <TouchableOpacity
+                onPress={() => {
+                  handleSavingWord({ imgUrl: uploadImgUrl });
+                  console.log(uploadImgUrl);
+                }}
+              >
+                <Text className="font-semibold">Save</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setIfPopUpWin(false);
+                }}
+              >
+                <Text className="font-semibold">Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Pressable>
+      )}
+      <View className="flex-1 px-10 py-10">
+        {/* HEADER */}
+        <View className="w-full flex-row justify-between">
+          <TouchableOpacity
+            className="p-3 flex justify-center rounded-xl bg-white items-center"
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <AlignLeft size={24} color={"black"} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="p-3 flex justify-center rounded-xl bg-white items-center"
+            onPress={handleInputImgUrl}
+          >
+            <ArrowDownToLine size={24} color={"black"} />
+          </TouchableOpacity>
         </View>
 
-        {/* TABBAR */}
-        <View className="flex border-b-2 mb-4 flex-row justify-between">
-            {
-                tabList.map(tabItem => (
-                    <TouchableOpacity
-                        key={tabItem.id}
-                        onPress={()=>{
-                            setTabId(tabItem.id)
-                        }}
-                    >
-                        <Text>
-                            {
-                                tabItem.tabName
-                            }
-                        </Text>
-                    </TouchableOpacity>
-                ))
-            }
-        </View>
+        <View className=" flex-row justify-between mb-10"></View>
+        <SwipeCardsScreen
+          card1={Card1} // Passing Card1 as a component
+          card2={Card2} // Passing Card2 as a component
+        />
+      </View>
+    </SafeAreaView>
+  );
+};
 
-        {
-            tabId === 0 && (
-                <View className="flex-1 flex  relative">
-            {
-                meanings && !isLoadingDef ? (
-                    <Meaning meanings={meanings} />
-                ):(
-                   <View className="flex-1 justify-center items-center">
-                        <ActivityIndicator />  
-                    </View>
-                )
-            }
-            {/* <TouchableOpacity style={{height:50, width:50}} className="bg-red-500 flex justify-center items-center rounded-full  absolute bottom-2 right-2">
-                <Text className=" font-semibold text-white">
-                    Save
-                </Text>
-            </TouchableOpacity> */}
-        </View>
-            )
-        }
-        {
-            tabId === 1 && (
-                <View className="flex-1  relative">
-                    {
-                        imagesResult.length > 0 && !isLoadingPic ? (
-                            <ImageGallery onSaveWord={handleSavingWord} images_result={imagesResult} />
-                        ):(
-                            <Text>Searching images...</Text>
-                        )
-                    }
-                </View>
-            )
-        }
-
-    </View>
-  )
-}
-
-export default DefinitionScreen
+export default DefinitionScreen;

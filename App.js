@@ -13,6 +13,28 @@ import { app, auth } from './firebase'
 import { onAuthStateChanged } from 'firebase/auth';
 import LoginWelcomeScreen from './screens/LoginWelcomeScreen';
 
+import { AppRegistry } from 'react-native';
+import { expo } from './app.json';
+
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: "https://702c79d431dc378ca532bc1813c0d72d@o4508032117243904.ingest.us.sentry.io/4508032119144448",
+  // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
+  // We recommend adjusting this value in production.
+  tracesSampleRate: 1.0,
+  _experiments: {
+    // profilesSampleRate is relative to tracesSampleRate.
+    // Here, we'll capture profiles for 100% of transactions.
+    profilesSampleRate: 1.0,
+  },
+});
+
+//Handling App Crash Cases
+
+const appName = expo.name
+
+
 function Loading({navigation}) {
 
   React.useEffect(() => {
@@ -70,4 +92,6 @@ function App() {
   );
 }
 
-export default App;
+AppRegistry.registerComponent(appName, () => App);
+
+export default Sentry.wrap(App);

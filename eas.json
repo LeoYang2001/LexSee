@@ -12,7 +12,11 @@
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_CHATGPT_KEY": "sk-proj-zla7u7ibGnm71qylVqb1T3BlbkFJbrzU9Yj0SvhpnPK6T9zl",
+        "EXPO_PUBLIC_IMAGE_SEARCH_KEY":"8373e03e0067b60c26b44b27fd691f5d311507ad2b344d3943873335bdee7511"
+      }
     }
   },
   "submit": {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Audio } from 'expo-av';
+import { Volume2, VolumeOff } from 'lucide-react-native';
 
 const PronunciationButton = ({ audioUrl }) => {
   const [sound, setSound] = useState(null);
@@ -34,18 +35,19 @@ const PronunciationButton = ({ audioUrl }) => {
   };
 
   return (
-    <View style={{ alignItems: 'center', marginTop: 20 }}>
+    <View>
       <TouchableOpacity
         onPress={playAudio}
-        style={{
-          padding: 10,
-          backgroundColor: isPlaying ? '#ccc' : '#4CAF50',
-          borderRadius: 5,
-        }}
+       
+        className="p-2 rounded-xl bg-black flex justify-center items-center"
       >
-        <Text style={{ color: '#fff' }}>
-          {isPlaying ? 'Playing...' : 'Play Pronunciation'}
-        </Text>
+       {
+        !isPlaying ? (
+          <Volume2 color={'white'} />
+        ):(
+          <VolumeOff color={'white'} />
+        )
+       }
       </TouchableOpacity>
     </View>
   );
