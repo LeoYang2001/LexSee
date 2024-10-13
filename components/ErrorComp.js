@@ -1,19 +1,27 @@
 import { View, Text } from "react-native";
 import React, { useEffect } from "react";
-import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, {
+  useSharedValue,
+  withTiming,
+  Easing,
+} from "react-native-reanimated";
+import { CircleAlert } from "lucide-react-native";
 
-const ErrorComp = ({ errorMessage, setErrorMessage }) => {
+const ErrorComp = ({ timeDur,errorMessage, setErrorMessage }) => {
   const errorMessageOpacity = useSharedValue(0);
-  
-  useEffect(() => {
-    const timeDur = 500;
-    if (errorMessage) {
-      // Fade in
-      errorMessageOpacity.value = withTiming(1, { duration: timeDur });
 
-      // Fade out
+  useEffect(() => {
+    if (errorMessage) {
+      // Fade in with ease-in-out easing
+      errorMessageOpacity.value = withTiming(1, {
+        duration: timeDur,
+      });
+
+      // Fade out smoothly after 2 seconds
       setTimeout(() => {
-        errorMessageOpacity.value = withTiming(0, { duration: timeDur });
+        errorMessageOpacity.value = withTiming(0, {
+          duration: timeDur,
+        });
         setErrorMessage("");
       }, 2000);
     }
@@ -27,9 +35,15 @@ const ErrorComp = ({ errorMessage, setErrorMessage }) => {
         opacity: errorMessageOpacity,
         transition: { duration: 300 },
       }}
-      className="bg-red-600 rounded-2xl p-4 mt-4"
+      className="bg-red-200 w-full rounded-lg p-4 mt-4 flex-row justify-center items-center"
     >
-      <Text className="text-white text-lg font-semibold text-center">
+      <CircleAlert
+        fill={"#dc2626"}
+        color={"#fecaca"}
+        size={30}
+        className="absolute left-5"
+      />
+      <Text className="text-red-700 text-xl text-center font-medium">
         {errorMessage}
       </Text>
     </Animated.View>

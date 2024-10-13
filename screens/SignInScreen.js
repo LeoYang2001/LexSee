@@ -15,6 +15,7 @@ import { auth } from "../firebase";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import ErrorComp from "../components/ErrorComp";
+import { CircleAlert } from "lucide-react-native";
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -53,11 +54,11 @@ const SignInScreen = ({ navigation }) => {
   const signIn = async () => {
     setErrorMessage("");
     if (!email || !password) {
-      setErrorMessage("empty field");
+      setErrorMessage("Empty Field");
       return;
     }
 
-    signInWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(auth, email.trim(), password.trim())
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(JSON.stringify(user));
@@ -66,16 +67,19 @@ const SignInScreen = ({ navigation }) => {
         }
       })
       .catch((error) => {
-        const errorMessage = error.message;
-        console.log(error.code);
         Haptics.selectionAsync();
         // Set a user-friendly error message
-        if (error.code === "auth/user-not-found") {
-          setErrorMessage("No user found");
+        if (error.code === "auth/invalid-email") {
+          setErrorMessage("Invalid email address");
         } else if (error.code === "auth/wrong-password") {
-          setErrorMessage("Incorrect password.");
+          setErrorMessage("Incorrect password");
+        } else if (error.code === "auth/invalid-credential") {
+          setErrorMessage("Invalid credential");
+        } else if ("auth/too-many-requests") {
+          setErrorMessage("Too many requests");
         } else {
-          setErrorMessage("An error occurred. Please try again.");
+          console.log(error);
+          setErrorMessage("An error occurred");
         }
       });
   };
@@ -164,13 +168,14 @@ const SignInScreen = ({ navigation }) => {
         </KeyboardAvoidingView>
 
         {/* Error Message Card */}
-        <View className=" absolute z-10 bottom-10">
-          {errorMessage && (
-            <ErrorComp
-              setErrorMessage={setErrorMessage}
-              errorMessage={errorMessage}
-            />
-          )}
+        <View className=" w-full absolute z-10 bottom-10">
+          {/* {errorMessage && ( */}
+          <ErrorComp
+            timeDur={300}
+            setErrorMessage={setErrorMessage}
+            errorMessage={errorMessage}
+          />
+          {/* )} */}
         </View>
 
         <TouchableOpacity
