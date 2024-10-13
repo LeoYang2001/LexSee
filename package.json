@@ -17,6 +17,7 @@
     "@sentry/react-native": "~5.24.3",
     "expo": "~51.0.28",
     "expo-av": "^14.0.7",
+    "expo-clipboard": "~6.0.3",
     "expo-status-bar": "~1.12.1",
     "firebase": "^10.13.2",
     "lucide-react-native": "^0.446.0",
