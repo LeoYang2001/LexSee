@@ -3,11 +3,7 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
-  TextInput,
   SafeAreaView,
-  Dimensions,
-  Pressable,
-  Keyboard,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import OpenAI from "openai";
@@ -17,14 +13,9 @@ import ImageGallery from "../components/ImageGallery";
 import Meaning from "../components/Meanings";
 import { auth, db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
-import {
-  AlignLeft,
-  ArrowDownToLine,
-  ChevronLeft,
-  WandSparkles,
-} from "lucide-react-native";
+import { ArrowDownToLine, ChevronLeft } from "lucide-react-native";
 import SwipeCardsScreen from "./SwipeCardsScreen";
-import { EXPO_DOT_CHATGPT_KEY, EXPO_DOT_IMAGE_SEARCH_KEY } from "@env";
+import SaveWordPopup from "../components/SaveWordPopup";
 
 const DefinitionScreen = ({ navigation, route }) => {
   const iniWord = route.params.searchedWord;
@@ -39,14 +30,6 @@ const DefinitionScreen = ({ navigation, route }) => {
   const [meanings, setMeanings] = useState(null);
 
   const [ifPopUpWin, setIfPopUpWin] = useState(false);
-  const [uploadImgUrl, setUploadImgUrl] = useState("");
-
-  useEffect(() => {
-    setUploadImgUrl("");
-  }, [ifPopUpWin]);
-
-  const windowWidth = Dimensions.get("window").width;
-  const windowHeight = Dimensions.get("window").height;
 
   const Card1 = () => {
     return (
@@ -239,46 +222,10 @@ const DefinitionScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView className="flex-1 relative overflow-hidden">
       {ifPopUpWin && (
-        <Pressable
-          onPress={() => {
-            Keyboard.dismiss();
-          }}
-          style={{
-            width: windowWidth,
-            height: windowHeight,
-            backgroundColor: "rgba(0,0,0,0.3)",
-          }}
-          className="absolute  flex justify-center items-center z-30"
-        >
-          <View className=" w-60 h-40 rounded-xl bg-white p-4 flex flex-col justify-start items-center">
-            <Text className=" font-semibold">Save the word</Text>
-            <View className={`  w-full mt-4    bg-gray-200  ${"rounded-xl"}`}>
-              <TextInput
-                className=" p-2 "
-                placeholder="upload your imgUrl here"
-                value={uploadImgUrl}
-                onChangeText={setUploadImgUrl}
-              />
-            </View>
-            <View className="flex flex-row justify-between mt-auto w-full">
-              <TouchableOpacity
-                onPress={() => {
-                  handleSavingWord({ imgUrl: uploadImgUrl });
-                  console.log(uploadImgUrl);
-                }}
-              >
-                <Text className="font-semibold">Save</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setIfPopUpWin(false);
-                }}
-              >
-                <Text className="font-semibold">Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Pressable>
+        <SaveWordPopup
+          handleSavingWord={handleSavingWord}
+          setIfPopUpWin={setIfPopUpWin}
+        />
       )}
       <View className="flex-1 px-10 py-10">
         {/* HEADER */}
@@ -289,7 +236,7 @@ const DefinitionScreen = ({ navigation, route }) => {
               navigation.goBack();
             }}
           >
-            <AlignLeft size={24} color={"black"} />
+            <ChevronLeft size={24} color={"black"} />
           </TouchableOpacity>
           <TouchableOpacity
             className="p-3 flex justify-center rounded-xl bg-white items-center"
