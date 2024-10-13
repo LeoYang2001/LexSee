@@ -122,7 +122,14 @@ const SaveWordPopup = ({ handleSavingWord, setIfPopUpWin }) => {
           }}
         >
           {imageError ? (
-            <CircleAlert size={28} color={"red"} />
+            <TouchableOpacity
+              onPress={() => {
+                setUploadImgUrl("");
+                setImageError(false);
+              }}
+            >
+              <CircleAlert size={28} color={"red"} />
+            </TouchableOpacity>
           ) : uploadImgUrl ? (
             // Render the image from the clipboard URL
             <Pressable

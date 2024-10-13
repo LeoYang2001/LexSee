@@ -82,6 +82,11 @@ const MainScreen = ({ navigation }) => {
   const [inputLabel, setInputLabel] = useState(false);
   const [latestWord, setLatestWord] = useState(null);
 
+  useEffect(() => {
+    setInputLabel(false);
+    setInputText("");
+  }, [navigation]);
+
   const searchWord = (word) => {
     setInputText("");
     navigation.navigate("Definition", {
