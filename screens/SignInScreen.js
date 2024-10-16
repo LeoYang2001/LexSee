@@ -13,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
+import * as Haptics from "    ";
 import ErrorComp from "../components/ErrorComp";
 import { CircleAlert } from "lucide-react-native";
 
