@@ -15,7 +15,6 @@ import { auth } from "../firebase";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 import ErrorComp from "../components/ErrorComp";
 import * as Haptics from "expo-haptics";
-import { CircleAlert } from "lucide-react-native";
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
