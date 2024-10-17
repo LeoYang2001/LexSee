@@ -13,8 +13,8 @@ import React, { useEffect, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
-import * as Haptics from "    ";
 import ErrorComp from "../components/ErrorComp";
+import * as Haptics from "expo-haptics";
 import { CircleAlert } from "lucide-react-native";
 
 const SignInScreen = ({ navigation }) => {
@@ -175,7 +175,6 @@ const SignInScreen = ({ navigation }) => {
             setErrorMessage={setErrorMessage}
             errorMessage={errorMessage}
           />
-          {/* )} */}
         </View>
 
         <TouchableOpacity
