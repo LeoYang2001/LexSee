@@ -54,6 +54,8 @@ const SignInScreen = ({ navigation }) => {
   const signIn = async () => {
     setErrorMessage("");
     if (!email || !password) {
+      Keyboard.dismiss();
+      Haptics.selectionAsync();
       setErrorMessage("Empty Field");
       return;
     }
@@ -68,6 +70,7 @@ const SignInScreen = ({ navigation }) => {
       })
       .catch((error) => {
         Haptics.selectionAsync();
+        Keyboard.dismiss();
         // Set a user-friendly error message
         if (error.code === "auth/invalid-email") {
           setErrorMessage("Invalid email address");
@@ -169,7 +172,6 @@ const SignInScreen = ({ navigation }) => {
 
         {/* Error Message Card */}
         <View className=" w-full absolute z-10 bottom-10">
-          {/* {errorMessage && ( */}
           <ErrorComp
             timeDur={300}
             setErrorMessage={setErrorMessage}
