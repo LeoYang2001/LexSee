@@ -35,17 +35,13 @@ const ErrorComp = ({ timeDur, errorMessage, setErrorMessage }) => {
         opacity: errorMessageOpacity,
         transition: { duration: 300 },
       }}
-      className="bg-blue-200 w-full rounded-lg p-4 mt-4 flex-row justify-center items-center"
+      className="bg-blue-200 flex w-full rounded-lg p-4 mt-4 flex-row justify-between items-center"
     >
-      <Info
-        fill={"#3b82f6"}
-        color={"#bfdbfe"}
-        size={30}
-        className="absolute left-5"
-      />
+      <Info fill={"#3b82f6"} color={"#bfdbfe"} size={30} />
       <Text className="text-blue-700 text-lg text-center font-medium">
         {errorMessage}
       </Text>
+      <View className=" w-2 h-2" />
     </Animated.View>
   );
 };

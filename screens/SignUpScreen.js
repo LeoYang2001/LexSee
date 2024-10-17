@@ -13,11 +13,14 @@ import React, { useEffect, useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
+import ErrorComp from "../components/ErrorComp";
 
 const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [cfmPassword, setCfmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [emailLabel, setEmailLabel] = useState(false);
   const [passwordLabel, setPasswordLabel] = useState(false);
@@ -59,9 +62,20 @@ const SignUpScreen = ({ navigation }) => {
   }, [emailLabel, passwordLabel, cfmPasswordLabel]);
 
   const handleSigningUp = () => {
-    if (!email || !password || !cfmPassword)
-      return alert("Fill in all the fields, please!");
-    if (password !== cfmPassword) return alert("Make sure the passwords match");
+    setErrorMessage("");
+    if (!email || !password || !cfmPassword) {
+      Keyboard.dismiss();
+      Haptics.selectionAsync();
+      setErrorMessage("Empty Field");
+      return;
+    }
+
+    if (password !== cfmPassword) {
+      Keyboard.dismiss();
+      Haptics.selectionAsync();
+      setErrorMessage("Passwords do not match");
+      return;
+    }
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -70,14 +84,27 @@ const SignUpScreen = ({ navigation }) => {
         // Optionally navigate to a different screen upon successful signup
       })
       .catch((error) => {
-        const errorMessage = error.message;
-        console.log(errorMessage);
+        const errorMessage = error.code;
+        Keyboard.dismiss();
+        Haptics.selectionAsync();
+        if (errorMessage == "auth/invalid-email") {
+          setErrorMessage("Invalid email address");
+        }
+        if (errorMessage == "auth/weak-password") {
+          setErrorMessage("Weak Password");
+        }
+        if (errorMessage == "auth/email-already-in-use") {
+          setErrorMessage("Email already in use");
+        } else {
+          console.log(errorMessage);
+          setErrorMessage("An error occured");
+        }
       });
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View className="flex-1 flex px-10 items-center py-10">
+      <View className="flex-1 flex px-10 items-center py-10 relative">
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           className="flex-1 justify-between w-full mb-20"
@@ -177,6 +204,15 @@ const SignUpScreen = ({ navigation }) => {
             <Text className="text-white font-bold">Sign Up</Text>
           </TouchableOpacity>
         </KeyboardAvoidingView>
+
+        {/* Error Message Card */}
+        <View className=" w-full absolute z-10 bottom-10">
+          <ErrorComp
+            timeDur={300}
+            setErrorMessage={setErrorMessage}
+            errorMessage={errorMessage}
+          />
+        </View>
 
         <TouchableOpacity
           onPress={() => {
