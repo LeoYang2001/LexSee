@@ -63,7 +63,7 @@ const SignInScreen = ({ navigation }) => {
         const user = userCredential.user;
         console.log(JSON.stringify(user));
         if (user.uid) {
-          navigation.navigate("DrawerEntry");
+          navigation.replace("DrawerEntry");
         }
       })
       .catch((error) => {

@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -6,9 +7,21 @@ import {
   Pressable,
   TextInput,
   TouchableOpacity,
+  ScrollView,
+  Text,
+  Dimensions,
+  Image,
+  PanResponder,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { db } from "../firebase"; // Adjust the path based on your structure
+import * as Haptics from "expo-haptics";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import CustomBackdrop from "../components/CustomBackdrop"; // Import your CustomBackdrop
+import WordItem from "../components/WordItem";
+import { AlignLeft, RefreshCw, X } from "lucide-react-native";
 import {
   collection,
   onSnapshot,
@@ -17,12 +30,9 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { auth } from "../firebase"; // Import auth to get the current user's UID
-import WordItem from "../components/WordItem";
-import { AlignLeft, RefreshCw, X } from "lucide-react-native";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { db, auth } from "../firebase";
 import OpenAI from "openai";
-import { reorganizeWords, synonymGroupExample } from "../constants";
+import WordDetail from "../components/WordDetail";
 
 const WordListScreen = ({ navigation }) => {
   const [words, setWords] = useState([]);
@@ -30,39 +40,66 @@ const WordListScreen = ({ navigation }) => {
   const [filterText, setFilterText] = useState("");
   const [filteredWords, setFilteredWords] = useState([]);
   const [isSorting, setIsSorting] = useState(false);
+  const [displayedWord, setDisplayedWord] = useState(null);
+  const [bottomSheetViewMode, setBottomSheetViewMode] = useState("small");
 
-  const CHATGPT_KEY =
-    "sk-proj-zla7u7ibGnm71qylVqb1T3BlbkFJbrzU9Yj0SvhpnPK6T9zl";
+  const bottomSheetModalRef = useRef(null);
+  const snapPoints = ["46%", "100%"];
 
-  const openai = new OpenAI({
-    apiKey: CHATGPT_KEY,
-    dangerouslyAllowBrowser: true,
-  });
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        const { dx, dy } = gestureState;
+        // Allow horizontal swipe
+        return Math.abs(dx) > Math.abs(dy);
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        // Handle your swipe logic here
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        // Handle the release event
+      },
+    })
+  ).current;
 
-  useEffect(() => {
-    if (!filterText) {
-      setFilteredWords(words);
-      return;
+  // callbacks
+  const handleOpenSheet = useCallback((item) => {
+    setDisplayedWord(item);
+    bottomSheetModalRef.current?.present();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  }, []);
+
+  const handleCloseSheet = useCallback(() => {
+    bottomSheetModalRef.current?.close();
+  }, []);
+
+  const handleSheetChanges = useCallback((index) => {
+    if (index == 2) {
+      setBottomSheetViewMode("large");
+    } else {
+      setBottomSheetViewMode("small");
     }
+  }, []);
 
-    const filteredWords = words.filter(
-      (word) => word.id.toLowerCase().includes(filterText.toLowerCase()) // Check if the word contains the filterText
-    );
-
-    setFilteredWords(filteredWords);
-  }, [filterText]);
+  const handleSheetAnimation = (fromIndex, toIndex) => {
+    if (toIndex <= 0.5) {
+      bottomSheetModalRef.current.close();
+      setBottomSheetViewMode("small");
+    } else if (toIndex > 0.5 && toIndex <= 1.5) {
+      setBottomSheetViewMode("small");
+    } else {
+      setBottomSheetViewMode("large");
+    }
+  };
 
   useEffect(() => {
-    const user = auth.currentUser; // Get the current user
+    const user = auth.currentUser;
 
     if (user) {
-      const userId = user.uid; // Get the current user's UID
-      const wordListRef = collection(db, "users", userId, "wordList"); // Reference to the user's wordList subcollection
-
-      // Query the wordList collection and order by timestamp, in descending order (newest first)
+      const userId = user.uid;
+      const wordListRef = collection(db, "users", userId, "wordList");
       const wordListQuery = query(wordListRef, orderBy("timeStamp", "desc"));
 
-      // Subscribe to the words in the user's wordList collection
       const unsubscribe = onSnapshot(wordListQuery, (snapshot) => {
         const wordsData = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -74,13 +111,11 @@ const WordListScreen = ({ navigation }) => {
         setLoading(false);
       });
 
-      // Cleanup subscription on unmount
       return () => unsubscribe();
     } else {
-      setLoading(false); // If there's no user, stop loading
+      setLoading(false);
     }
   }, []);
-
   const handleDeleteWord = async (id) => {
     const user = auth.currentUser;
 
@@ -97,118 +132,126 @@ const WordListScreen = ({ navigation }) => {
     }
   };
 
-  const sortMyWordsList = async () => {
-    //Get AI's result
-
-    setIsSorting(true);
-    const groupWordsList = words.map((item) => item.id);
-    // setIsLoadingDef(true);
-    try {
-      const completion = await openai.chat.completions.create({
-        messages: [
-          { role: "system", content: "You are an English teacher." },
-          {
-            role: "user",
-            content: `group these words: ${groupWordsList} by its definition  and return me a js arr of these groups,
-              example: ${JSON.stringify(
-                synonymGroupExample
-              )}, only return me the array, for the format purpose,
-               the array starts with & and ends with &
-            `,
-          },
-        ],
-        model: "gpt-4o-mini",
-      });
-
-      const response = completion.choices[0].message.content;
-      // format the response from AI
-      const groupedArrObj = JSON.parse(response.slice(1, response.length - 1));
-      const groupedArr = groupedArrObj.map((item) => item["synonyms"]);
-
-      console.log(reorganizeWords(filteredWords, groupedArr));
-      setFilteredWords(reorganizeWords(filteredWords, groupedArr));
-      setIsSorting(false);
-
-      //merge the result to the filteredWords,
-    } catch (error) {
-      console.error("Error in handleAISearch:", error);
-    } finally {
-    }
-  };
-
   if (loading) {
     return (
-      <ActivityIndicator size="large" color="#0000ff" style={styles.loading} />
+      <ActivityIndicator size="small" color="gray" style={styles.loading} />
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View className="w-full px-10 mt-10 flex-row justify-between">
-        <TouchableOpacity
-          className="p-3 flex justify-center rounded-xl bg-white items-center"
-          onPress={() => {
-            navigation.openDrawer();
-          }}
-        >
-          <AlignLeft size={24} color={"black"} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="p-3 flex justify-center rounded-xl bg-white items-center"
-          onPress={() => {
-            sortMyWordsList();
-            // alert("AI search feature is not supported yet");
-          }}
-        >
-          <RefreshCw size={24} color={"black"} />
-        </TouchableOpacity>
-      </View>
-      <View className="flex-1">
-        <View
-          className={` mx-10 my-10  z-20  bg-gray-200  ${
-            !filterText && "rounded-xl"
-          }`}
-        >
-          <TextInput
-            className="text-lg w-full py-2 px-4 "
-            value={filterText}
-            onChangeText={setFilterText}
-          />
-          {filterText && (
-            <Pressable
-              onPress={() => {
-                setFilterText("");
-              }}
-              className="absolute h-full flex justify-center items-center mr-4  right-0 z-0"
-            >
-              <X color={"gray"} fontSize={14} />
-            </Pressable>
-          )}
-        </View>
+    <SafeAreaView className="relative" style={styles.container}>
+      <BottomSheetModalProvider>
+        <View style={styles.container}>
+          <View className="flex-1">
+            <View className="w-full px-10 mt-10 flex-row justify-between">
+              <TouchableOpacity
+                className="p-3 flex justify-center rounded-xl bg-white items-center"
+                onPress={() => {
+                  navigation.openDrawer();
+                }}
+              >
+                <AlignLeft size={24} color={"black"} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="p-3 flex justify-center rounded-xl bg-white items-center"
+                onPress={() => {
+                  sortMyWordsList();
+                }}
+              >
+                <RefreshCw size={24} color={"black"} />
+              </TouchableOpacity>
+            </View>
+            <View className="flex-1">
+              <View
+                className={`mx-10 my-10 z-20 bg-gray-200 ${
+                  !filterText && "rounded-xl"
+                }`}
+              >
+                <TextInput
+                  className="text-lg w-full py-2 px-4"
+                  value={filterText}
+                  onChangeText={setFilterText}
+                />
+                {filterText && (
+                  <Pressable
+                    onPress={() => {
+                      setFilterText("");
+                    }}
+                    className="absolute h-full flex justify-center items-center mr-4 right-0 z-0"
+                  >
+                    <X color={"gray"} fontSize={14} />
+                  </Pressable>
+                )}
+              </View>
 
-        {/* <FlatList
-          data={filteredWords}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false} // Hide vertical scroll indicator
-        /> */}
-        {isSorting ? (
-          <ActivityIndicator />
-        ) : (
-          <ScrollView>
-            {filteredWords.map((item) => (
-              <WordItem
-                key={item.id}
-                imgUrl={item.imgUrl}
-                word={item.id}
-                phonetics={item.phonetics}
-                onDelete={handleDeleteWord}
-                itemColor={item?.groupColor}
-              />
-            ))}
-          </ScrollView>
-        )}
-      </View>
+              {isSorting ? (
+                <ActivityIndicator />
+              ) : (
+                <ScrollView>
+                  {filteredWords.map((item) => (
+                    <WordItem
+                      key={item.id}
+                      imgUrl={item.imgUrl}
+                      word={item.id}
+                      handlePresentModalPress={() => {
+                        handleOpenSheet(item);
+                      }}
+                      wordItem={item}
+                      phonetics={item.phonetics}
+                      onDelete={handleDeleteWord}
+                      itemColor={item?.groupColor}
+                      bottomSheetModalRef={bottomSheetModalRef}
+                    />
+                  ))}
+                </ScrollView>
+              )}
+            </View>
+          </View>
+
+          {/* BOTTOM SHEET */}
+          <BottomSheetModal
+            backgroundStyle={{
+              backgroundColor: "black",
+              borderRadius: 45,
+            }}
+            onTouchStart={() => {}}
+            ref={bottomSheetModalRef}
+            index={1}
+            snapPoints={snapPoints}
+            handleComponent={bottomSheetViewMode === "large" ? null : undefined}
+            onChange={handleSheetChanges}
+            backdropComponent={(props) => (
+              <CustomBackdrop {...props} bottomSheetRef={bottomSheetModalRef} />
+            )}
+          >
+            <BottomSheetView>
+              {/* words detailed definition  */}
+              <View
+                className=" relative overflow-visible"
+                style={{
+                  height: Dimensions.get("window").height * 0.45,
+                }}
+              >
+                {bottomSheetViewMode === "small" && (
+                  <>
+                    {/* HANDLE BAR  */}
+                    <View
+                      style={{ height: 6 }}
+                      className="w-10  bg-white self-center  rounded-md "
+                    />
+                  </>
+                )}
+                <WordDetail
+                  bottomSheetModalRef={bottomSheetModalRef}
+                  wordItem={displayedWord}
+                  setBottomSheetViewMode={setBottomSheetViewMode}
+                  bottomSheetViewMode={bottomSheetViewMode}
+                />
+              </View>
+            </BottomSheetView>
+          </BottomSheetModal>
+        </View>
+      </BottomSheetModalProvider>
     </SafeAreaView>
   );
 };
@@ -220,32 +263,6 @@ const styles = StyleSheet.create({
   loading: {
     flex: 1,
     justifyContent: "center",
-  },
-  itemContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-  },
-  image: {
-    width: 50, // Adjust width as needed
-    height: 50, // Adjust height as needed
-    borderRadius: 25, // Optional: rounded image
-    marginRight: 10,
-  },
-  textContainer: {
-    flex: 1, // Take the remaining space
-  },
-  word: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  phonetics: {
-    fontSize: 14,
-    color: "#666",
   },
 });
 
