@@ -63,8 +63,11 @@ const SignInScreen = ({ navigation }) => {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(JSON.stringify(user));
-        if (user.uid) {
-          navigation.navigate("DrawerEntry");
+        // Check if the user's email is verified
+        if (user.emailVerified) {
+          navigation.navigate("DrawerEntry"); // Navigate to the main app if verified
+        } else {
+          navigation.navigate("EmailVerification"); // Navigate to email verification screen if not verified
         }
       })
       .catch((error) => {
