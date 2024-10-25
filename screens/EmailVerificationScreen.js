@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { auth } from "../firebase"; // Ensure your Firebase config is imported correctly
+import { RefreshCcw } from "lucide-react-native";
 
 const EmailVerificationScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
@@ -38,8 +39,14 @@ const EmailVerificationScreen = ({ navigation }) => {
         Check your email to verify
       </Text>
 
-      <TouchableOpacity onPress={handleRefreshVerificationStatus}>
-        <Text className="mt-5 text-blue-500">Refresh Verification Status</Text>
+      <TouchableOpacity
+        className="bg-black rounded-2xl flex-row justify-center items-center mt-10 py-4 px-4"
+        onPress={handleRefreshVerificationStatus}
+      >
+        <RefreshCcw color={"white"} />
+        <Text className="text-white font-bold px-2">
+          Refresh Verification Status
+        </Text>
       </TouchableOpacity>
 
       {user && (
