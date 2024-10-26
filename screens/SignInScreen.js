@@ -91,7 +91,7 @@ const SignInScreen = ({ navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View className="flex-1 relative  flex px-10 items-center py-10">
+      <View className="flex-1 relative flex px-10 items-center py-10">
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           className="flex-1 justify-between w-full mb-40"

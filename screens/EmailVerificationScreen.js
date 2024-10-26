@@ -3,23 +3,60 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { auth } from "../firebase"; // Ensure your Firebase config is imported correctly
 import { RefreshCcw } from "lucide-react-native";
+import ErrorComp from "../components/ErrorComp";
+import SuccessComp from "../components/SuccessComp";
+import { sendEmailVerification } from "firebase/auth";
 
 const EmailVerificationScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  // wait function
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const resendEmailVerification = async () => {
+    setErrorMessage("");
+    setSuccessMessage("");
+    if (auth.currentUser) {
+      try {
+        await sendEmailVerification(auth.currentUser);
+        setSuccessMessage("Verification Email sent");
+      } catch (error) {
+        setErrorMessage("Error sending verification email");
+      }
+    } else {
+      setErrorMessage("Error");
+      console.log("No user is currently signed in.");
+    }
+  };
 
   const handleRefreshVerificationStatus = async () => {
+    setErrorMessage("");
+    setSuccessMessage("");
     if (auth.currentUser) {
-      await auth.currentUser.reload(); // Refresh user data
-      const { emailVerified } = auth.currentUser;
-      setUser({ email: auth.currentUser.email, emailVerified });
-      if (user.emailVerified) {
-        navigation.replace("DrawerEntry");
+      try {
+        await auth.currentUser.reload(); // Refresh user data
+        const { emailVerified } = auth.currentUser;
+        setUser({ email: auth.currentUser.email, emailVerified });
+        if (emailVerified) {
+          setSuccessMessage("Email Verified");
+          await wait(2000);
+          navigation.replace("DrawerEntry");
+        } else {
+          setErrorMessage("Verify your email");
+        }
+      } catch (error) {
+        console.error("Error reloading user data:", error);
+        setErrorMessage("Error checking email verification status.");
       }
+    } else {
+      setErrorMessage("No user is currently signed in.");
     }
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-white">
+    <View className="flex-1 justify-center items-center bg-white p-10">
       {/* Back Button */}
       <TouchableOpacity
         onPress={async () => {
@@ -49,14 +86,28 @@ const EmailVerificationScreen = ({ navigation }) => {
         </Text>
       </TouchableOpacity>
 
-      {user && (
-        <View className="mt-5">
-          <Text>{user?.email}</Text>
-          <Text>
-            {user?.emailVerified ? "Accepted" : "Please verify your email"}
-          </Text>
-        </View>
-      )}
+      <View className="absolute bottom-10">
+        <TouchableOpacity onPress={resendEmailVerification}>
+          <Text>Resend Verification mail</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Error Message Card */}
+      <View className=" w-full absolute z-10 bottom-10">
+        <ErrorComp
+          timeDur={300}
+          setErrorMessage={setErrorMessage}
+          errorMessage={errorMessage}
+        />
+      </View>
+      {/* Success Message Card */}
+      <View className=" w-full absolute z-10 bottom-10">
+        <SuccessComp
+          timeDur={300}
+          setErrorMessage={setSuccessMessage}
+          errorMessage={successMessage}
+        />
+      </View>
     </View>
   );
 };
