@@ -5,12 +5,14 @@ import { auth } from "../firebase"; // Ensure your Firebase config is imported c
 import { RefreshCcw } from "lucide-react-native";
 import ErrorComp from "../components/ErrorComp";
 import SuccessComp from "../components/SuccessComp";
+import AlertComp from "../components/AlertComp";
 import { sendEmailVerification } from "firebase/auth";
 
 const EmailVerificationScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
 
   // wait function
   const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -23,7 +25,12 @@ const EmailVerificationScreen = ({ navigation }) => {
         await sendEmailVerification(auth.currentUser);
         setSuccessMessage("Verification Email sent");
       } catch (error) {
-        setErrorMessage("Error sending verification email");
+        console.log(error.code);
+        if (error.code == "auth/too-many-requests") {
+          setAlertMessage("Please Wait a Moment Before Trying Again");
+        } else {
+          setErrorMessage("Error sending verification email");
+        }
       }
     } else {
       setErrorMessage("Error");
@@ -41,10 +48,10 @@ const EmailVerificationScreen = ({ navigation }) => {
         setUser({ email: auth.currentUser.email, emailVerified });
         if (emailVerified) {
           setSuccessMessage("Email Verified");
-          await wait(2000);
+          await wait(1500);
           navigation.replace("DrawerEntry");
         } else {
-          setErrorMessage("Verify your email");
+          setAlertMessage("Verify your email");
         }
       } catch (error) {
         console.error("Error reloading user data:", error);
@@ -100,12 +107,22 @@ const EmailVerificationScreen = ({ navigation }) => {
           errorMessage={errorMessage}
         />
       </View>
+
       {/* Success Message Card */}
       <View className=" w-full absolute z-10 bottom-10">
         <SuccessComp
           timeDur={300}
           setErrorMessage={setSuccessMessage}
           errorMessage={successMessage}
+        />
+      </View>
+
+      {/* Alert Message Card */}
+      <View className=" w-full absolute z-10 bottom-10">
+        <AlertComp
+          timeDur={300}
+          setErrorMessage={setAlertMessage}
+          errorMessage={alertMessage}
         />
       </View>
     </View>
