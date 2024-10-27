@@ -19,6 +19,7 @@ import { auth } from "../firebase";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import ErrorComp from "../components/ErrorComp";
+import SuccessComp from "../components/SuccessComp";
 import { User } from "lucide-react-native";
 
 const SignUpScreen = ({ navigation }) => {
@@ -26,11 +27,11 @@ const SignUpScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [cfmPassword, setCfmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [emailLabel, setEmailLabel] = useState(false);
   const [passwordLabel, setPasswordLabel] = useState(false);
   const [cfmPasswordLabel, setCfmPasswordLabel] = useState(false);
-  const [user, setUser] = useState(null);
 
   const emailLabelTop = useSharedValue(16);
   const emailLabelLeft = useSharedValue(0);
@@ -39,28 +40,8 @@ const SignUpScreen = ({ navigation }) => {
   const cfmPasswordLabelTop = useSharedValue(16);
   const cfmPasswordLabelLeft = useSharedValue(0);
 
-  const handleRefreshVerificationStatus = async () => {
-    if (auth.currentUser) {
-      await auth.currentUser.reload(); // Refresh user data
-      const { emailVerified } = auth.currentUser;
-      setUser({ email: auth.currentUser.email, emailVerified });
-    }
-  };
-
-  // Goto email verification Screen when signed up
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((userCredential) => {
-      if (userCredential) {
-        const { email, emailVerified } = userCredential;
-        setUser({ email, emailVerified });
-      } else {
-        setUser(null); // User is not logged in
-      }
-    });
-
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, []);
+  // wait function
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   useEffect(() => {
     const timeDur = 300;
@@ -92,6 +73,7 @@ const SignUpScreen = ({ navigation }) => {
 
   const handleSigningUp = () => {
     setErrorMessage("");
+    setSuccessMessage("");
     if (!email || !password || !cfmPassword) {
       Keyboard.dismiss();
       Haptics.selectionAsync();
@@ -113,13 +95,12 @@ const SignUpScreen = ({ navigation }) => {
         try {
           await sendEmailVerification(user);
           console.log("Verification email sent to:", user.email);
-          setErrorMessage("Verification email sent. Please check your inbox.");
+          setSuccessMessage("Acount successfully created");
+          await wait(1000);
           navigation.navigate("EmailVerification");
         } catch (error) {
           console.error("Error sending verification email:", error);
-          setErrorMessage(
-            "Failed to send verification email. Please try again later."
-          );
+          setErrorMessage("Failed to send verification email");
         }
         console.log(user);
       })
@@ -254,12 +235,14 @@ const SignUpScreen = ({ navigation }) => {
           />
         </View>
 
-        {user && (
-          <View>
-            <Text>{user?.email}</Text>
-            <Text>{user?.emailVerified ? "True" : "False"}</Text>
-          </View>
-        )}
+        {/* Success Message Card */}
+        <View className=" w-full absolute z-10 bottom-10">
+          <SuccessComp
+            timeDur={300}
+            setErrorMessage={setSuccessMessage}
+            errorMessage={successMessage}
+          />
+        </View>
 
         <TouchableOpacity
           onPress={() => {
