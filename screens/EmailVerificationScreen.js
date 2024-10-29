@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { auth } from "../firebase"; // Ensure your Firebase config is imported correctly
-import { RefreshCcw } from "lucide-react-native";
+import { ChevronLeft, RefreshCcw } from "lucide-react-native";
 import ErrorComp from "../components/ErrorComp";
 import SuccessComp from "../components/SuccessComp";
 import AlertComp from "../components/AlertComp";
@@ -74,9 +74,10 @@ const EmailVerificationScreen = ({ navigation }) => {
             console.error("Error logging out: ", error); // Handle errors if any
           }
         }}
-        className="absolute top-12 left-5"
+        className="absolute top-12 left-5 flex-row justify-center items-center"
       >
-        <Text className="text-lg text-blue-500">Back</Text>
+        <ChevronLeft size={36} color={"black"} />
+        <Text className="text-lg">Back</Text>
       </TouchableOpacity>
 
       <Text className="text-xl font-bold text-gray-500">
