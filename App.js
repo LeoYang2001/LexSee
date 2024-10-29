@@ -17,7 +17,10 @@ import { AppRegistry } from "react-native";
 import { expo } from "./app.json";
 
 import * as Sentry from "@sentry/react-native";
-import BottomSheetDemo from "./screens/BottomSheetDemo";
+
+
+import EmailVerificationScreen from "./screens/EmailVerificationScreen";
+
 
 Sentry.init({
   dsn: "https://702c79d431dc378ca532bc1813c0d72d@o4508032117243904.ingest.us.sentry.io/4508032119144448",
@@ -41,23 +44,20 @@ function Loading({ navigation }) {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/auth.user
+        const userVerified = user.emailVerified;
         const uid = user.uid;
         console.log(uid);
-        if (uid) {
+        if (userVerified) {
           navigation.replace("DrawerEntry");
+        } else {
+          navigation.replace("EmailVerification");
         }
-        // ...
       } else {
         // User is signed out
         navigation.replace("LoginWelcome");
       }
     });
     return unsubscribe;
-    // const timer = setTimeout(() => {
-    //   navigation.replace('SignIn')
-    // }, 2000);
-
-    // return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -85,7 +85,11 @@ function App() {
         <Stack.Screen name="DrawerEntry" component={DrawerEntryScreen} />
         <Stack.Screen name="Main" component={MainScreen} />
         <Stack.Screen name="Definition" component={DefinitionScreen} />
-        <Stack.Screen name="BottomSheetDemo" component={BottomSheetDemo} />
+        <Stack.Screen
+          name="EmailVerification"
+          component={EmailVerificationScreen}
+        />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

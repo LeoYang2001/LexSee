@@ -13,9 +13,8 @@ import React, { useEffect, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
 import ErrorComp from "../components/ErrorComp";
-import { CircleAlert } from "lucide-react-native";
+import * as Haptics from "expo-haptics";
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -54,6 +53,8 @@ const SignInScreen = ({ navigation }) => {
   const signIn = async () => {
     setErrorMessage("");
     if (!email || !password) {
+      Keyboard.dismiss();
+      Haptics.selectionAsync();
       setErrorMessage("Empty Field");
       return;
     }
@@ -62,12 +63,16 @@ const SignInScreen = ({ navigation }) => {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(JSON.stringify(user));
-        if (user.uid) {
-          navigation.replace("DrawerEntry");
+        // Check if the user's email is verified
+        if (user.emailVerified) {
+          navigation.navigate("DrawerEntry"); // Navigate to the main app if verified
+        } else {
+          navigation.navigate("EmailVerification"); // Navigate to email verification screen if not verified
         }
       })
       .catch((error) => {
         Haptics.selectionAsync();
+        Keyboard.dismiss();
         // Set a user-friendly error message
         if (error.code === "auth/invalid-email") {
           setErrorMessage("Invalid email address");
@@ -86,7 +91,7 @@ const SignInScreen = ({ navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View className="flex-1 relative  flex px-10 items-center py-10">
+      <View className="flex-1 relative flex px-10 items-center py-10">
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           className="flex-1 justify-between w-full mb-40"
@@ -169,13 +174,11 @@ const SignInScreen = ({ navigation }) => {
 
         {/* Error Message Card */}
         <View className=" w-full absolute z-10 bottom-10">
-          {/* {errorMessage && ( */}
           <ErrorComp
             timeDur={300}
             setErrorMessage={setErrorMessage}
             errorMessage={errorMessage}
           />
-          {/* )} */}
         </View>
 
         <TouchableOpacity

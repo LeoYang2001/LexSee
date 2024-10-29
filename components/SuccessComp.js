@@ -5,7 +5,7 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { CircleAlert } from "lucide-react-native";
+import { CircleCheck } from "lucide-react-native";
 
 const ErrorComp = ({ timeDur, errorMessage, setErrorMessage }) => {
   const errorMessageOpacity = useSharedValue(0);
@@ -35,10 +35,10 @@ const ErrorComp = ({ timeDur, errorMessage, setErrorMessage }) => {
         opacity: errorMessageOpacity,
         transition: { duration: 300 },
       }}
-      className="bg-red-200 flex w-full rounded-lg p-4 mt-4 flex-row justify-between items-center"
+      className="bg-green-200 flex w-full rounded-lg p-4 mt-4 flex-row justify-between items-center"
     >
-      <CircleAlert fill={"#dc2626"} color={"#fecaca"} size={30} />
-      <Text className="text-red-700 text-lg text-center font-medium">
+      <CircleCheck fill={"#22c55e"} color={"#bbf7d0"} size={30} />
+      <Text className="text-green-700 text-lg text-center font-medium">
         {errorMessage}
       </Text>
       <View className=" w-2 h-2" />
