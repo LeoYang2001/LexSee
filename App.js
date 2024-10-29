@@ -17,7 +17,10 @@ import { AppRegistry } from "react-native";
 import { expo } from "./app.json";
 
 import * as Sentry from "@sentry/react-native";
+
+
 import EmailVerificationScreen from "./screens/EmailVerificationScreen";
+
 
 Sentry.init({
   dsn: "https://702c79d431dc378ca532bc1813c0d72d@o4508032117243904.ingest.us.sentry.io/4508032119144448",
@@ -86,6 +89,7 @@ function App() {
           name="EmailVerification"
           component={EmailVerificationScreen}
         />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

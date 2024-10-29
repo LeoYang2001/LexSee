@@ -17,7 +17,7 @@ import Animated, {
 import * as Clipboard from "expo-clipboard";
 import { Images, CircleAlert } from "lucide-react-native";
 
-const SaveWordPopup = ({ handleSavingWord, setIfPopUpWin }) => {
+const SaveWordPopup = ({ handleSavingWord, setIfPopUpWin, isSaving }) => {
   const [uploadImgUrl, setUploadImgUrl] = useState("");
   const [showButton, setShowButton] = useState(false);
   const [imageError, setImageError] = useState(false); // State to handle image error
@@ -172,7 +172,9 @@ const SaveWordPopup = ({ handleSavingWord, setIfPopUpWin }) => {
           }}
           className="bg-black w-full rounded-2xl flex justify-center items-center mt-10 py-4 px-4 "
         >
-          <Text className="text-white font-bold">Save</Text>
+          <Text className="text-white font-bold">
+            {isSaving ? "Saving..." : "Save"}
+          </Text>
         </TouchableOpacity>
       </Animated.View>
     </Pressable>

@@ -1,4 +1,6 @@
 import { View, Text, TouchableOpacity } from "react-native";
+import React from "react";
+
 import React, { useEffect, useState } from "react";
 import {
   createDrawerNavigator,
@@ -8,6 +10,7 @@ import {
 import { auth } from "../firebase"; // Make sure you import the firebase auth
 import MainScreen from "./MainScreen";
 import WordListScreen from "./WordListScreen";
+import WordListScreenWithBottomSheet from "./WordListScreen";
 
 const Drawer = createDrawerNavigator();
 

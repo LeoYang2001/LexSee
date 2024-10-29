@@ -25,6 +25,7 @@ const DefinitionScreen = ({ navigation, route }) => {
   const [isLoadingDef, setIsLoadingDef] = useState(false);
   const [isLoadingPic, setIsLoadingPic] = useState(false);
   const [searchBarWord, setSearchBarWord] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   //divide the response into different parts
   const [phonetics, setPhonetics] = useState(null);
   const [meanings, setMeanings] = useState(null);
@@ -66,10 +67,9 @@ const DefinitionScreen = ({ navigation, route }) => {
   };
 
   const handleSavingWord = async ({ imgUrl }) => {
-    console.log("imgUrl:");
-    console.log(imgUrl);
     if (!searchedWord || !meanings) return;
 
+    setIsSaving(true);
     const user = auth.currentUser;
 
     if (user) {
@@ -87,6 +87,7 @@ const DefinitionScreen = ({ navigation, route }) => {
           wordData
         );
         console.log("Word saved successfully!");
+        setIsSaving(false);
         navigation.navigate("WordList");
       } catch (error) {
         console.error("Error saving word:", error);
@@ -223,6 +224,7 @@ const DefinitionScreen = ({ navigation, route }) => {
     <SafeAreaView className="flex-1 relative overflow-hidden">
       {ifPopUpWin && (
         <SaveWordPopup
+          isSaving={isSaving}
           handleSavingWord={handleSavingWord}
           setIfPopUpWin={setIfPopUpWin}
         />

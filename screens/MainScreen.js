@@ -124,12 +124,17 @@ const MainScreen = ({ navigation }) => {
   useEffect(() => {
     if (!inputText) setWordSuggestion([]);
     const fetchWordSuggestion = async () => {
-      const res = await fetch(
-        `https://api.datamuse.com/sug?s=${inputText}&max=40`
-      );
-      const rs = await res.json();
-      if (rs.length > 0) setWordSuggestion(rs);
-      else setWordSuggestion([]);
+      try {
+        const res = await fetch(
+          `https://api.datamuse.com/sug?s=${inputText}&max=40`
+        );
+        const rs = await res.json();
+        if (rs.length > 0) setWordSuggestion(rs);
+        else setWordSuggestion([]);
+      } catch (error) {
+        console.log("word suggestion api error: ");
+        console.log(error);
+      }
     };
 
     if (inputText.length === 0) {

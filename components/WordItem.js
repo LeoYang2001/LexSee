@@ -22,8 +22,14 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 
-const WordItem = ({ imgUrl, word, phonetics, onDelete, itemColor }) => {
-  console.log(itemColor);
+const WordItem = ({
+  imgUrl,
+  word,
+  phonetics,
+  onDelete,
+  itemColor,
+  handlePresentModalPress,
+}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const translateX = useSharedValue(0);
@@ -33,6 +39,16 @@ const WordItem = ({ imgUrl, word, phonetics, onDelete, itemColor }) => {
   const showDeleteBtn = () => {
     translateX.value = withSpring(-80); // swipe left
     opacity.value = withTiming(1, { duration: 300 });
+  };
+
+  const handlePressItem = () => {
+    // setModalVisible(true)
+    if (opacity.value > 0) {
+      hideDeleteBtn();
+    } else {
+      // setModalVisible(true);
+      handlePresentModalPress();
+    }
   };
 
   // Hide delete button (swipe right to hide)
@@ -97,16 +113,7 @@ const WordItem = ({ imgUrl, word, phonetics, onDelete, itemColor }) => {
             className="relative overflow-hidden"
             style={[styles.itemContainer, animatedStyle]}
           >
-            <Pressable
-              onPress={() => {
-                // setModalVisible(true)
-                if (opacity.value > 0) {
-                  hideDeleteBtn();
-                } else {
-                  setModalVisible(true);
-                }
-              }}
-            >
+            <Pressable onPress={handlePressItem}>
               <View style={styles.itemContent}>
                 <Image source={{ uri: imgUrl }} style={styles.image} />
                 <View style={styles.textContainer}>
