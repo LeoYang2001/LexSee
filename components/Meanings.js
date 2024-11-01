@@ -10,7 +10,7 @@ import PronunciationButton from "./PronunciationButton";
 
 const Meaning = ({ meanings, searchedWord, phonetics, searchNewWord }) => {
   return (
-    <ScrollView className="p-6 rounded-xl shadow-lg w-full overflow-hidden flex-1 bg-white">
+    <ScrollView className="p-6  w-full rounded-xl shadow-lg overflow-hidden flex-1 bg-white">
       <View className="flex-row  justify-between items-center">
         <View>
           <Text className="font-semibold text-xl">{searchedWord}</Text>

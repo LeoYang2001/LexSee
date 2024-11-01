@@ -242,6 +242,7 @@ const WordListScreen = ({ navigation }) => {
                   </>
                 )}
                 <WordDetail
+                  navigation={navigation}
                   bottomSheetModalRef={bottomSheetModalRef}
                   wordItem={displayedWord}
                   setBottomSheetViewMode={setBottomSheetViewMode}
