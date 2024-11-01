@@ -28,9 +28,17 @@ const CustomDrawerContent = (props) => {
   };
 
   return (
-    <DrawerContentScrollView {...props}>
+    <DrawerContentScrollView
+      contentContainerStyle={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+      }}
+      {...props}
+    >
       <DrawerItemList {...props} />
       <TouchableOpacity
+        className="mt-auto"
         onPress={signOut}
         style={{
           margin: 20,

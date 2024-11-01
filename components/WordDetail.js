@@ -29,6 +29,7 @@ const WordDetail = ({
   bottomSheetModalRef,
   bottomSheetViewMode,
   setBottomSheetViewMode,
+  navigation,
 }) => {
   const [activePage, setActivePage] = useState(0); // Keep track of the active page (0: Page1, 1: Page2)
   const translateX = useSharedValue(0); // Shared value for horizontal translation
@@ -146,7 +147,11 @@ const WordDetail = ({
           style={[{ borderRadius: 47, width: 2 * SCREEN_WIDTH }, animatedStyle]}
         >
           <View style={{ width: SCREEN_WIDTH }}>
-            <Page1 wordItem={wordItem} handlePageChange={handlePageChange} />
+            <Page1
+              navigation={navigation}
+              wordItem={wordItem}
+              handlePageChange={handlePageChange}
+            />
           </View>
           <View style={{ width: SCREEN_WIDTH }}>
             <Page2 wordItem={wordItem} handlePageChange={handlePageChange} />

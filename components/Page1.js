@@ -49,9 +49,14 @@ const ListenButton = ({ audioUrl }) => {
   );
 };
 
-const Page1 = ({ wordItem }) => {
+const Page1 = ({ wordItem, navigation }) => {
   const { id, imgUrl, meanings, phonetics } = wordItem;
-  console.log(wordItem);
+
+  const searchNewWord = (word) => {
+    navigation.navigate("Definition", {
+      searchedWord: word,
+    });
+  };
 
   // Extracting the primary phonetic representation (first entry)
   const primaryPhonetic = phonetics[0] ? phonetics[0].text : "";
@@ -68,21 +73,36 @@ const Page1 = ({ wordItem }) => {
         </View>
       </View>
 
-      <ScrollView className="flex-1 border mt-4 border-red-500">
+      <ScrollView className="flex-1 border mt-4">
         {meanings.map((meaning, index) => (
           <View key={index} className="mb-4">
-            <Text className="text-lg text-white font-semibold">
+            <Text className="text-xl font-mono text-gray-600 font-semibold">
               {meaning.partOfSpeech}
             </Text>
             {meaning.definitions.map((definition, defIndex) => (
-              <View key={defIndex} className="ml-4">
-                <Text className="text-white">
-                  {defIndex + 1}. {definition.definition}
+              <View key={defIndex}>
+                <Text className="text-white text-xl  my-2 font-mono">
+                  {definition.definition}
                 </Text>
                 {definition.synonyms.length > 0 && (
-                  <Text className="text-gray-300">
-                    Synonyms: {definition.synonyms.join(", ")}
-                  </Text>
+                  <>
+                    <Text className="text-xl font-mono text-gray-600 my-2 font-semibold">
+                      Synonyms
+                    </Text>
+                    <View className="flex-1 flex flex-row flex-wrap mb-2">
+                      {definition?.synonyms?.map((syn) => (
+                        <TouchableOpacity
+                          onPress={() => {
+                            searchNewWord(syn);
+                          }}
+                          className="border bg-white p-2 mr-1 justify-center items-center rounded-md "
+                          key={syn}
+                        >
+                          <Text className="text-black  ">{syn}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </>
                 )}
                 {definition.antonyms.length > 0 && (
                   <Text className="text-gray-300">

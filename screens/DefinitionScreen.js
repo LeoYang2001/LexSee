@@ -21,10 +21,10 @@ const DefinitionScreen = ({ navigation, route }) => {
   const iniWord = route.params.searchedWord;
   const [searchedWord, setSearchedWord] = useState(iniWord);
   const [definition, setDefinition] = useState(null);
-  const [imagesResult, setImagesResults] = useState([]);
+  const [imagesResults, setimagesResults] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true); // To know if there are more images to load
   const [isLoadingDef, setIsLoadingDef] = useState(false);
-  const [isLoadingPic, setIsLoadingPic] = useState(false);
-  const [searchBarWord, setSearchBarWord] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   //divide the response into different parts
   const [phonetics, setPhonetics] = useState(null);
@@ -34,7 +34,7 @@ const DefinitionScreen = ({ navigation, route }) => {
 
   const Card1 = () => {
     return (
-      <View className="flex-1 flex   relative">
+      <View className="flex-1 flex   w-full relative">
         {meanings && !isLoadingDef ? (
           <Meaning
             searchNewWord={searchNewWord}
@@ -54,10 +54,12 @@ const DefinitionScreen = ({ navigation, route }) => {
   const Card2 = () => {
     return (
       <View className="flex-1 w-full  relative">
-        {imagesResult.length > 0 && !isLoadingPic ? (
+        {imagesResults.length > 0 ? (
           <ImageGallery
             onSaveWord={handleSavingWord}
-            images_result={imagesResult}
+            images_result={imagesResults}
+            fetchMoreImages={fetchMoreImages}
+            page={page}
           />
         ) : (
           <Text>Searching images...</Text>
@@ -104,9 +106,6 @@ const DefinitionScreen = ({ navigation, route }) => {
 
   const CHATGPT_KEY =
     "sk-proj-zla7u7ibGnm71qylVqb1T3BlbkFJbrzU9Yj0SvhpnPK6T9zl";
-  const IMAGE_SEARCH_KEY =
-    "8373e03e0067b60c26b44b27fd691f5d311507ad2b344d3943873335bdee7511";
-
   const openai = new OpenAI({
     apiKey: CHATGPT_KEY,
     dangerouslyAllowBrowser: true,
@@ -186,22 +185,39 @@ const DefinitionScreen = ({ navigation, route }) => {
     }
   };
 
-  const handleSearchImage = async (urlWord) => {
-    setIsLoadingPic(true);
-    //find an alternative api
-    // return
+  const handleSearchImage = async (urlWord, newPage = 1) => {
+    console.log("fetching images...", newPage);
+    // setIsLoadingPic(true);
+
     try {
+      const apiKey = "AIzaSyBTVL3kl1d0u7sg0h9VjYsiQtot58DPwQ0";
+      const cx = "2121e0d2556664ff3";
       const response = await fetch(
-        `https://serpapi.com/search.json?engine=google_images&q=${urlWord}&api_key=${IMAGE_SEARCH_KEY}`
+        `https://www.googleapis.com/customsearch/v1?q=${urlWord}&cx=${cx}&searchType=image&key=${apiKey}&start=${
+          (newPage - 1) * 10 + 1
+        }`
       );
       const data = await response.json();
-      if (data?.images_results) {
-        // setImagesResults(data?.images_results)
-        setImagesResults(data.images_results);
-        setIsLoadingPic(false);
+      if (data.items) {
+        // Append new images to the current list
+        setimagesResults((prevImages) => [...prevImages, ...data.items]);
+        console.log(imagesResults.length);
+        // Set `hasMore` to `false` if fewer items are returned than requested (indicating end of results)
+        setHasMore(data.items.length === 10);
+        setPage(newPage);
+      } else {
+        setHasMore(false);
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching images:", error);
+      setHasMore(false);
+    } finally {
+    }
+  };
+
+  const fetchMoreImages = () => {
+    if (hasMore) {
+      handleSearchImage(searchedWord, page + 1);
     }
   };
 
@@ -209,16 +225,6 @@ const DefinitionScreen = ({ navigation, route }) => {
     fetchWordDefinition();
     handleSearchImage(searchedWord);
   }, [searchedWord]);
-
-  const handleSearch = () => {
-    if (searchBarWord.trim()) {
-      setSearchedWord(searchBarWord);
-      setSearchBarWord("");
-      if (inputRef?.current) {
-        inputRef.current.blur();
-      }
-    }
-  };
 
   return (
     <SafeAreaView className="flex-1 relative overflow-hidden">
