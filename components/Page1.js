@@ -49,8 +49,8 @@ const ListenButton = ({ audioUrl }) => {
   );
 };
 
-const Page1 = ({ wordItem, navigation }) => {
-  const { id, imgUrl, meanings, phonetics } = wordItem;
+const Page1 = ({ wordItem, navigation, bottomSheetModalRef }) => {
+  const { id, meanings, phonetics } = wordItem;
 
   const searchNewWord = (word) => {
     navigation.navigate("Definition", {
@@ -81,7 +81,7 @@ const Page1 = ({ wordItem, navigation }) => {
             </Text>
             {meaning.definitions.map((definition, defIndex) => (
               <View key={defIndex}>
-                <Text className="text-white text-xl  my-2 font-mono">
+                <Text className="text-white  font-semibold my-2 font-mono">
                   {definition.definition}
                 </Text>
                 {definition.synonyms.length > 0 && (
@@ -94,6 +94,9 @@ const Page1 = ({ wordItem, navigation }) => {
                         <TouchableOpacity
                           onPress={() => {
                             searchNewWord(syn);
+                            if (bottomSheetModalRef?.current) {
+                              bottomSheetModalRef?.current.close();
+                            }
                           }}
                           className="border bg-white p-2 mr-1 justify-center items-center rounded-md "
                           key={syn}

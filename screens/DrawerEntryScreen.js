@@ -38,7 +38,7 @@ const CustomDrawerContent = (props) => {
     >
       <DrawerItemList {...props} />
       <TouchableOpacity
-        className="mt-auto"
+        className="mt-auto mb-10"
         onPress={signOut}
         style={{
           margin: 20,

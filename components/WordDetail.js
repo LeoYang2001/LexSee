@@ -9,7 +9,7 @@ import {
   ImageBackground,
   Pressable,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Animated, {
   useSharedValue,
@@ -151,6 +151,7 @@ const WordDetail = ({
               navigation={navigation}
               wordItem={wordItem}
               handlePageChange={handlePageChange}
+              bottomSheetModalRef={bottomSheetModalRef}
             />
           </View>
           <View style={{ width: SCREEN_WIDTH }}>

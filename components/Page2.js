@@ -1,14 +1,20 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OpenAI from "openai";
 
 const Page2 = ({ wordItem }) => {
+  const [partOfSpeech, setPartOfSpeech] = useState([]);
+  useEffect(() => {
+    wordItem.meanings.map((meaning) => {
+      console.log(meaning);
+    });
+  }, []);
+
   const chatgptApiKey = process.env.EXPO_PUBLIC_CHATGPT_KEY;
   const openai = new OpenAI({
     apiKey: chatgptApiKey,
   });
 
-  console.log(openai);
   const [response, setResponse] = useState(null);
   // Shared value to track the scale of the image
 
