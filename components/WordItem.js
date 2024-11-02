@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react-native";
+import { EllipsisVertical, Trash2 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   View,
@@ -29,6 +29,7 @@ const WordItem = ({
   onDelete,
   itemColor,
   handlePresentModalPress,
+  scrollRef,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -63,16 +64,20 @@ const WordItem = ({
       context.startX = translateX.value;
     },
     onActive: (event, context) => {
-      translateX.value = context.startX + event.translationX;
-      if (translateX.value < 0) {
-        opacity.value = Math.abs(translateX.value) / 100; // opacity increases as swipe moves left
+      // Only allow left swipes (negative translationX)
+      if (event.translationX < 0) {
+        translateX.value = context.startX + event.translationX;
+        if (translateX.value < 0) {
+          opacity.value = Math.abs(translateX.value) / 100; // opacity increases as swipe moves left
+        }
       }
     },
     onEnd: () => {
+      // Show delete button if swiped past threshold, otherwise hide
       if (translateX.value < -70) {
-        runOnJS(showDeleteBtn)(); // Show delete button if swiped past threshold
+        runOnJS(showDeleteBtn)();
       } else {
-        runOnJS(hideDeleteBtn)(); // Hide if swipe doesn't meet threshold
+        runOnJS(hideDeleteBtn)();
       }
     },
   });
@@ -108,32 +113,37 @@ const WordItem = ({
         </Animated.View>
 
         {/* Pan Gesture Handler for WordItem */}
-        <PanGestureHandler onGestureEvent={panGestureHandler}>
-          <Animated.View
-            className="relative overflow-hidden"
-            style={[styles.itemContainer, animatedStyle]}
+        <Animated.View
+          className="relative overflow-hidden"
+          style={[styles.itemContainer, animatedStyle]}
+        >
+          <Pressable
+            className="flex flex-row justify-between items-center"
+            onPress={handlePressItem}
           >
-            <Pressable onPress={handlePressItem}>
-              <View style={styles.itemContent}>
-                <Image source={{ uri: imgUrl }} style={styles.image} />
-                <View style={styles.textContainer}>
-                  <Text style={styles.word}>{word}</Text>
-                  {phonetics && phonetics.text && (
-                    <Text style={styles.phonetics}>{phonetics.text}</Text>
-                  )}
-                </View>
+            <View className=" flex-1 flex flex-row items-center">
+              <Image source={{ uri: imgUrl }} style={styles.image} />
+              <View style={styles.textContainer}>
+                <Text style={styles.word}>{word}</Text>
+                {phonetics && phonetics.text && (
+                  <Text style={styles.phonetics}>{phonetics.text}</Text>
+                )}
               </View>
-            </Pressable>
-            <View
-              style={
-                itemColor && {
-                  backgroundColor: itemColor,
-                }
+            </View>
+            <TouchableOpacity onPress={showDeleteBtn}>
+              <EllipsisVertical color={"black"} />
+            </TouchableOpacity>
+          </Pressable>
+
+          <View
+            style={
+              itemColor && {
+                backgroundColor: itemColor,
               }
-              className=" absolute w-2  h-20  right-0 "
-            ></View>
-          </Animated.View>
-        </PanGestureHandler>
+            }
+            className=" absolute w-2  h-20  right-0 "
+          ></View>
+        </Animated.View>
       </View>
 
       {/* Modal for zoomable image */}

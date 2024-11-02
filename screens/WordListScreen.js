@@ -7,7 +7,6 @@ import {
   Pressable,
   TextInput,
   TouchableOpacity,
-  ScrollView,
   Text,
   Dimensions,
   Image,
@@ -33,6 +32,7 @@ import {
 import { db, auth } from "../firebase";
 import OpenAI from "openai";
 import WordDetail from "../components/WordDetail";
+import { ScrollView } from "react-native-gesture-handler";
 
 const WordListScreen = ({ navigation }) => {
   const [words, setWords] = useState([]);
@@ -46,21 +46,7 @@ const WordListScreen = ({ navigation }) => {
   const bottomSheetModalRef = useRef(null);
   const snapPoints = ["46%", "100%"];
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (evt, gestureState) => {
-        const { dx, dy } = gestureState;
-        // Allow horizontal swipe
-        return Math.abs(dx) > Math.abs(dy);
-      },
-      onPanResponderMove: (evt, gestureState) => {
-        // Handle your swipe logic here
-      },
-      onPanResponderRelease: (evt, gestureState) => {
-        // Handle the release event
-      },
-    })
-  ).current;
+  const scrollRef = useRef();
 
   // callbacks
   const handleOpenSheet = useCallback((item) => {
@@ -187,7 +173,7 @@ const WordListScreen = ({ navigation }) => {
               {isSorting ? (
                 <ActivityIndicator />
               ) : (
-                <ScrollView>
+                <ScrollView scrollEnabled={true}>
                   {filteredWords.map((item) => (
                     <WordItem
                       key={item.id}
@@ -200,6 +186,7 @@ const WordListScreen = ({ navigation }) => {
                       phonetics={item.phonetics}
                       onDelete={handleDeleteWord}
                       itemColor={item?.groupColor}
+                      scrollRef={scrollRef}
                       bottomSheetModalRef={bottomSheetModalRef}
                     />
                   ))}

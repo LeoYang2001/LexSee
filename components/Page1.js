@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
 
 const ListenButton = ({ audioUrl }) => {
   const [sound, setSound] = useState(null);
@@ -49,8 +50,8 @@ const ListenButton = ({ audioUrl }) => {
   );
 };
 
-const Page1 = ({ wordItem, navigation }) => {
-  const { id, imgUrl, meanings, phonetics } = wordItem;
+const Page1 = ({ wordItem, navigation, bottomSheetModalRef }) => {
+  const { id, meanings, phonetics } = wordItem;
 
   const searchNewWord = (word) => {
     navigation.navigate("Definition", {
@@ -62,7 +63,10 @@ const Page1 = ({ wordItem, navigation }) => {
   const primaryPhonetic = phonetics[0] ? phonetics[0].text : "";
 
   return (
-    <View className="flex-1 w-full py-6 pt-24 px-6">
+    <LinearGradient
+      colors={["#000000", "#cccccc"]}
+      className="flex-1 w-full py-6 pt-24 px-6"
+    >
       <View className="flex flex-row justify-between items-center">
         <View>
           <Text className="font-semibold text-3xl text-white">{id}</Text>
@@ -73,15 +77,18 @@ const Page1 = ({ wordItem, navigation }) => {
         </View>
       </View>
 
-      <ScrollView className="flex-1 border mt-4">
+      <ScrollView className="flex-1   mt-4">
         {meanings.map((meaning, index) => (
-          <View key={index} className="mb-4">
+          <View
+            key={index}
+            className="mb-4 border border-gray-500 p-4 rounded-md shadow-md"
+          >
             <Text className="text-xl font-mono text-gray-600 font-semibold">
               {meaning.partOfSpeech}
             </Text>
             {meaning.definitions.map((definition, defIndex) => (
               <View key={defIndex}>
-                <Text className="text-white text-xl  my-2 font-mono">
+                <Text className="text-white  font-semibold my-2 font-mono">
                   {definition.definition}
                 </Text>
                 {definition.synonyms.length > 0 && (
@@ -94,6 +101,9 @@ const Page1 = ({ wordItem, navigation }) => {
                         <TouchableOpacity
                           onPress={() => {
                             searchNewWord(syn);
+                            if (bottomSheetModalRef?.current) {
+                              bottomSheetModalRef?.current.close();
+                            }
                           }}
                           className="border bg-white p-2 mr-1 justify-center items-center rounded-md "
                           key={syn}
@@ -114,7 +124,7 @@ const Page1 = ({ wordItem, navigation }) => {
           </View>
         ))}
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 
