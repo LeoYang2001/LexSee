@@ -4,7 +4,7 @@
     "slug": "LexSee",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/bookmark.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",

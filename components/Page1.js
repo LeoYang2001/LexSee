@@ -64,7 +64,7 @@ const Page1 = ({ wordItem, navigation, bottomSheetModalRef }) => {
 
   return (
     <LinearGradient
-      colors={["#000000", "#cccccc"]}
+      colors={["#000000", "#000"]}
       className="flex-1 w-full py-6 pt-24 px-6"
     >
       <View className="flex flex-row justify-between items-center">
@@ -79,9 +79,10 @@ const Page1 = ({ wordItem, navigation, bottomSheetModalRef }) => {
 
       <ScrollView className="flex-1   mt-4">
         {meanings.map((meaning, index) => (
-          <View
+          <LinearGradient
+            colors={["#333333", "#111"]}
             key={index}
-            className="mb-4 border border-gray-500 p-4 rounded-md shadow-md"
+            className="mb-4 p-4 rounded-md shadow-md"
           >
             <Text className="text-xl font-mono text-gray-600 font-semibold">
               {meaning.partOfSpeech}
@@ -121,7 +122,7 @@ const Page1 = ({ wordItem, navigation, bottomSheetModalRef }) => {
                 )}
               </View>
             ))}
-          </View>
+          </LinearGradient>
         ))}
       </ScrollView>
     </LinearGradient>

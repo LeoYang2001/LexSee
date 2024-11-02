@@ -1,15 +1,14 @@
-import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
-
+import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { auth } from "../firebase"; // Make sure you import the firebase auth
+import { auth } from "../firebase"; // Ensure firebase auth is correctly imported
 import MainScreen from "./MainScreen";
 import WordListScreen from "./WordListScreen";
-import WordListScreenWithBottomSheet from "./WordListScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -18,7 +17,6 @@ const CustomDrawerContent = (props) => {
     auth
       .signOut()
       .then(() => {
-        // Navigate back to the SignIn screen after sign out
         props.navigation.navigate("LoginWelcome");
         props.navigation.closeDrawer();
       })
@@ -29,25 +27,16 @@ const CustomDrawerContent = (props) => {
 
   return (
     <DrawerContentScrollView
-      contentContainerStyle={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-      }}
+      contentContainerStyle={styles.drawerContainer}
       {...props}
     >
+      {/* Drawer Items */}
       <DrawerItemList {...props} />
-      <TouchableOpacity
-        className="mt-auto mb-10"
-        onPress={signOut}
-        style={{
-          margin: 20,
-          padding: 10,
-          backgroundColor: "#f56",
-          borderRadius: 5,
-        }}
-      >
-        <Text style={{ color: "#fff", textAlign: "center" }}>Sign Out</Text>
+
+      {/* Sign Out Button */}
+      <TouchableOpacity onPress={signOut} style={styles.signOutButton}>
+        <MaterialIcons name="logout" size={20} color="#fff" />
+        <Text style={styles.signOutText}>Sign Out</Text>
       </TouchableOpacity>
     </DrawerContentScrollView>
   );
@@ -58,13 +47,75 @@ const DrawerEntryScreen = () => {
     <Drawer.Navigator
       screenOptions={{
         headerShown: false,
+        drawerStyle: { backgroundColor: "#f8f8f8" },
+        drawerActiveBackgroundColor: "#f56",
+        drawerActiveTintColor: "#fff",
+        drawerInactiveTintColor: "#333",
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Drawer.Screen name="Main" component={MainScreen} />
-      <Drawer.Screen name="WordList" component={WordListScreen} />
+      <Drawer.Screen
+        name="Main"
+        component={MainScreen}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <MaterialIcons name="home" color={color} size={size} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="WordList"
+        component={WordListScreen}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <MaterialIcons name="list" color={color} size={size} />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 };
 
 export default DrawerEntryScreen;
+
+const styles = StyleSheet.create({
+  drawerContainer: {
+    flex: 1,
+    paddingVertical: 20,
+  },
+  profileContainer: {
+    alignItems: "center",
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    marginBottom: 10,
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 10,
+  },
+  profileName: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+  },
+  signOutButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    backgroundColor: "#f56",
+    borderRadius: 8,
+    marginHorizontal: 20,
+    marginBottom: 20,
+    marginTop: "auto",
+  },
+  signOutText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "500",
+    marginLeft: 8,
+  },
+});

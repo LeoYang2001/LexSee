@@ -10,7 +10,7 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AlignLeft, Search, X } from "lucide-react-native";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
@@ -81,6 +81,7 @@ const MainScreen = ({ navigation }) => {
   const cardOpacity = useSharedValue(1);
   const [inputLabel, setInputLabel] = useState(false);
   const [latestWord, setLatestWord] = useState(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     setInputLabel(false);
@@ -170,7 +171,7 @@ const MainScreen = ({ navigation }) => {
           </View>
 
           <View className="mt-12">
-            <Text className="text-4xl font-bold">Dictionary</Text>
+            <Text className="text-4xl font-bold">LexSee</Text>
 
             <View
               className={`w-full mt-12 relative z-20  bg-gray-200  ${
@@ -187,6 +188,7 @@ const MainScreen = ({ navigation }) => {
                 <Search color={inputLabel ? "black" : "gray"} fontSize={14} />
               </Animated.View>
               <TextInput
+                ref={inputRef}
                 className="text-lg w-full py-2 px-4 "
                 value={inputText}
                 onChangeText={setInputText}
@@ -278,7 +280,14 @@ const MainScreen = ({ navigation }) => {
                     />
                     <View className="flex-row justify-between">
                       <ListenButton audioUrl={latestWord?.phonetics?.audio} />
-                      <TouchableOpacity className="rounded-xl bg-white p-3">
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("WordList", {
+                            callFunction: true, // Pass a parameter to indicate the function should be called
+                          });
+                        }}
+                        className="rounded-xl bg-white p-3"
+                      >
                         <Text className="text-black font-semibold">
                           View more
                         </Text>
@@ -286,7 +295,43 @@ const MainScreen = ({ navigation }) => {
                     </View>
                   </>
                 ) : (
-                  <ActivityIndicator color={"white"} />
+                  <>
+                    <View>
+                      <Text className="text-white font-thin">
+                        Add Your First Word
+                      </Text>
+                      <View className="flex-row  items-center ">
+                        <Text className="text-white font-semibold text-2xl">
+                          Genesis
+                        </Text>
+                        <Text className="text-gray-400 text-sm ml-3">
+                          /ˈdʒɛnəsɪs/
+                        </Text>
+                      </View>
+                    </View>
+                    <Image
+                      source={require("../assets/firstWord.jpg")}
+                      style={{
+                        width: "100%",
+                        height: 150,
+                        borderRadius: 8,
+                        marginTop: 10,
+                      }} // Adjust height as needed
+                      resizeMode="cover" // Adjust to 'contain' if you want the image to fit inside the box
+                    />
+                    <View className="flex-row justify-center">
+                      <TouchableOpacity
+                        onPress={() => {
+                          inputRef.current.focus();
+                        }}
+                        className="rounded-xl bg-white p-3"
+                      >
+                        <Text className="text-black font-semibold">
+                          Start Your Journey
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
                 )}
               </Pressable>
             </Animated.View>
