@@ -33,6 +33,7 @@ import { db, auth } from "../firebase";
 import OpenAI from "openai";
 import WordDetail from "../components/WordDetail";
 import { ScrollView } from "react-native-gesture-handler";
+import { useRoute } from "@react-navigation/native";
 
 const WordListScreen = ({ navigation }) => {
   const [words, setWords] = useState([]);
@@ -48,15 +49,27 @@ const WordListScreen = ({ navigation }) => {
 
   const scrollRef = useRef();
 
+  //function to view the latest saved word
+  const route = useRoute();
+
+  // Define the function you want to run on screen load
+  const displayLatestSavedWord = () => {
+    setDisplayedWord(filteredWords[0]);
+    bottomSheetModalRef.current.present();
+  };
+
+  useEffect(() => {
+    // Check if callFunction is set to true, then call someFunction
+    if (route.params?.callFunction) {
+      displayLatestSavedWord();
+    }
+  }, [route.params]);
+
   // callbacks
   const handleOpenSheet = useCallback((item) => {
     setDisplayedWord(item);
     bottomSheetModalRef.current?.present();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  }, []);
-
-  const handleCloseSheet = useCallback(() => {
-    bottomSheetModalRef.current?.close();
   }, []);
 
   const handleSheetChanges = useCallback((index) => {
@@ -66,17 +79,6 @@ const WordListScreen = ({ navigation }) => {
       setBottomSheetViewMode("small");
     }
   }, []);
-
-  const handleSheetAnimation = (fromIndex, toIndex) => {
-    if (toIndex <= 0.5) {
-      bottomSheetModalRef.current.close();
-      setBottomSheetViewMode("small");
-    } else if (toIndex > 0.5 && toIndex <= 1.5) {
-      setBottomSheetViewMode("small");
-    } else {
-      setBottomSheetViewMode("large");
-    }
-  };
 
   useEffect(() => {
     const user = auth.currentUser;
