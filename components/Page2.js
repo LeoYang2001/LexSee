@@ -13,7 +13,7 @@ const Page2 = ({ wordItem }) => {
     wordItem.meanings.map((meaning) => {
       console.log(meaning);
     });
-    sendMsg();
+    createConversation();
   }, []);
 
   const chatgptApiKey = process.env.EXPO_PUBLIC_CHATGPT_KEY;
@@ -23,7 +23,7 @@ const Page2 = ({ wordItem }) => {
 
   // Shared value to track the scale of the image
 
-  const sendMsg = async (definition = null) => {
+  const createConversation = async (definition = null) => {
     // Adjust the prompt based on whether a specific definition is provided
     const userPrompt = definition
       ? `Use the word "${id}" and its specific definition: "${definition}" to create a conversation between two people. 
@@ -86,7 +86,7 @@ Please respond using this format exactly, with no more than 6 lines.`;
         </View>
         <TouchableOpacity
           className="p-3 self-center"
-          onPress={() => sendMsg()}
+          onPress={() => createConversation()}
         >
           <RefreshCcw color="white" />
         </TouchableOpacity>
