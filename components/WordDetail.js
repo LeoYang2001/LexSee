@@ -5,9 +5,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Dimensions,
-  StyleSheet,
-  ImageBackground,
-  Pressable,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 
@@ -33,6 +30,7 @@ const WordDetail = ({
 }) => {
   const [activePage, setActivePage] = useState(0); // Keep track of the active page (0: Page1, 1: Page2)
   const translateX = useSharedValue(0); // Shared value for horizontal translation
+  const [selectedDefinition, setSelectedDefinition] = useState(null);
 
   // Handle page change on pagination header click
   const handlePageChange = (page) => {
@@ -46,6 +44,11 @@ const WordDetail = ({
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
   }));
+
+  const handleSelectingDef = (def) => {
+    setSelectedDefinition(def);
+    handlePageChange(1);
+  };
 
   if (!wordItem) return;
   if (bottomSheetViewMode === "small")
@@ -152,10 +155,15 @@ const WordDetail = ({
               wordItem={wordItem}
               handlePageChange={handlePageChange}
               bottomSheetModalRef={bottomSheetModalRef}
+              handleSelectingDef={handleSelectingDef}
             />
           </View>
           <View style={{ width: SCREEN_WIDTH }}>
-            <Page2 wordItem={wordItem} handlePageChange={handlePageChange} />
+            <Page2
+              selectedDefinition={selectedDefinition}
+              wordItem={wordItem}
+              handlePageChange={handlePageChange}
+            />
           </View>
         </Animated.View>
       </View>

@@ -60,10 +60,12 @@ const WordListScreen = ({ navigation }) => {
 
   useEffect(() => {
     // Check if callFunction is set to true, then call someFunction
-    if (route.params?.callFunction) {
-      displayLatestSavedWord();
+    if (route.params?.callFunction && bottomSheetModalRef?.current) {
+      setTimeout(() => {
+        displayLatestSavedWord();
+      }, 500);
     }
-  }, [route.params]);
+  }, [route.params, bottomSheetModalRef]);
 
   // callbacks
   const handleOpenSheet = useCallback((item) => {
