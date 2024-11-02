@@ -4,6 +4,7 @@ import OpenAI from "openai";
 
 const Page2 = ({ wordItem }) => {
   const [partOfSpeech, setPartOfSpeech] = useState([]);
+  console.log(wordItem);
   useEffect(() => {
     wordItem.meanings.map((meaning) => {
       console.log(meaning);
@@ -25,13 +26,14 @@ const Page2 = ({ wordItem }) => {
         { role: "system", content: "You are a helpful assistant." },
         {
           role: "user",
-          content: "Hello!",
+          content: "use the word" + wordItem.id + "and make a conversation of two people. within each dialouge seperate it with ~",
         },
       ],
     });
     console.log(completion.choices[0].message.content);
     setResponse(completion.choices[0].message.content);
   };
+
   return (
     <View className="bg-white w-full pt-20 h-full">
       <TouchableOpacity onPress={sendMsg}>
