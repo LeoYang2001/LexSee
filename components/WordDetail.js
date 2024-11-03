@@ -160,6 +160,7 @@ const WordDetail = ({
           </View>
           <View style={{ width: SCREEN_WIDTH }}>
             <Page2
+              activePage={activePage}
               selectedDefinition={selectedDefinition}
               wordItem={wordItem}
               handlePageChange={handlePageChange}

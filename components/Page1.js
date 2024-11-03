@@ -64,17 +64,14 @@ const Page1 = ({
     });
   };
 
-  // Extracting the primary phonetic representation (first entry)
-  const primaryPhonetic = phonetics[0] ? phonetics[0].text : "";
-
   return (
     <LinearGradient
-      colors={["#000000", "#000"]}
-      className="flex-1 w-full py-6 pt-24 px-6"
+      colors={["#000", "#0D0F1fff"]}
+      className="flex-1 w-full  pt-24 px-6"
     >
       <View className="flex flex-row justify-between items-center">
         <View>
-          <Text className="font-semibold text-3xl text-white">{id}</Text>
+          <Text className="font-semibold text-2xl text-white">{id}</Text>
           <Text className="text-sm text-gray-300">{phonetics.text}</Text>
         </View>
         <View>
@@ -85,11 +82,11 @@ const Page1 = ({
       <ScrollView className="flex-1   mt-4">
         {meanings.map((meaning, index) => (
           <LinearGradient
-            colors={["#333333", "#111"]}
+            colors={["#323B4Aff", "#323B4Aff"]}
             key={index}
             className="mb-4 p-4 rounded-md shadow-md"
           >
-            <Text className="text-xl font-mono text-gray-600 font-semibold">
+            <Text className="text-xl font-mono text-gray-400 font-semibold">
               {meaning.partOfSpeech}
             </Text>
             {meaning.definitions.map((definition, defIndex) => (
@@ -99,7 +96,7 @@ const Page1 = ({
                     handleSelectingDef(definition?.definition);
                   }}
                 >
-                  <Text className="text-white  font-semibold my-2 font-mono">
+                  <Text className="text-white  my-2 font-mono">
                     {definition.definition}
                   </Text>
                 </TouchableOpacity>
