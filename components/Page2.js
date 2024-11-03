@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import OpenAI from "openai";
 import { ScrollView } from "react-native-gesture-handler";
 import { RefreshCcw } from "lucide-react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 const LoadingAnimation = () => {
   const [colorArr, setColorArr] = useState([
@@ -110,11 +111,16 @@ const ConversationItem = ({ line, index, pushConversation }) => {
   return (
     <>
       {isLoading ? (
-        <View
+        <LinearGradient
+          colors={
+            index % 2 === 0 ? ["#1b1920", "#1b1920"] : ["#6D60F3ff", "#c34af4"]
+          }
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
           key={index}
           style={{
             alignSelf: index % 2 === 0 ? "flex-start" : "flex-end",
-            backgroundColor: index % 2 === 0 ? "#E0E0E0" : "#007AFF",
+            // backgroundColor: index % 2 === 0 ? "#E0E0E0" : "#007AFF",
             padding: 10,
             borderRadius: 15,
             marginVertical: 5,
@@ -122,13 +128,18 @@ const ConversationItem = ({ line, index, pushConversation }) => {
           }}
         >
           <LoadingAnimation />
-        </View>
+        </LinearGradient>
       ) : (
-        <View
+        <LinearGradient
+          colors={
+            index % 2 === 0 ? ["#1b1920", "#1b1920"] : ["#6D60F3ff", "#c34af4"]
+          }
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
           key={index}
           style={{
             alignSelf: index % 2 === 0 ? "flex-start" : "flex-end",
-            backgroundColor: index % 2 === 0 ? "#E0E0E0" : "#007AFF",
+            // backgroundColor: index % 2 === 0 ? "#E0E0E0" : "#007AFF",
             padding: 10,
             borderRadius: 15,
             marginVertical: 5,
@@ -137,19 +148,19 @@ const ConversationItem = ({ line, index, pushConversation }) => {
         >
           <Text
             style={{
-              color: index % 2 === 0 ? "#000" : "#fff",
+              color: index % 2 === 0 ? "#fff" : "#000",
               fontSize: 16,
             }}
           >
             {line}
           </Text>
-        </View>
+        </LinearGradient>
       )}
     </>
   );
 };
 
-const Page2 = ({ wordItem, selectedDefinition }) => {
+const Page2 = ({ wordItem, selectedDefinition, activePage }) => {
   const { id, phonetics } = wordItem;
   const [conversation, setConversation] = useState([]);
   const [displayedConversation, setDisplayedConversation] = useState([]);
@@ -157,11 +168,17 @@ const Page2 = ({ wordItem, selectedDefinition }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    createConversation(selectedDefinition);
-  }, [selectedDefinition]);
+    if (activePage === 1) {
+      createConversation(selectedDefinition);
+    } else {
+      resetDisplayedConversation();
+    }
+  }, [selectedDefinition, activePage]);
 
   useEffect(() => {
-    resetDisplayedConversation();
+    if (conversation.length > 0) {
+      pushConversation();
+    }
   }, [conversation]);
 
   useEffect(() => {
@@ -174,6 +191,8 @@ const Page2 = ({ wordItem, selectedDefinition }) => {
   });
 
   const pushConversation = () => {
+    console.log("push conve");
+    console.log(conversation.length);
     if (displayedIndex < conversation.length) {
       console.log(displayedIndex);
       setDisplayedIndex((prevIndex) => prevIndex + 1);
@@ -230,8 +249,9 @@ Please respond using this format exactly, with no more than 6 lines.`;
     });
 
     const responseText = completion.choices[0].message.content;
-    console.log(responseText);
-
+    console.log("got conversation from gpt");
+    console.log(displayedConversation);
+    console.log(displayedIndex);
     // Split response by newline and remove empty lines, then set as conversation array
     const conversationLines = responseText
       .split("\n")
@@ -242,14 +262,16 @@ Please respond using this format exactly, with no more than 6 lines.`;
 
     setConversation(conversationLines);
     setIsLoading(false);
-    pushConversation();
   };
 
   return (
-    <View className="bg-black w-full h-full pt-20 px-4">
+    <LinearGradient
+      colors={["#000", "#0D0F1fff"]}
+      className="flex-1 w-full  pt-24 px-6"
+    >
       <View className="flex flex-row justify-between items-center mb-4">
         <View>
-          <Text className="font-semibold text-3xl text-white">{id}</Text>
+          <Text className="font-semibold text-2xl text-white">{id}</Text>
           <Text className="text-sm text-gray-300">{phonetics.text}</Text>
         </View>
         <TouchableOpacity
@@ -271,10 +293,13 @@ Please respond using this format exactly, with no more than 6 lines.`;
       </View>
 
       {isLoading ? (
-        <View
+        <LinearGradient
+          colors={true ? ["#1b1920", "#1b1920"] : ["#6D60F3ff", "#c34af4"]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
           style={{
             alignSelf: true ? "flex-start" : "flex-end",
-            backgroundColor: true ? "#E0E0E0" : "#007AFF",
+            // backgroundColor: index % 2 === 0 ? "#E0E0E0" : "#007AFF",
             padding: 10,
             borderRadius: 15,
             marginVertical: 5,
@@ -282,7 +307,7 @@ Please respond using this format exactly, with no more than 6 lines.`;
           }}
         >
           <IniLoadingAnimation />
-        </View>
+        </LinearGradient>
       ) : (
         <>
           {/* Display each line in the conversation array in a text-message style */}
@@ -296,7 +321,7 @@ Please respond using this format exactly, with no more than 6 lines.`;
           ))}
         </>
       )}
-    </View>
+    </LinearGradient>
   );
 };
 
