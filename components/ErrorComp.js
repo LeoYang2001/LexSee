@@ -18,12 +18,16 @@ const ErrorComp = ({ timeDur, errorMessage, setErrorMessage }) => {
       });
 
       // Fade out smoothly after 2 seconds
+      // Fade out after 3 seconds
       setTimeout(() => {
         errorMessageOpacity.value = withTiming(0, {
           duration: timeDur,
         });
-        setErrorMessage("");
-      }, 2000);
+        // Clear message after fade-out animation completes
+        setTimeout(() => {
+          setErrorMessage("");
+        }, timeDur); // Delay clear to match fade-out duration
+      }, timeDur * 3);
     }
   }, [errorMessage]);
 

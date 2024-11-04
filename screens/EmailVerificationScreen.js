@@ -103,7 +103,7 @@ const EmailVerificationScreen = ({ navigation }) => {
       {/* Error Message Card */}
       <View className=" w-full absolute z-10 bottom-10">
         <ErrorComp
-          timeDur={300}
+          timeDur={500}
           setErrorMessage={setErrorMessage}
           errorMessage={errorMessage}
         />
@@ -112,18 +112,18 @@ const EmailVerificationScreen = ({ navigation }) => {
       {/* Success Message Card */}
       <View className=" w-full absolute z-10 bottom-10">
         <SuccessComp
-          timeDur={300}
-          setErrorMessage={setSuccessMessage}
-          errorMessage={successMessage}
+          timeDur={500}
+          setSuccessMessage={setSuccessMessage}
+          successMessage={successMessage}
         />
       </View>
 
       {/* Alert Message Card */}
       <View className=" w-full absolute z-10 bottom-10">
         <AlertComp
-          timeDur={300}
-          setErrorMessage={setAlertMessage}
-          errorMessage={alertMessage}
+          timeDur={500}
+          setAlertMessage={setAlertMessage}
+          alertMessage={alertMessage}
         />
       </View>
     </View>

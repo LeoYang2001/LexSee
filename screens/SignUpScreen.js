@@ -229,7 +229,7 @@ const SignUpScreen = ({ navigation }) => {
         {/* Error Message Card */}
         <View className=" w-full absolute z-10 bottom-10">
           <ErrorComp
-            timeDur={300}
+            timeDur={500}
             setErrorMessage={setErrorMessage}
             errorMessage={errorMessage}
           />
@@ -238,9 +238,9 @@ const SignUpScreen = ({ navigation }) => {
         {/* Success Message Card */}
         <View className=" w-full absolute z-10 bottom-10">
           <SuccessComp
-            timeDur={300}
-            setErrorMessage={setSuccessMessage}
-            errorMessage={successMessage}
+            timeDur={500}
+            setSuccessMessage={setSuccessMessage}
+            successMessage={successMessage}
           />
         </View>
 
