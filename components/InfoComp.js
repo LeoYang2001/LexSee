@@ -7,43 +7,46 @@ import Animated, {
 } from "react-native-reanimated";
 import { Info } from "lucide-react-native";
 
-const ErrorComp = ({ timeDur, errorMessage, setErrorMessage }) => {
-  const errorMessageOpacity = useSharedValue(0);
+const InfoComp = ({ timeDur, infoMessage, setInfoMessage }) => {
+  const infoMessageOpacity = useSharedValue(0);
 
   useEffect(() => {
-    if (errorMessage) {
+    if (infoMessage) {
       // Fade in with ease-in-out easing
-      errorMessageOpacity.value = withTiming(1, {
+      infoMessageOpacity.value = withTiming(1, {
         duration: timeDur,
       });
 
       // Fade out smoothly after 2 seconds
       setTimeout(() => {
-        errorMessageOpacity.value = withTiming(0, {
+        infoMessageOpacity.value = withTiming(0, {
           duration: timeDur,
         });
-        setErrorMessage("");
-      }, 2000);
+        // Clear message after fade-out animation completes
+        setTimeout(() => {
+          setInfoMessage("");
+        }, timeDur); // Delay clear to match fade-out duration
+      }, timeDur * 3);
     }
-  }, [errorMessage]);
+  }, [infoMessage]);
 
-  if (!errorMessage) return;
+  if (!infoMessage) return;
 
   return (
     <Animated.View
       style={{
-        opacity: errorMessageOpacity,
+        opacity: infoMessageOpacity,
         transition: { duration: 300 },
       }}
       className="bg-blue-200 flex w-full rounded-lg p-4 mt-4 flex-row justify-between items-center"
     >
       <Info fill={"#3b82f6"} color={"#bfdbfe"} size={30} />
       <Text className="text-blue-700 text-lg text-center font-medium">
-        {errorMessage}
+        {infoMessage}
       </Text>
       <View className=" w-2 h-2" />
     </Animated.View>
   );
 };
 
-export default ErrorComp;
+export default InfoComp;

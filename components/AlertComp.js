@@ -7,43 +7,46 @@ import Animated, {
 } from "react-native-reanimated";
 import { TriangleAlert } from "lucide-react-native";
 
-const ErrorComp = ({ timeDur, errorMessage, setErrorMessage }) => {
-  const errorMessageOpacity = useSharedValue(0);
+const AlertComp = ({ timeDur, alertMessage, setAlertMessage }) => {
+  const alertMessageOpacity = useSharedValue(0);
 
   useEffect(() => {
-    if (errorMessage) {
+    if (alertMessage) {
       // Fade in with ease-in-out easing
-      errorMessageOpacity.value = withTiming(1, {
+      alertMessageOpacity.value = withTiming(1, {
         duration: timeDur,
       });
 
       // Fade out smoothly after 2 seconds
       setTimeout(() => {
-        errorMessageOpacity.value = withTiming(0, {
+        alertMessageOpacity.value = withTiming(0, {
           duration: timeDur,
         });
-        setErrorMessage("");
-      }, 2000);
+        // Clear message after fade-out animation completes
+        setTimeout(() => {
+          setAlertMessage("");
+        }, timeDur); // Delay clear to match fade-out duration
+      }, timeDur * 3);
     }
-  }, [errorMessage]);
+  }, [alertMessage]);
 
-  if (!errorMessage) return;
+  if (!alertMessage) return;
 
   return (
     <Animated.View
       style={{
-        opacity: errorMessageOpacity,
+        opacity: alertMessageOpacity,
         transition: { duration: 300 },
       }}
       className="bg-yellow-200 flex w-full rounded-lg p-4 mt-4 flex-row justify-between items-center"
     >
       <TriangleAlert fill={"#ca8a04"} color={"#fef08a"} size={30} />
       <Text className="text-yellow-700 text-lg text-center font-medium">
-        {errorMessage}
+        {alertMessage}
       </Text>
       <View className=" w-2 h-2" />
     </Animated.View>
   );
 };
 
-export default ErrorComp;
+export default AlertComp;
