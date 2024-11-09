@@ -47,8 +47,8 @@ const DrawerEntryScreen = () => {
     <Drawer.Navigator
       screenOptions={{
         headerShown: false,
-        drawerStyle: { backgroundColor: "#f8f8f8" },
-        drawerActiveBackgroundColor: "#f56",
+        drawerStyle: { backgroundColor: "#fff" },
+        drawerActiveBackgroundColor: "#6D60F3ff",
         drawerActiveTintColor: "#fff",
         drawerInactiveTintColor: "#333",
       }}
@@ -83,34 +83,17 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 20,
   },
-  profileContainer: {
-    alignItems: "center",
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    marginBottom: 10,
-  },
-  profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 10,
-  },
-  profileName: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
-  },
+
   signOutButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 12,
-    backgroundColor: "#f56",
     borderRadius: 8,
     marginHorizontal: 20,
     marginBottom: 20,
     marginTop: "auto",
+    backgroundColor: "#6D60F3ff",
   },
   signOutText: {
     color: "#fff",

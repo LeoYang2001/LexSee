@@ -7,10 +7,7 @@ import {
   Pressable,
   TextInput,
   TouchableOpacity,
-  Text,
   Dimensions,
-  Image,
-  PanResponder,
 } from "react-native";
 import * as Haptics from "expo-haptics";
 import {
@@ -36,9 +33,9 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useRoute } from "@react-navigation/native";
 
 const WordListScreen = ({ navigation }) => {
-  const [words, setWords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterText, setFilterText] = useState("");
+  const [words, setWords] = useState([]);
   const [filteredWords, setFilteredWords] = useState([]);
   const [isSorting, setIsSorting] = useState(false);
   const [displayedWord, setDisplayedWord] = useState(null);
@@ -57,6 +54,16 @@ const WordListScreen = ({ navigation }) => {
     setDisplayedWord(filteredWords[0]);
     bottomSheetModalRef.current.present();
   };
+
+  useEffect(() => {
+    // Apply the filter whenever filterText changes
+    const filtered = words.filter((item) => {
+      return item.id.toLowerCase().includes(filterText.trim().toLowerCase()); // Filter by word ID
+    });
+
+    // Update the filtered words list
+    setFilteredWords(filtered);
+  }, [filterText, words]);
 
   useEffect(() => {
     // Check if callFunction is set to true, then call someFunction
@@ -97,7 +104,6 @@ const WordListScreen = ({ navigation }) => {
         }));
 
         setWords(wordsData);
-        setFilteredWords(wordsData);
         setLoading(false);
       });
 

@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { Audio } from "expo-av";
 
 const ListenButton = ({ audioUrl }) => {
   const [sound, setSound] = useState(null);
@@ -82,11 +83,14 @@ const Page1 = ({
       <ScrollView className="flex-1   mt-4">
         {meanings.map((meaning, index) => (
           <LinearGradient
-            colors={["#323B4Aff", "#323B4Aff"]}
+            colors={["#6D60F3ff", "#6D60F3ff"]}
             key={index}
             className="mb-4 p-4 rounded-md shadow-md"
           >
-            <Text className="text-xl font-mono text-gray-400 font-semibold">
+            <Text
+              style={{ color: "#000" }}
+              className="text-xl font-mono font-semibold"
+            >
               {meaning.partOfSpeech}
             </Text>
             {meaning.definitions.map((definition, defIndex) => (

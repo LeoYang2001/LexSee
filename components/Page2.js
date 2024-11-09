@@ -186,21 +186,18 @@ const Page2 = ({ wordItem, selectedDefinition, activePage }) => {
   }, [displayedIndex]);
 
   const chatgptApiKey = process.env.EXPO_PUBLIC_CHATGPT_KEY;
+
   const openai = new OpenAI({
     apiKey: chatgptApiKey,
   });
 
   const pushConversation = () => {
-    console.log("push conve");
-    console.log(conversation.length);
     if (displayedIndex < conversation.length) {
-      console.log(displayedIndex);
       setDisplayedIndex((prevIndex) => prevIndex + 1);
     }
   };
 
   const resetDisplayedConversation = () => {
-    console.log("reset");
     setDisplayedConversation([]);
     setDisplayedIndex(0);
   };
@@ -249,9 +246,6 @@ Please respond using this format exactly, with no more than 6 lines.`;
     });
 
     const responseText = completion.choices[0].message.content;
-    console.log("got conversation from gpt");
-    console.log(displayedConversation);
-    console.log(displayedIndex);
     // Split response by newline and remove empty lines, then set as conversation array
     const conversationLines = responseText
       .split("\n")
