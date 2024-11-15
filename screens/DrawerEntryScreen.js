@@ -60,15 +60,6 @@ const DrawerEntryScreen = ({ route }) => {
     >
       <Drawer.Screen
         name="Main"
-        component={MainScreen}
-        options={{
-          drawerIcon: ({ color, size }) => (
-            <MaterialIcons name="home" color={color} size={size} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="WordList"
         options={{
           drawerIcon: ({ color, size }) => (
             <MaterialIcons name="list" color={color} size={size} />
@@ -77,6 +68,15 @@ const DrawerEntryScreen = ({ route }) => {
       >
         {(props) => <MainScreen {...props} savedWord={savedWord} />}
       </Drawer.Screen>
+      <Drawer.Screen
+        name="WordList"
+        component={WordListScreen}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <MaterialIcons name="home" color={color} size={size} />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 };
