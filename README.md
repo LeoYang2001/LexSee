@@ -37,11 +37,12 @@ LexSee aims to bridge this gap by providing **English definitions** without tran
 
 ## Technologies Used
 
-- **React Native**: For building the cross-platform mobile app.
-- **Expo**: A framework and platform for universal React applications.
-- **Firebase**: For backend services, user authentication, and data storage.
-- **TensorFlow.js**: Used for AI conversation simulation.
-- **Sentry**: For error tracking and monitoring.
+- **Open Model: GPT-4o-mini**: Used for simulating real-life conversations and demonstrating how newly learned words can be applied in daily life.
+- **Firebase**: Used as the backend for user authentication, data storage, and real-time services.
+- **Expo and React Native**: Used for building the cross-platform mobile app.
+- **api.dictionaryapi.dev**: Provides English word definitions for the app's word search feature.
+- **Google Custom Search**: Supports the integration of Google Images to provide relevant visuals for each word.
+
 
 ---
 
