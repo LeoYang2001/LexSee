@@ -148,14 +148,14 @@ const WordListScreen = ({ navigation }) => {
               >
                 <AlignLeft size={24} color={"black"} />
               </TouchableOpacity>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 className="p-3 flex justify-center rounded-xl bg-white items-center"
                 onPress={() => {
                   sortMyWordsList();
                 }}
               >
                 <RefreshCw size={24} color={"black"} />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
             <View className="flex-1">
               <View

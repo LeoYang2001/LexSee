@@ -42,7 +42,11 @@ const CustomDrawerContent = (props) => {
   );
 };
 
-const DrawerEntryScreen = () => {
+const DrawerEntryScreen = ({ route }) => {
+  const savedWord = route.params?.savedWord
+    ? route.params?.savedWord
+    : undefined;
+
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -65,13 +69,14 @@ const DrawerEntryScreen = () => {
       />
       <Drawer.Screen
         name="WordList"
-        component={WordListScreen}
         options={{
           drawerIcon: ({ color, size }) => (
             <MaterialIcons name="list" color={color} size={size} />
           ),
         }}
-      />
+      >
+        {(props) => <MainScreen {...props} savedWord={savedWord} />}
+      </Drawer.Screen>
     </Drawer.Navigator>
   );
 };

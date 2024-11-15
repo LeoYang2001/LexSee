@@ -11,10 +11,11 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 import ErrorComp from "../components/ErrorComp";
 import * as Haptics from "expo-haptics";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -62,10 +63,29 @@ const SignInScreen = ({ navigation }) => {
     signInWithEmailAndPassword(auth, email.trim(), password.trim())
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log(JSON.stringify(user));
         // Check if the user's email is verified
         if (user.emailVerified) {
-          navigation.navigate("DrawerEntry"); // Navigate to the main app if verified
+          try {
+            //get the first letter
+            const wordListRef = collection(db, "users", user.uid, "wordList"); // Reference to the user's wordList subcollection
+
+            // Query the wordList collection and order by timestamp, in descending order (newest first)
+            const wordListQuery = query(
+              wordListRef,
+              orderBy("timeStamp", "desc")
+            );
+            onSnapshot(wordListQuery, (snapshot) => {
+              const wordsData = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+
+              console.log(wordsData[0]);
+              navigation.navigate("DrawerEntry", { savedWord: wordsData[0] }); // Navigate to the main app if verified
+            });
+          } catch (error) {
+            console.log(error);
+          }
         } else {
           navigation.navigate("EmailVerification"); // Navigate to email verification screen if not verified
         }
@@ -73,6 +93,7 @@ const SignInScreen = ({ navigation }) => {
       .catch((error) => {
         Haptics.selectionAsync();
         Keyboard.dismiss();
+        console.log(error);
         // Set a user-friendly error message
         if (error.code === "auth/invalid-email") {
           setErrorMessage("Invalid email address");
@@ -175,7 +196,7 @@ const SignInScreen = ({ navigation }) => {
         {/* Error Message Card */}
         <View className=" w-full absolute z-10 bottom-10">
           <ErrorComp
-            timeDur={500}
+            timeDur={300}
             setErrorMessage={setErrorMessage}
             errorMessage={errorMessage}
           />

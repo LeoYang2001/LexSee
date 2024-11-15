@@ -73,22 +73,24 @@ const Page1 = ({
       <View className="flex flex-row justify-between items-center">
         <View>
           <Text className="font-semibold text-2xl text-white">{id}</Text>
-          <Text className="text-sm text-gray-300">{phonetics.text}</Text>
+          {phonetics?.text && (
+            <Text className="text-sm text-gray-300">{phonetics?.text}</Text>
+          )}
         </View>
         <View>
-          <ListenButton audioUrl={phonetics.audio} />
+          <ListenButton audioUrl={phonetics?.audio} />
         </View>
       </View>
 
       <ScrollView className="flex-1   mt-4">
         {meanings.map((meaning, index) => (
           <LinearGradient
-            colors={["#6D60F3ff", "#6D60F3ff"]}
+            colors={["#323b4a", "#323b4a"]}
             key={index}
             className="mb-4 p-4 rounded-md shadow-md"
           >
             <Text
-              style={{ color: "#000" }}
+              style={{ color: "#9ba1ad" }}
               className="text-xl font-mono font-semibold"
             >
               {meaning.partOfSpeech}
@@ -106,7 +108,10 @@ const Page1 = ({
                 </TouchableOpacity>
                 {definition.synonyms.length > 0 && (
                   <>
-                    <Text className="text-xl font-mono text-gray-600 my-2 font-semibold">
+                    <Text
+                      style={{ color: "#9ba1ad" }}
+                      className="text-lg underline font-mono my-2 font-semibold"
+                    >
                       Synonyms
                     </Text>
                     <View className="flex-1 flex flex-row flex-wrap mb-2">
@@ -118,19 +123,49 @@ const Page1 = ({
                               bottomSheetModalRef?.current.close();
                             }
                           }}
-                          className="border bg-white p-2 mr-1 justify-center items-center rounded-md "
+                          style={{
+                            backgroundColor: "#323b4a",
+                          }}
+                          className=" shadow-md shadow-gray-900  p-2 mr-3 justify-center items-center rounded-md "
                           key={syn}
                         >
-                          <Text className="text-black  ">{syn}</Text>
+                          <Text style={{ color: "#9ba1ad" }}>{syn}</Text>
                         </TouchableOpacity>
                       ))}
                     </View>
                   </>
                 )}
                 {definition.antonyms.length > 0 && (
-                  <Text className="text-gray-300">
-                    Antonyms: {definition.antonyms.join(", ")}
-                  </Text>
+                  // <Text className="text-gray-300">
+                  //   Antonyms: {definition.antonyms.join(", ")}
+                  // </Text>
+                  <>
+                    <Text
+                      style={{ color: "#9ba1ad" }}
+                      className="text-lg underline font-mono my-2 font-semibold"
+                    >
+                      Antonyms
+                    </Text>
+                    <View className="flex-1 flex flex-row flex-wrap mb-2">
+                      {definition?.antonyms?.map((atn) => (
+                        <TouchableOpacity
+                          onPress={() => {
+                            searchNewWord(atn);
+                            if (bottomSheetModalRef?.current) {
+                              bottomSheetModalRef?.current.close();
+                            }
+                          }}
+                          style={{
+                            backgroundColor: "#9ba1ad",
+                          }}
+                          className=" shadow-md shadow-gray-900  p-2 mr-3 justify-center items-center rounded-md "
+                          key={atn}
+                        >
+                          <Text style={{ color: "#323b4a" }}>{atn}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </>
                 )}
               </View>
             ))}

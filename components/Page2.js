@@ -4,6 +4,7 @@ import OpenAI from "openai";
 import { ScrollView } from "react-native-gesture-handler";
 import { RefreshCcw } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import Constants from "expo-constants";
 
 const LoadingAnimation = () => {
   const [colorArr, setColorArr] = useState([
@@ -185,7 +186,7 @@ const Page2 = ({ wordItem, selectedDefinition, activePage }) => {
     setDisplayedConversation(conversation.slice(0, displayedIndex));
   }, [displayedIndex]);
 
-  const chatgptApiKey = process.env.EXPO_PUBLIC_CHATGPT_KEY;
+  const chatgptApiKey = Constants.expoConfig.extra.chatgptApiKey;
 
   const openai = new OpenAI({
     apiKey: chatgptApiKey,
@@ -266,7 +267,9 @@ Please respond using this format exactly, with no more than 6 lines.`;
       <View className="flex flex-row justify-between items-center mb-4">
         <View>
           <Text className="font-semibold text-2xl text-white">{id}</Text>
-          <Text className="text-sm text-gray-300">{phonetics.text}</Text>
+          {phonetics?.text && (
+            <Text className="text-sm text-gray-300">{phonetics?.text}</Text>
+          )}
         </View>
         <TouchableOpacity
           disabled={displayedConversation.length != conversation.length}

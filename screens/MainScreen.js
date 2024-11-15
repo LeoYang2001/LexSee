@@ -72,7 +72,7 @@ const ListenButton = ({ audioUrl }) => {
   );
 };
 
-const MainScreen = ({ navigation }) => {
+const MainScreen = ({ navigation, savedWord }) => {
   const [inputText, setInputText] = useState("");
   const [wordSuggestion, setWordSuggestion] = useState([]);
 
@@ -96,29 +96,33 @@ const MainScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const user = auth.currentUser; // Get the current user
-
-    if (user) {
-      const userId = user.uid; // Get the current user's UID
-      const wordListRef = collection(db, "users", userId, "wordList"); // Reference to the user's wordList subcollection
-
-      // Query the wordList collection and order by timestamp, in descending order (newest first)
-      const wordListQuery = query(wordListRef, orderBy("timeStamp", "desc"));
-
-      // Subscribe to the words in the user's wordList collection
-      const unsubscribe = onSnapshot(wordListQuery, (snapshot) => {
-        const wordsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        setLatestWord(wordsData[0]);
-      });
-
-      // Cleanup subscription on unmount
-      return () => unsubscribe();
+    if (savedWord) {
+      return setLatestWord(savedWord);
     } else {
-      //   setLoading(false); // If there's no user, stop loading
+      const user = auth.currentUser; // Get the current user
+
+      if (user) {
+        const userId = user.uid; // Get the current user's UID
+        const wordListRef = collection(db, "users", userId, "wordList"); // Reference to the user's wordList subcollection
+
+        // Query the wordList collection and order by timestamp, in descending order (newest first)
+        const wordListQuery = query(wordListRef, orderBy("timeStamp", "desc"));
+
+        // Subscribe to the words in the user's wordList collection
+        const unsubscribe = onSnapshot(wordListQuery, (snapshot) => {
+          const wordsData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          setLatestWord(wordsData[0]);
+        });
+
+        // Cleanup subscription on unmount
+        return () => unsubscribe();
+      } else {
+        //   setLoading(false); // If there's no user, stop loading
+      }
     }
   }, []);
 
@@ -127,7 +131,7 @@ const MainScreen = ({ navigation }) => {
     const fetchWordSuggestion = async () => {
       try {
         const res = await fetch(
-          `https://api.datamuse.com/sug?s=${inputText}&max=40`
+          `https://api.datamuse.com/sug?s=${inputText.trim()}&max=40`
         );
         const rs = await res.json();
         if (rs.length > 0) setWordSuggestion(rs);
