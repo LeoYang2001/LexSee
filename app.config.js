@@ -34,15 +34,6 @@ export default {
         projectId: "7b05e482-ffc9-46e8-b33c-c4bf2e938fcc",
       },
     },
-    plugins: [
-      [
-        "@sentry/react-native/expo",
-        {
-          organization: "leo-team-q0",
-          project: "react-native",
-          url: "https://sentry.io/",
-        },
-      ],
-    ],
+    plugins: [],
   },
 };
