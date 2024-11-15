@@ -28,8 +28,7 @@ export default {
       favicon: "./assets/favicon.png",
     },
     extra: {
-      dotImageSearchKey: process.env.EXPO_DOT_IMAGE_SEARCH_KEY,
-      chatgptApiKey: process.env.EXPO_DOT_CHATGPT_KEY,
+      chatgptApiKey: process.env.OPENAI_API_KEY,
       eas: {
         projectId: "7b05e482-ffc9-46e8-b33c-c4bf2e938fcc",
       },
