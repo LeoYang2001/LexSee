@@ -18,13 +18,11 @@ LexSee is an innovative English learning app designed to help users, particularl
 
 ## About
 
-Many English learners often rely on translation apps to map new words to their native language, which can hinder their ability to think and speak in English fluently. LexSee aims to change this by providing not just word definitions, but also relevant images and contextual usage to help learners better understand and apply the words in daily life. 
+LexSee was developed by **Leo** and **Tabito**, two passionate Computer Science students currently studying in college. We share a common goal: to innovate in ways that make people's lives easier and more meaningful.
 
-Key features include:
+The genesis of this idea came from seeing the challenges faced by international students at our college. Many struggle with learning English and use ineffective methods to memorize words or immerse themselves in the language and culture. We realized there was a gap in how language learning apps support true language immersion, and that's where LexSee comes in.
 
-- **English Definitions**: Helps learners focus on understanding words in their English context rather than relying on translations.
-- **Relevant Images**: Each search provides relevant images to enhance understanding and visual learning.
-- **AI-Powered Conversations**: Simulates real-world conversations, showing how words can be used in daily life situations.
+LexSee aims to bridge this gap by providing **English definitions** without translations, supplemented with **relevant images** to enhance comprehension. We’ve also incorporated an **AI-driven conversation feature** that simulates real-life scenarios to demonstrate how new words can be used in everyday life. Although LexSee is focused on English learners, we hope to expand the app in the future to support learners of other languages like Spanish, French, Japanese, and more.
 
 ---
 
