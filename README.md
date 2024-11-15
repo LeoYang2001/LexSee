@@ -50,6 +50,30 @@ LexSee aims to bridge this gap by providing **English definitions** without tran
 
 To run LexSee locally, follow these steps:
 
+## Usage
+
+Once the app is up and running, users can:
+
+1. **Search for a word**: Simply enter any English word to view its definition, accompanied by relevant images. This feature helps users better understand the word in context without relying on translations.
+2. **Engage in AI-powered conversations**: Practice applying new words in realistic conversation scenarios. The AI uses the **GPT-4o-mini** model to simulate real-life dialogues, demonstrating how the words can be used in daily life.
+3. **Track progress**: Learn and test new words consistently as part of a structured learning path. Users can monitor their learning journey and track which words they've mastered.
+
+---
+
+## Contributing
+
+We welcome contributions to LexSee! If you'd like to contribute, here's how you can get involved:
+
+1. **Fork the repository**: Create a personal copy of the repository by forking it.
+2. **Create a new branch**: Before making any changes, create a new branch for your feature or bug fix.
+3. **Make your changes**: Implement your changes or improvements to the project.
+4. **Write tests**: If applicable, write tests for your changes to ensure they work as expected.
+5. **Submit a pull request**: Once you're happy with your changes, submit a pull request with a clear description of what you've done.
+
+We encourage all contributions that can help make LexSee better and more effective for language learners. Please make sure to follow our code of conduct and submit clean, well-documented code.
+
+---
+
 1. **Clone the repository**:
 
    ```bash
