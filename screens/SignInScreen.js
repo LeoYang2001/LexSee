@@ -30,6 +30,8 @@ const SignInScreen = ({ navigation }) => {
   const passwordLabelTop = useSharedValue(16); // New shared value for password label
   const passwordLabelLeft = useSharedValue(0); // New shared value for password label
 
+  const [isSigningIn, setisSigningIn] = useState(false);
+
   useEffect(() => {
     const timeDur = 300;
     // Email label animation
@@ -59,7 +61,7 @@ const SignInScreen = ({ navigation }) => {
       setErrorMessage("Empty Field");
       return;
     }
-
+    setisSigningIn(true);
     signInWithEmailAndPassword(auth, email.trim(), password.trim())
       .then((userCredential) => {
         const user = userCredential.user;
@@ -85,6 +87,7 @@ const SignInScreen = ({ navigation }) => {
             });
           } catch (error) {
             console.log(error);
+            setisSigningIn(false);
           }
         } else {
           navigation.navigate("EmailVerification"); // Navigate to email verification screen if not verified
@@ -184,11 +187,13 @@ const SignInScreen = ({ navigation }) => {
 
             {/* Sign In Button */}
             <TouchableOpacity
-              disabled={errorMessage}
+              disabled={errorMessage || isSigningIn}
               className="bg-black rounded-2xl flex justify-center items-center mt-10 py-4 px-4"
               onPress={signIn}
             >
-              <Text className="text-white font-bold">Sign In</Text>
+              <Text className="text-white font-bold">
+                {isSigningIn ? "Signing In..." : "Sign In"}
+              </Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
