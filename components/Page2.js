@@ -186,7 +186,11 @@ const Page2 = ({ wordItem, selectedDefinition, activePage }) => {
     setDisplayedConversation(conversation.slice(0, displayedIndex));
   }, [displayedIndex]);
 
-  const chatgptApiKey = Constants.expoConfig.extra.chatgptApiKey;
+  console.log(Constants.expoConfig.extra);
+
+  const chatgptApiKey =
+    Constants.expoConfig.extra.chatgptApiKey ||
+    process.env.EXPO_DOT_CHATGPT_KEY;
 
   const openai = new OpenAI({
     apiKey: chatgptApiKey,

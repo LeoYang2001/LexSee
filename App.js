@@ -18,9 +18,13 @@ import { expo } from "./app.json";
 
 import EmailVerificationScreen from "./screens/EmailVerificationScreen";
 
+import Constants from "expo-constants";
+
 //Handling App Crash Cases
 
 const appName = expo.name;
+
+console.log(Constants.expoConfig.extra);
 
 function Loading({ navigation }) {
   React.useEffect(() => {
