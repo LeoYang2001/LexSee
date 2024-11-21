@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "LexSee",
     slug: "lexsee",
-    version: "1.0.0",
+    version: "1.0.1",
     orientation: "portrait",
     icon: "./assets/bookmark.png",
     userInterfaceStyle: "light",
