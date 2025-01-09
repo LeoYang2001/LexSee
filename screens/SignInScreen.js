@@ -10,17 +10,19 @@ import {
   StyleSheet,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 import ErrorComp from "../components/ErrorComp";
 import * as Haptics from "expo-haptics";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import SuccessComp from "../components/SuccessComp";
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [emailLabel, setEmailLabel] = useState(false);
   const [passwordLabel, setPasswordLabel] = useState(false); // New state for password label
@@ -31,6 +33,27 @@ const SignInScreen = ({ navigation }) => {
   const passwordLabelLeft = useSharedValue(0); // New shared value for password label
 
   const [isSigningIn, setisSigningIn] = useState(false);
+
+  const handlePasswordReset = async () => {
+    setErrorMessage("");
+    setSuccessMessage("");
+    if (email) {
+      try {
+        await sendPasswordResetEmail(auth, email);
+        setSuccessMessage("Password reset email sent");
+      } catch (error) {
+        console.log(error.code);
+        if (error.code == "auth/user-not-found") {
+          setAlertMessage("No user found with this email");
+        } else {
+          setErrorMessage("Error sending password reset email");
+          console.log(error);
+        }
+      }
+    } else {
+      setErrorMessage("Please enter your email");
+    }
+  };
 
   useEffect(() => {
     const timeDur = 300;
@@ -94,6 +117,7 @@ const SignInScreen = ({ navigation }) => {
         }
       })
       .catch((error) => {
+        setisSigningIn(false);
         Haptics.selectionAsync();
         Keyboard.dismiss();
         console.log(error);
@@ -195,8 +219,17 @@ const SignInScreen = ({ navigation }) => {
                 {isSigningIn ? "Signing In..." : "Sign In"}
               </Text>
             </TouchableOpacity>
+
+            {/* Forgot Password Button */}
+            <TouchableOpacity
+              onPress={handlePasswordReset}
+              className="justify-center items-center mt-2"
+            >
+              <Text>Forgot Password?</Text>
+            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
+        {/* Forgot Password Button */}
 
         {/* Error Message Card */}
         <View className=" w-full absolute z-10 bottom-10">
@@ -204,6 +237,15 @@ const SignInScreen = ({ navigation }) => {
             timeDur={300}
             setErrorMessage={setErrorMessage}
             errorMessage={errorMessage}
+          />
+        </View>
+
+        {/* Success Message Card */}
+        <View className=" w-full absolute z-10 bottom-10">
+          <SuccessComp
+            timeDur={500}
+            setSuccessMessage={setSuccessMessage}
+            successMessage={successMessage}
           />
         </View>
 
