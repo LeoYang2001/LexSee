@@ -12,12 +12,9 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  withSpring,
 } from "react-native-reanimated";
-import { Audio } from "expo-av";
-import { ScrollView } from "react-native-gesture-handler";
-import Page2 from "./Page2";
 import Page1 from "./Page1";
+import Page2 from "./Page2";
 
 const { width: SCREEN_WIDTH, height: screenHeight } = Dimensions.get("window");
 

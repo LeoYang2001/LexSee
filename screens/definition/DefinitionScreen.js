@@ -7,15 +7,15 @@ import {
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import OpenAI from "openai";
-import { definitionReturnExample } from "../constants";
-import PronunciationButton from "../components/PronunciationButton";
-import ImageGallery from "../components/ImageGallery";
-import Meaning from "../components/Meanings";
-import { auth, db } from "../firebase";
+import { definitionReturnExample } from "../../constants";
+import PronunciationButton from "../../components-shared/PronunciationButton";
+import { auth, db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { ArrowDownToLine, ChevronLeft } from "lucide-react-native";
-import SwipeCardsScreen from "./SwipeCardsScreen";
-import SaveWordPopup from "../components/SaveWordPopup";
+import SaveWordPopup from "../../components-shared/SaveWordPopup";
+import ImageGallery from "./components/ImageGallery";
+import SwipeCardsScreen from "./components/SwipeCardsScreen";
+import Meaning from "./components/Meanings";
 
 const DefinitionScreen = ({ navigation, route }) => {
   const iniWord = route.params.searchedWord;

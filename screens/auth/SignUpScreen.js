@@ -15,11 +15,11 @@ import {
   onIdTokenChanged,
   sendEmailVerification,
 } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth } from "../../firebase";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
-import ErrorComp from "../components/ErrorComp";
-import SuccessComp from "../components/SuccessComp";
+import ErrorComp from "../../components-shared/ErrorComp";
+import SuccessComp from "../../components-shared/SuccessComp";
 import { User } from "lucide-react-native";
 
 const SignUpScreen = ({ navigation }) => {

@@ -15,8 +15,6 @@ import {
   BottomSheetView,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-import CustomBackdrop from "../components/CustomBackdrop"; // Import your CustomBackdrop
-import WordItem from "../components/WordItem";
 import { AlignLeft, RefreshCw, X } from "lucide-react-native";
 import {
   collection,
@@ -26,11 +24,12 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { db, auth } from "../firebase";
-import OpenAI from "openai";
-import WordDetail from "../components/WordDetail";
 import { ScrollView } from "react-native-gesture-handler";
 import { useRoute } from "@react-navigation/native";
+import CustomBackdrop from "./components/CustomBackdrop";
+import WordItem from "./components/WordItem";
+import { auth, db } from "../../firebase";
+import WordDetail from "./components/WordDetail";
 
 const WordListScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);

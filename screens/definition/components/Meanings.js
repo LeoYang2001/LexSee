@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import PronunciationButton from "./PronunciationButton";
+import PronunciationButton from "../../../components-shared/PronunciationButton";
 
 const Meaning = ({ meanings, searchedWord, phonetics, searchNewWord }) => {
   return (

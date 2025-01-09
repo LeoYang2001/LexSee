@@ -4,21 +4,18 @@ import * as React from "react";
 import { View, Text, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SignUpScreen from "./screens/SignUpScreen";
-import SignInScreen from "./screens/SignInScreen";
-import MainScreen from "./screens/MainScreen";
-import DrawerEntryScreen from "./screens/DrawerEntryScreen";
-import DefinitionScreen from "./screens/DefinitionScreen";
 import { app, auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import LoginWelcomeScreen from "./screens/LoginWelcomeScreen";
-
 import { AppRegistry } from "react-native";
 import { expo } from "./app.json";
-
-import EmailVerificationScreen from "./screens/EmailVerificationScreen";
-
 import Constants from "expo-constants";
+import LoginWelcomeScreen from "./screens/auth/LoginWelcomeScreen";
+import SignInScreen from "./screens/auth/SignInScreen";
+import SignUpScreen from "./screens/auth/SignUpScreen";
+import EmailVerificationScreen from "./screens/auth/EmailVerificationScreen";
+import DrawerEntryScreen from "./screens/main/DrawerEntryScreen";
+import MainScreen from "./screens/main/MainScreen";
+import DefinitionScreen from "./screens/definition/DefinitionScreen";
 
 //Handling App Crash Cases
 
