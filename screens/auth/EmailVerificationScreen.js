@@ -1,11 +1,11 @@
 // EmailVerificationScreen.js
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { auth } from "../firebase"; // Ensure your Firebase config is imported correctly
+import { auth } from "../../firebase"; // Ensure your Firebase config is imported correctly
 import { ChevronLeft, RefreshCcw } from "lucide-react-native";
-import ErrorComp from "../components/ErrorComp";
-import SuccessComp from "../components/SuccessComp";
-import AlertComp from "../components/AlertComp";
+import ErrorComp from "../../components-shared/ErrorComp";
+import SuccessComp from "../../components-shared/SuccessComp";
+import AlertComp from "../../components-shared/AlertComp";
 import { sendEmailVerification } from "firebase/auth";
 
 const EmailVerificationScreen = ({ navigation }) => {

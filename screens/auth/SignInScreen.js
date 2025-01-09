@@ -11,11 +11,11 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../firebase";
+import { auth, db } from "../../firebase";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
-import ErrorComp from "../components/ErrorComp";
 import * as Haptics from "expo-haptics";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import ErrorComp from "../../components-shared/ErrorComp";
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");

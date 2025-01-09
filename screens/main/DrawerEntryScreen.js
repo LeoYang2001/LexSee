@@ -6,9 +6,9 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { auth } from "../firebase"; // Ensure firebase auth is correctly imported
 import MainScreen from "./MainScreen";
-import WordListScreen from "./WordListScreen";
+import { auth } from "../../firebase";
+import WordListScreen from "../inventory/WordListScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -55,6 +55,7 @@ const DrawerEntryScreen = ({ route }) => {
         drawerActiveBackgroundColor: "#6D60F3ff",
         drawerActiveTintColor: "#fff",
         drawerInactiveTintColor: "#333",
+        drawerPosition: "right",
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >

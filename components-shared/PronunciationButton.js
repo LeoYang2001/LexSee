@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Audio } from 'expo-av';
-import { Volume2, VolumeOff } from 'lucide-react-native';
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Audio } from "expo-av";
+import { Volume2, VolumeOff } from "lucide-react-native";
 
 const PronunciationButton = ({ audioUrl }) => {
   const [sound, setSound] = useState(null);
@@ -18,7 +18,9 @@ const PronunciationButton = ({ audioUrl }) => {
     }
 
     try {
-      const { sound: newSound } = await Audio.Sound.createAsync({ uri: audioUrl });
+      const { sound: newSound } = await Audio.Sound.createAsync({
+        uri: audioUrl,
+      });
       setSound(newSound);
       setIsPlaying(true);
 
@@ -29,7 +31,7 @@ const PronunciationButton = ({ audioUrl }) => {
         }
       });
     } catch (error) {
-      console.log('Error loading or playing sound:', error);
+      console.log("Error loading or playing sound:", error);
       setIsPlaying(false);
     }
   };
@@ -38,19 +40,16 @@ const PronunciationButton = ({ audioUrl }) => {
     <View>
       <TouchableOpacity
         onPress={playAudio}
-       
         className="p-2 rounded-xl bg-black flex justify-center items-center"
       >
-       {
-        !isPlaying ? (
-          <Volume2 color={'white'} />
-        ):(
-          <VolumeOff color={'white'} />
-        )
-       }
+        {!isPlaying ? (
+          <Volume2 color={"white"} />
+        ) : (
+          <VolumeOff color={"white"} />
+        )}
       </TouchableOpacity>
     </View>
   );
 };
 
-  export default PronunciationButton
+export default PronunciationButton;
