@@ -7,11 +7,14 @@ const WordFlexCard = () => {
       style={{
         height: 132,
         borderRadius: 12,
-        backgroundColor: "red",
       }}
-      className="w-full "
+      className="w-full flex flex-col  border p-4"
     >
-      <Text>WordFlexCard</Text>
+      <View className="w-full border">
+        <Text className="font-semibold" style={{ fontSize: 24 }}>
+          Explore
+        </Text>
+      </View>
     </View>
   );
 };
