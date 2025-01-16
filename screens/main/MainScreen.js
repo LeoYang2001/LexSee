@@ -13,14 +13,7 @@ import {
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import {
-  AlignLeft,
-  ChevronDown,
-  Search,
-  Tally2,
-  Triangle,
-  X,
-} from "lucide-react-native";
+import { AlignLeft, ChevronDown, Search, X } from "lucide-react-native";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 
 import { Button } from "react-native";
@@ -35,54 +28,6 @@ import WordFlexCard from "../../components-shared/WordFlexCard";
 
 // Word suggestion API = https://api.datamuse.com/sug?s=d&max=40
 
-const ListenButton = ({ audioUrl }) => {
-  const [sound, setSound] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  const playAudio = async () => {
-    if (!audioUrl) {
-      console.log("No audio available");
-      return;
-    }
-
-    if (sound) {
-      await sound.unloadAsync(); // Unload any previous sound
-    }
-
-    try {
-      const { sound: newSound } = await Audio.Sound.createAsync({
-        uri: audioUrl,
-      });
-      setSound(newSound);
-      setIsPlaying(true);
-
-      await newSound.playAsync();
-      newSound.setOnPlaybackStatusUpdate((status) => {
-        if (status.didJustFinish) {
-          setIsPlaying(false); // Reset the state when playback finishes
-        }
-      });
-    } catch (error) {
-      console.log("Error loading or playing sound:", error);
-      setIsPlaying(false);
-    }
-  };
-
-  return (
-    <TouchableOpacity
-      disabled={isPlaying}
-      onPress={playAudio}
-      className="rounded-xl bg-white p-3"
-    >
-      {!isPlaying ? (
-        <Text className="text-black font-semibold">Listen</Text>
-      ) : (
-        <Text className="text-black font-semibold">Playing...</Text>
-      )}
-    </TouchableOpacity>
-  );
-};
-
 const MainScreen = ({ navigation, savedWord }) => {
   const [inputText, setInputText] = useState("");
   const [wordSuggestion, setWordSuggestion] = useState([]);
@@ -93,6 +38,61 @@ const MainScreen = ({ navigation, savedWord }) => {
   const [inputLabel, setInputLabel] = useState(false);
   const [latestWord, setLatestWord] = useState(null);
   const inputRef = useRef(null);
+
+  const mockWordList = [
+    {
+      id: "culpable",
+      imgUrl: "https://cdn.langeek.co/photo/23505/original/?type=jpeg",
+      meanings: [
+        {
+          antonyms: [],
+          definitions: [
+            "Actuated by avarice; extremely greedy for wealth or material gain; immoderately desirous of accumulating property.",
+          ],
+          partOfSpeech: "adjective",
+          synonyms: [],
+        },
+      ],
+      phonetics: {
+        audio:
+          "https://api.dictionaryapi.dev/media/pronunciations/en/culpable-us.mp3",
+        license: {
+          name: "BY-SA 3.0",
+          url: "https://creativecommons.org/licenses/by-sa/3.0",
+        },
+        sourceUrl: "https://commons.wikimedia.org/w/index.php?curid=789670",
+        text: "/ˈkʌlpəbəl/",
+      },
+      timeStamp: "2024-11-03T23:14:17.405Z",
+    },
+    {
+      id: "demo",
+      imgUrl: "https://cdn.langeek.co/photo/23505/original/?type=jpeg",
+      meanings: [
+        {
+          antonyms: [],
+          definitions: [
+            "Actuated by avarice; extremely greedy for wealth or material gain; immoderately desirous of accumulating property.",
+          ],
+          partOfSpeech: "adjective",
+          synonyms: [],
+        },
+      ],
+      phonetics: {
+        audio:
+          "https://api.dictionaryapi.dev/media/pronunciations/en/culpable-us.mp3",
+        license: {
+          name: "BY-SA 3.0",
+          url: "https://creativecommons.org/licenses/by-sa/3.0",
+        },
+        sourceUrl: "https://commons.wikimedia.org/w/index.php?curid=789670",
+        text: "/ˈkʌlpəbəl/",
+      },
+      timeStamp: "2024-11-03T23:14:17.405Z",
+    },
+  ];
+  //Active flexCard Id
+  const [activeCardId, setActiveCardId] = useState(null);
 
   useEffect(() => {
     setInputLabel(false);
@@ -174,8 +174,18 @@ const MainScreen = ({ navigation, savedWord }) => {
   }, [inputLabel]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView className="flex-1">
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+        setActiveCardId(null);
+      }}
+    >
+      <View
+        style={{
+          backgroundColor: "#181d24",
+        }}
+        className="flex-1 pt-16"
+      >
         <View
           style={{
             paddingHorizontal: 18,
@@ -190,7 +200,7 @@ const MainScreen = ({ navigation, savedWord }) => {
             <View>
               <Text
                 style={{
-                  color: "#161A21",
+                  color: "#fff",
                   fontSize: 18,
                 }}
                 className="font-semibold z-30"
@@ -203,7 +213,14 @@ const MainScreen = ({ navigation, savedWord }) => {
             </View>
             <View className="flex flex-row gap-4 items-center">
               <TouchableOpacity className=" flex flex-row gap-1  items-center justify-center">
-                <Text>English</Text>
+                <Text
+                  style={{
+                    opacity: 0.7,
+                    color: "#FFFFFF",
+                  }}
+                >
+                  English
+                </Text>
                 <View
                   style={{
                     width: 0,
@@ -226,7 +243,7 @@ const MainScreen = ({ navigation, savedWord }) => {
                 <View
                   style={{
                     borderWidth: 1,
-                    borderColor: "#000",
+                    borderColor: "#fff",
                     width: 18,
                     borderRadius: 1,
                   }}
@@ -234,7 +251,7 @@ const MainScreen = ({ navigation, savedWord }) => {
                 <View
                   style={{
                     borderWidth: 1,
-                    borderColor: "#000",
+                    borderColor: "#fff",
                     width: 18,
                     borderRadius: 1,
                   }}
@@ -246,7 +263,7 @@ const MainScreen = ({ navigation, savedWord }) => {
           <View
             style={{
               height: 49,
-              backgroundColor: "#e9ebef",
+              backgroundColor: "#3d3f44",
               borderRadius: 12,
               borderBottomRightRadius: wordSuggestion.length > 0 ? 0 : 12,
               borderBottomLeftRadius: wordSuggestion.length > 0 ? 0 : 12,
@@ -260,11 +277,11 @@ const MainScreen = ({ navigation, savedWord }) => {
               }}
               className="absolute h-full flex justify-center items-center ml-4  z-0"
             >
-              <Search color={"black"} fontSize={14} />
+              <Search color={"#fff"} fontSize={14} />
             </Animated.View>
             <TextInput
               ref={inputRef}
-              className="text-lg w-full py-2 px-4 "
+              className="text-lg w-full py-2 px-4 text-white "
               value={inputText}
               onChangeText={setInputText}
               onBlur={() => {
@@ -286,7 +303,7 @@ const MainScreen = ({ navigation, savedWord }) => {
               <ScrollView
                 style={{
                   top: "100%",
-                  backgroundColor: "#e9ebef",
+                  backgroundColor: "#3d3f44",
                 }}
                 className=" absolute w-full  rounded-b-xl z-20 px-4 pb-4"
               >
@@ -303,7 +320,9 @@ const MainScreen = ({ navigation, savedWord }) => {
                           searchWord(wordItem.word);
                         }}
                       >
-                        <Text className="text-lg ">{wordItem.word}</Text>
+                        <Text className="text-lg  text-white">
+                          {wordItem.word}
+                        </Text>
                       </TouchableOpacity>
                     );
                   }
@@ -320,12 +339,43 @@ const MainScreen = ({ navigation, savedWord }) => {
             style={{
               opacity: cardOpacity,
             }}
-            className=" border mt-8 flex-1 "
+            className=" mt-8 flex-1 "
           >
-            <WordFlexCard />
+            {/* Filter  */}
+            <View className="w-full  mb-4 flex flex-row justify-between">
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: "#fff",
+                  opacity: 0.7,
+                }}
+              >
+                Recently Pinned
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: "#fff",
+                  opacity: 0.7,
+                }}
+              >
+                All
+              </Text>
+            </View>
+            <ScrollView>
+              {mockWordList.map((word) => (
+                <WordFlexCard
+                  navigation={navigation}
+                  ifActive={activeCardId === word.id}
+                  setActiveCardId={setActiveCardId}
+                  wordItem={word}
+                  key={word.id}
+                />
+              ))}
+            </ScrollView>
           </Animated.View>
         </View>
-      </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 };

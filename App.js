@@ -16,6 +16,7 @@ import EmailVerificationScreen from "./screens/auth/EmailVerificationScreen";
 import DrawerEntryScreen from "./screens/main/DrawerEntryScreen";
 import MainScreen from "./screens/main/MainScreen";
 import DefinitionScreen from "./screens/definition/DefinitionScreen";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 //Handling App Crash Cases
 
@@ -56,26 +57,28 @@ const Stack = createNativeStackNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-        initialRouteName="Loading"
-      >
-        <Stack.Screen name="Loading" component={Loading} />
-        <Stack.Screen name="LoginWelcome" component={LoginWelcomeScreen} />
-        <Stack.Screen name="SignIn" component={SignInScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="DrawerEntry" component={DrawerEntryScreen} />
-        <Stack.Screen name="Main" component={MainScreen} />
-        <Stack.Screen name="Definition" component={DefinitionScreen} />
-        <Stack.Screen
-          name="EmailVerification"
-          component={EmailVerificationScreen}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GestureHandlerRootView>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}
+          initialRouteName="NestedSheetPlaceHolder"
+        >
+          <Stack.Screen name="Loading" component={Loading} />
+          <Stack.Screen name="LoginWelcome" component={LoginWelcomeScreen} />
+          <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="DrawerEntry" component={DrawerEntryScreen} />
+          <Stack.Screen name="Main" component={MainScreen} />
+          <Stack.Screen name="Definition" component={DefinitionScreen} />
+          <Stack.Screen
+            name="EmailVerification"
+            component={EmailVerificationScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 
