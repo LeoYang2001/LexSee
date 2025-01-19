@@ -16,13 +16,16 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { AlignLeft, ChevronDown, Search, X } from "lucide-react-native";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 
-import { Button } from "react-native";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import { Audio } from "expo-av";
 import { auth, db } from "../../firebase";
 import Logo from "../../components-shared/Logo";
 import InventoryStatistic from "./components/InventoryStatistic";
 import WordFlexCard from "../../components-shared/WordFlexCard";
+import { fetchDefinition } from "../../gptFunctions";
+
+import Constants from "expo-constants";
+import OpenAI from "openai";
+
 
 // Inside some component
 
@@ -38,6 +41,7 @@ const MainScreen = ({ navigation, savedWord }) => {
   const [inputLabel, setInputLabel] = useState(false);
   const [latestWord, setLatestWord] = useState(null);
   const inputRef = useRef(null);
+
 
   const mockWordList = [
     {
@@ -93,6 +97,21 @@ const MainScreen = ({ navigation, savedWord }) => {
   ];
   //Active flexCard Id
   const [activeCardId, setActiveCardId] = useState(null);
+
+  // ***TEST AI FUNCTIONS***
+  const chatgptApiKey =
+  Constants.expoConfig.extra.chatgptApiKey ||
+  process.env.EXPO_DOT_CHATGPT_KEY;
+
+console.log(`chatgptApiKey : ${chatgptApiKey}`);
+const openai = new OpenAI({
+  apiKey: chatgptApiKey,
+});
+
+  useEffect(() => {
+    fetchDefinition(openai, 'feckless')
+  }, [])
+  
 
   useEffect(() => {
     setInputLabel(false);
