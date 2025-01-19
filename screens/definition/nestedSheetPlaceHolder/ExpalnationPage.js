@@ -1,9 +1,9 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import React from "react";
 import { Bookmark, Volume2 } from "lucide-react-native";
 
 const ExpalnationPage = () => {
-  const mockWordItem = {
+  const wordItem = {
     id: "culpable",
     imgUrl: "https://cdn.langeek.co/photo/23505/original/?type=jpeg",
     meanings: [
@@ -36,15 +36,17 @@ const ExpalnationPage = () => {
     },
     timeStamp: "2024-11-03T23:14:17.405Z",
   };
+
+
   return (
-    <View className="w-full h-full py-8 px-5 flex  flex-col gap-4 ">
-      <View className="w-full flex flex-row justify-between  items-center">
+    <View className="w-full h-full py-8 px-5 flex   flex-col gap-4 ">
+      <View className="w-full flex flex-row justify-between  items-center ">
         <View>
           <Text
             className="font-semibold"
             style={{ fontSize: 28, color: "#fff" }}
           >
-            {mockWordItem?.id}
+            {wordItem?.id}
           </Text>
           <TouchableOpacity className="py-2 flex flex-row items-center">
             <Text
@@ -53,7 +55,7 @@ const ExpalnationPage = () => {
                 fontSize: 18,
               }}
             >
-              {mockWordItem?.phonetics.text}
+              {wordItem?.phonetics.text}
             </Text>
             <Volume2 className="ml-2" color={"#FFFFFFB3"} size={18} />
           </TouchableOpacity>
@@ -71,7 +73,7 @@ const ExpalnationPage = () => {
         </TouchableOpacity>
       </View>
       <View className=" flex flex-row ">
-        {mockWordItem.meanings.map((meaning, index) => (
+        {wordItem.meanings.map((meaning, index) => (
           <TouchableOpacity
             style={{
               height: 20,
@@ -107,23 +109,24 @@ const ExpalnationPage = () => {
             borderRadius: 12,
           }}
           source={{
-            uri: mockWordItem.imgUrl,
+            uri: wordItem.imgUrl,
           }}
           resizeMode="cover"
         />
       </View>
+      <ScrollView className=" flex-1  w-full">
       <View
         style={{
           backgroundColor: "#ffffff0a",
           borderRadius: 12,
         }}
-        className="p-4 w-full"
+        className="p-4 w-full "
       >
-        {mockWordItem.meanings.map((meaning, index) => (
+        {wordItem.meanings.map((meaning, index) => (
           <View
             style={
-              mockWordItem.meanings.length > 1 &&
-              index !== mockWordItem.meanings.length - 1 && { marginBottom: 16 }
+              wordItem.meanings.length > 1 &&
+              index !== wordItem.meanings.length - 1 && { marginBottom: 16 }
             }
             className=" w-full"
             key={index}
@@ -149,6 +152,10 @@ const ExpalnationPage = () => {
           </View>
         ))}
       </View>
+      </ScrollView>
+      {/* FOOTER  */}
+        <View className="mt-auto opacity-0" />
+      
     </View>
   );
 };

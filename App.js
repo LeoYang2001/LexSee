@@ -8,7 +8,6 @@ import { app, auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { AppRegistry } from "react-native";
 import { expo } from "./app.json";
-import Constants from "expo-constants";
 import LoginWelcomeScreen from "./screens/auth/LoginWelcomeScreen";
 import SignInScreen from "./screens/auth/SignInScreen";
 import SignUpScreen from "./screens/auth/SignUpScreen";
@@ -18,11 +17,16 @@ import MainScreen from "./screens/main/MainScreen";
 import DefinitionScreen from "./screens/definition/DefinitionScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+
+
+  
+
+
+
 //Handling App Crash Cases
 
 const appName = expo.name;
 
-console.log(Constants.expoConfig.extra);
 
 function Loading({ navigation }) {
   React.useEffect(() => {
@@ -32,7 +36,6 @@ function Loading({ navigation }) {
         // https://firebase.google.com/docs/reference/js/auth.user
         const userVerified = user.emailVerified;
         const uid = user.uid;
-        console.log(uid);
         if (userVerified) {
           navigation.replace("DrawerEntry");
         } else {
@@ -56,29 +59,33 @@ function Loading({ navigation }) {
 const Stack = createNativeStackNavigator();
 
 function App() {
+ 
+
+  
+  
   return (
-    <GestureHandlerRootView>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-          }}
-          initialRouteName="NestedSheetPlaceHolder"
-        >
-          <Stack.Screen name="Loading" component={Loading} />
-          <Stack.Screen name="LoginWelcome" component={LoginWelcomeScreen} />
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="DrawerEntry" component={DrawerEntryScreen} />
-          <Stack.Screen name="Main" component={MainScreen} />
-          <Stack.Screen name="Definition" component={DefinitionScreen} />
-          <Stack.Screen
-            name="EmailVerification"
-            component={EmailVerificationScreen}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </GestureHandlerRootView>
+      <GestureHandlerRootView>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+            }}
+            initialRouteName="NestedSheetPlaceHolder"
+          >
+            <Stack.Screen name="Loading" component={Loading} />
+            <Stack.Screen name="LoginWelcome" component={LoginWelcomeScreen} />
+            <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="DrawerEntry" component={DrawerEntryScreen} />
+            <Stack.Screen name="Main" component={MainScreen} />
+            <Stack.Screen name="Definition" component={DefinitionScreen} />
+            <Stack.Screen
+              name="EmailVerification"
+              component={EmailVerificationScreen}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </GestureHandlerRootView>
   );
 }
 
