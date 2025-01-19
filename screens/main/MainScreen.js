@@ -102,16 +102,11 @@ const MainScreen = ({ navigation, savedWord }) => {
   const chatgptApiKey =
   Constants.expoConfig.extra.chatgptApiKey ||
   process.env.EXPO_DOT_CHATGPT_KEY;
+  const openai = new OpenAI({
+    apiKey: chatgptApiKey,
+  });
 
-console.log(`chatgptApiKey : ${chatgptApiKey}`);
-const openai = new OpenAI({
-  apiKey: chatgptApiKey,
-});
-
-  useEffect(() => {
-    fetchDefinition(openai, 'feckless')
-  }, [])
-  
+ 
 
   useEffect(() => {
     setInputLabel(false);

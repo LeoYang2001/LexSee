@@ -26,29 +26,38 @@ export const fetchDefinition = async (openai, word, language = 'English') => {
 
     if(!word) return 
     // Adjust the pr  ompt based on whether a specific definition is provided
-    const userPrompt = `what's the definition of "${word}", in ${language}
+    const userPrompt = `
+    Provide the definition of the word "${word}" in ${language}. Return the output as a valid JSON object strictly adhering to the following format:
 
-    return my in JSON format like this
+    {
+      "id": "sample",
+      "meanings": [
         {
-        "id": "sample",
-        "meanings": [
-          {
-            "antonyms": ["if applicable"],
-            "definitions": [
-              "if applicable",
-              "if applicable",
-              "if applicable"
-            ],
-            "partOfSpeech": "if applicable",
-            "synonyms": ["if applicable"]
-          }
-        ],
-        "phonetics": {
-          "text": "/ˈkʌlpəbəl/"
+          "antonyms": ["if applicable in ${language}"],
+          "definitions": [
+            "if applicable in ${language}",
+            "if applicable in ${language}",
+            "if applicable in ${language}"
+          ],
+          "partOfSpeech": "if applicable in ${language}",
+          "synonyms": ["if applicable in ${language}"]
         }
+      ],
+      "phonetics": {
+        "text": "if applicable in ${language}"
+      }
     }
 
-    use ~ to wrap the return, Do not include any additional characters within "~" symbols`;
+    Special Instructions:
+    1. If the language is "${language}" and it is not English, return all content (including definitions, synonyms, antonyms, part of speech, and phonetics) localized in ${language}.
+    2. Wrap the entire JSON response between "~" symbols (e.g., ~{...}~).
+    3. Ensure all JSON keys are properly quoted.
+    4. Return only the JSON object wrapped with "~". Avoid adding explanations, comments, or any text outside the JSON object.
+
+    If any field (e.g., synonyms, antonyms, phonetics) is not applicable, use an empty string ("") or an empty array ([]).
+    `;
+
+    
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
