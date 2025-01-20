@@ -16,6 +16,7 @@ import DrawerEntryScreen from "./screens/main/DrawerEntryScreen";
 import MainScreen from "./screens/main/MainScreen";
 import DefinitionScreen from "./screens/definition/DefinitionScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import WordSearchScreen from "./screens/wordSearch/WordSearchScreen";
 
 
 
@@ -60,9 +61,6 @@ const Stack = createNativeStackNavigator();
 
 function App() {
  
-
-  
-  
   return (
       <GestureHandlerRootView>
         <NavigationContainer>
@@ -70,7 +68,7 @@ function App() {
             screenOptions={{
               headerShown: false,
             }}
-            initialRouteName="NestedSheetPlaceHolder"
+            initialRouteName="WordSearch"
           >
             <Stack.Screen name="Loading" component={Loading} />
             <Stack.Screen name="LoginWelcome" component={LoginWelcomeScreen} />
@@ -78,6 +76,7 @@ function App() {
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="DrawerEntry" component={DrawerEntryScreen} />
             <Stack.Screen name="Main" component={MainScreen} />
+            <Stack.Screen name="WordSearch" component={WordSearchScreen} />
             <Stack.Screen name="Definition" component={DefinitionScreen} />
             <Stack.Screen
               name="EmailVerification"
