@@ -26,22 +26,25 @@ import { fetchDefinition } from "../../gptFunctions";
 import Constants from "expo-constants";
 import OpenAI from "openai";
 
-
 // Inside some component
 
 // Word suggestion API = https://api.datamuse.com/sug?s=d&max=40
 
 const MainScreen = ({ navigation, savedWord }) => {
+  //Search Bar Functions
   const [inputText, setInputText] = useState("");
   const [wordSuggestion, setWordSuggestion] = useState([]);
 
+  const inputRef = useRef(null);
+  //Active flexCard Id
+  const [activeCardId, setActiveCardId] = useState(null);
+  const [latestWord, setLatestWord] = useState(null);
+
+  //Search Bar animation
+  const [inputLabel, setInputLabel] = useState(false);
   const rotateDeg = useSharedValue(0);
   const searchIconOpacity = useSharedValue(1);
   const cardOpacity = useSharedValue(1);
-  const [inputLabel, setInputLabel] = useState(false);
-  const [latestWord, setLatestWord] = useState(null);
-  const inputRef = useRef(null);
-
 
   const mockWordList = [
     {
@@ -95,18 +98,14 @@ const MainScreen = ({ navigation, savedWord }) => {
       timeStamp: "2024-11-03T23:14:17.405Z",
     },
   ];
-  //Active flexCard Id
-  const [activeCardId, setActiveCardId] = useState(null);
 
   // ***TEST AI FUNCTIONS***
   const chatgptApiKey =
-  Constants.expoConfig.extra.chatgptApiKey ||
-  process.env.EXPO_DOT_CHATGPT_KEY;
+    Constants.expoConfig.extra.chatgptApiKey ||
+    process.env.EXPO_DOT_CHATGPT_KEY;
   const openai = new OpenAI({
     apiKey: chatgptApiKey,
   });
-
- 
 
   useEffect(() => {
     setInputLabel(false);
@@ -226,12 +225,13 @@ const MainScreen = ({ navigation, savedWord }) => {
               </View>
             </View>
             <View className="flex flex-row gap-4 items-center">
-              <TouchableOpacity className=" flex flex-row gap-1  items-center justify-center">
+              <TouchableOpacity className=" flex flex-row   items-center justify-center">
                 <Text
                   style={{
                     opacity: 0.7,
                     color: "#FFFFFF",
                   }}
+                  className=" mr-2"
                 >
                   English
                 </Text>

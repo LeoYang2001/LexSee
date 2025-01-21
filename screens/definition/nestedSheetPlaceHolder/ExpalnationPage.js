@@ -37,7 +37,6 @@ const ExpalnationPage = () => {
     timeStamp: "2024-11-03T23:14:17.405Z",
   };
 
-
   return (
     <View className="w-full h-full py-8 px-5 flex   flex-col gap-4 ">
       <View className="w-full flex flex-row justify-between  items-center ">
@@ -115,47 +114,46 @@ const ExpalnationPage = () => {
         />
       </View>
       <ScrollView className=" flex-1  w-full">
-      <View
-        style={{
-          backgroundColor: "#ffffff0a",
-          borderRadius: 12,
-        }}
-        className="p-4 w-full "
-      >
-        {wordItem.meanings.map((meaning, index) => (
-          <View
-            style={
-              wordItem.meanings.length > 1 &&
-              index !== wordItem.meanings.length - 1 && { marginBottom: 16 }
-            }
-            className=" w-full"
-            key={index}
-          >
-            <Text
-              className="font-bold"
-              style={{
-                color: "#fff",
-                opacity: 0.7,
-              }}
+        <View
+          style={{
+            backgroundColor: "#ffffff0a",
+            borderRadius: 12,
+          }}
+          className="p-4 w-full "
+        >
+          {wordItem.meanings.map((meaning, index) => (
+            <View
+              style={
+                wordItem.meanings.length > 1 &&
+                index !== wordItem.meanings.length - 1 && { marginBottom: 16 }
+              }
+              className=" w-full"
+              key={index}
             >
-              {meaning.partOfSpeech}
-            </Text>
-            <Text
-              style={{
-                color: "#fff",
-                opacity: 0.7,
-              }}
-              className="mt-2"
-            >
-              {meaning.definitions}
-            </Text>
-          </View>
-        ))}
-      </View>
+              <Text
+                className="font-bold"
+                style={{
+                  color: "#fff",
+                  opacity: 0.7,
+                }}
+              >
+                {meaning.partOfSpeech}
+              </Text>
+              <Text
+                style={{
+                  color: "#fff",
+                  opacity: 0.7,
+                }}
+                className="mt-2"
+              >
+                {meaning.definitions}
+              </Text>
+            </View>
+          ))}
+        </View>
       </ScrollView>
       {/* FOOTER  */}
-        <View className="mt-auto opacity-0" />
-      
+      <View className="mt-auto opacity-0" />
     </View>
   );
 };

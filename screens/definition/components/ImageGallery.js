@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Alert,
-  Text,
 } from "react-native";
 
 const ImageGallery = ({ images_result, onSaveWord, fetchMoreImages, page }) => {
