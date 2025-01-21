@@ -7,11 +7,27 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
+  Alert,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { ChevronLeft, CircleX } from "lucide-react-native";
 import SearchedWordItem from "./components/SearchedWordItem";
 import { useFocusEffect } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { doc, updateDoc } from "firebase/firestore";
+import { auth, db } from "../../firebase";
+
+//compare saved and searched list and return a acceptable search history format
+const compareLists = (searchHistory, savedWordList) => {
+  // Create a Set of IDs from savedWordList for efficient lookup
+  const savedWordSet = new Set(savedWordList.map((word) => word.id));
+
+  // Map over searchHistory and check if each word exists in savedWordSet
+  return searchHistory.map((word) => ({
+    word,
+    ifSaved: savedWordSet.has(word),
+  }));
+};
 
 const WordSearchScreen = ({ navigation }) => {
   //Search Bar Functions
@@ -19,12 +35,76 @@ const WordSearchScreen = ({ navigation }) => {
   const [wordSuggestion, setWordSuggestion] = useState([]);
   const inputRef = useRef(null);
 
+  const uid = auth.currentUser?.uid;
+
   //SearchedHistory will be fetched from firebase
+  const searchHistory = useSelector((state) => {
+    try {
+      return state.userInfo.searchHistory; // Parse the stringified word list
+    } catch (error) {
+      console.log("Error parsing savedWordList:", error);
+      return [];
+    }
+  });
+
+  const savedWordList = useSelector((state) => {
+    try {
+      return JSON.parse(state.userInfo.savedWordList); // Parse the stringified word list
+    } catch (error) {
+      console.log("Error parsing savedWordList:", error);
+      return [];
+    }
+  });
+
+  const clearHistoryFromFirebase = async () => {
+    try {
+      if (!uid) {
+        console.error("UID is required to clear search history.");
+        return;
+      }
+
+      // Show confirmation alert
+      Alert.alert(
+        "Confirm Action",
+        "Are you sure you want to clear your search history?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Operation canceled."),
+            style: "cancel",
+          },
+          {
+            text: "OK",
+            onPress: async () => {
+              // Reference to the user's document
+              const userDocRef = doc(db, "users", uid);
+
+              // Update the document by setting searchHistory to an empty array
+              await updateDoc(userDocRef, {
+                searchHistory: [],
+              });
+
+              console.log("Search history cleared successfully.");
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (error) {
+      console.error("Error clearing search history:", error);
+    }
+  };
+
   const [searchedHistory, setSearchedHistory] = useState([]);
+
+  useEffect(() => {
+    setSearchedHistory(compareLists(searchHistory, savedWordList));
+  }, [searchHistory]);
 
   useFocusEffect(
     React.useCallback(() => {
       setInputText("");
+
       return () => {
         console.log("Screen is no longer focused");
       };
@@ -64,26 +144,6 @@ const WordSearchScreen = ({ navigation }) => {
       inputRef.current.focus();
     }
   }, []);
-
-  //fetch history of seached words
-  const mockedSearchedHistory = [
-    {
-      word: "seachedWord1",
-      ifSaved: false,
-    },
-    {
-      word: "seachedWord2",
-      ifSaved: false,
-    },
-    {
-      word: "seachedWord3",
-      ifSaved: true,
-    },
-    {
-      word: "seachedWord4",
-      ifSaved: false,
-    },
-  ];
 
   return (
     <TouchableWithoutFeedback
@@ -175,7 +235,7 @@ const WordSearchScreen = ({ navigation }) => {
               >
                 History
               </Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={clearHistoryFromFirebase}>
                 <Text
                   style={{
                     fontSize: 12,
@@ -188,7 +248,7 @@ const WordSearchScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             <ScrollView className=" mt-4 flex-1 w-full">
-              {mockedSearchedHistory.map((searchedWord, index) => (
+              {searchedHistory.reverse().map((searchedWord, index) => (
                 <SearchedWordItem
                   navigation={navigation}
                   key={index}

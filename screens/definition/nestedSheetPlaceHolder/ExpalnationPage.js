@@ -12,7 +12,7 @@ const ExpalnationPage = ({ wordItem, ifSaved }) => {
       style={{
         borderRadius: 16,
       }}
-      className="w-full h-full "
+      className="w-full h-full"
     >
       <View className="w-full h-full py-8 px-5 flex  flex-col  gap-y-4">
         <View className="w-full flex flex-row justify-between  items-center ">

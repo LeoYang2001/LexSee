@@ -23,12 +23,12 @@ function convertJsonToObject(str) {
 
 export const fetchDefinition = async (openai, word, language = "English") => {
   if (!word) return;
-  // Adjust the pr  ompt based on whether a specific definition is provided
+  // Adjust the prompt based on whether a specific definition is provided
   const userPrompt = `
     Provide the definition of the word "${word}" in ${language}. Return the output as a valid JSON object strictly adhering to the following format:
 
     {
-      "id": "sample",
+      "id": "${word}",
       "meanings": [
         {
           "antonyms": ["if applicable in ${language}"],
