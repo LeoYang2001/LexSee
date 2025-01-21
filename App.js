@@ -17,17 +17,13 @@ import MainScreen from "./screens/main/MainScreen";
 import DefinitionScreen from "./screens/definition/DefinitionScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import WordSearchScreen from "./screens/wordSearch/WordSearchScreen";
-
-
-
-  
-
-
+import { Provider } from "react-redux";
+import store from "./store";
+import MyLoading from "./components-shared/loading/MyLoading";
 
 //Handling App Crash Cases
 
 const appName = expo.name;
-
 
 function Loading({ navigation }) {
   React.useEffect(() => {
@@ -36,7 +32,6 @@ function Loading({ navigation }) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/auth.user
         const userVerified = user.emailVerified;
-        const uid = user.uid;
         if (userVerified) {
           navigation.replace("DrawerEntry");
         } else {
@@ -60,15 +55,15 @@ function Loading({ navigation }) {
 const Stack = createNativeStackNavigator();
 
 function App() {
- 
   return (
+    <Provider store={store}>
       <GestureHandlerRootView>
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
               headerShown: false,
             }}
-            initialRouteName="WordSearch"
+            initialRouteName="Loading"
           >
             <Stack.Screen name="Loading" component={Loading} />
             <Stack.Screen name="LoginWelcome" component={LoginWelcomeScreen} />
@@ -85,6 +80,7 @@ function App() {
           </Stack.Navigator>
         </NavigationContainer>
       </GestureHandlerRootView>
+    </Provider>
   );
 }
 

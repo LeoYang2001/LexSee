@@ -1,12 +1,54 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import React, { useEffect, useState } from "react";
 import NestedSheetPlaceHolder from "./nestedSheetPlaceHolder/NestedSheetPlaceHolder";
 import { ChevronLeft } from "lucide-react-native";
+import { fetchDefinition } from "../../gptFunctions";
+import OpenAI from "openai";
+import Constants from "expo-constants";
 
-const DefinitionScreen = ({ navigation }) => {
+const DefinitionScreen = ({ navigation, route }) => {
   const [pageTitle, setPageTitle] = useState("Explanation");
 
-  return (
+  const ifSaved = route.params.ifSaved;
+  const initWordItem = ifSaved
+    ? JSON.parse(route.params.wordItem)
+    : route.params.wordItem;
+  const [wordItem, setWordItem] = useState(initWordItem);
+
+  // *** AI FUNCTIONS***
+  const chatgptApiKey =
+    Constants.expoConfig.extra.chatgptApiKey ||
+    process.env.EXPO_DOT_CHATGPT_KEY;
+  const openai = new OpenAI({
+    apiKey: chatgptApiKey,
+  });
+
+  useEffect(() => {
+    //if its an unsaved word than fetch definition
+    const fetchWordDefinition = async () => {
+      if (!wordItem?.id) {
+        console.log("Fetching the definition of:", wordItem);
+        try {
+          const fetchedWord = await fetchDefinition(
+            openai,
+            wordItem,
+            "English"
+          );
+          console.log("Fetched Word:", fetchedWord);
+          if (!fetchedWord) {
+            //if fetchedWord == null, then navigate back
+            navigation.goBack();
+          }
+          setWordItem(fetchedWord);
+        } catch (error) {
+          console.error("Error fetching definition:", error);
+        }
+      }
+    };
+    fetchWordDefinition();
+  }, []);
+
+  return wordItem?.id ? (
     <View
       style={{
         backgroundColor: "#121417",
@@ -44,10 +86,21 @@ const DefinitionScreen = ({ navigation }) => {
         className="w-full absolute bottom-0"
       >
         <NestedSheetPlaceHolder
+          wordItem={wordItem}
+          ifSaved={ifSaved}
           setPageTitle={setPageTitle}
           pageTitle={pageTitle}
         />
       </View>
+    </View>
+  ) : (
+    <View
+      style={{
+        backgroundColor: "#121417",
+      }}
+      className="w-full h-full flex justify-center items-center"
+    >
+      <ActivityIndicator />
     </View>
   );
 };

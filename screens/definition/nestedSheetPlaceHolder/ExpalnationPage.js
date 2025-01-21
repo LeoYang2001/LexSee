@@ -1,160 +1,171 @@
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import React from "react";
 import { Bookmark, Volume2 } from "lucide-react-native";
+import { BlurView } from "expo-blur";
+import SaveBtn from "../components/SaveBtn";
+import { LinearGradient } from "expo-linear-gradient";
 
-const ExpalnationPage = () => {
-  const wordItem = {
-    id: "culpable",
-    imgUrl: "https://cdn.langeek.co/photo/23505/original/?type=jpeg",
-    meanings: [
-      {
-        antonyms: [],
-        definitions: [
-          "Actuated by avarice; extremely greedy for wealth or material gain; immoderately desirous of accumulating property.",
-        ],
-        partOfSpeech: "adjective",
-        synonyms: [],
-      },
-      {
-        antonyms: [],
-        definitions: [
-          "Actuated by avarice; extremely greedy for wealth or material gain; immoderately desirous of accumulating property.",
-        ],
-        partOfSpeech: "adjective",
-        synonyms: [],
-      },
-    ],
-    phonetics: {
-      audio:
-        "https://api.dictionaryapi.dev/media/pronunciations/en/culpable-us.mp3",
-      license: {
-        name: "BY-SA 3.0",
-        url: "https://creativecommons.org/licenses/by-sa/3.0",
-      },
-      sourceUrl: "https://commons.wikimedia.org/w/index.php?curid=789670",
-      text: "/ˈkʌlpəbəl/",
-    },
-    timeStamp: "2024-11-03T23:14:17.405Z",
-  };
-
+const ExpalnationPage = ({ wordItem, ifSaved }) => {
   return (
-    <View className="w-full h-full py-8 px-5 flex   flex-col gap-4 ">
-      <View className="w-full flex flex-row justify-between  items-center ">
-        <View>
-          <Text
-            className="font-semibold"
-            style={{ fontSize: 28, color: "#fff" }}
-          >
-            {wordItem?.id}
-          </Text>
-          <TouchableOpacity className="py-2 flex flex-row items-center">
+    <LinearGradient
+      colors={["#242c3c", "#1d1f24"]}
+      style={{
+        borderRadius: 16,
+      }}
+      className="w-full h-full "
+    >
+      <View className="w-full h-full py-8 px-5 flex  flex-col  gap-y-4">
+        <View className="w-full flex flex-row justify-between  items-center ">
+          <View>
             <Text
-              style={{
-                color: "#FFFFFFB3",
-                fontSize: 18,
-              }}
+              className="font-semibold"
+              style={{ fontSize: 28, color: "#fff" }}
             >
-              {wordItem?.phonetics.text}
+              {wordItem?.id}
             </Text>
-            <Volume2 className="ml-2" color={"#FFFFFFB3"} size={18} />
-          </TouchableOpacity>
+            <TouchableOpacity className="py-2 flex flex-row items-center">
+              <Text
+                style={{
+                  color: "#FFFFFFB3",
+                  fontSize: 18,
+                }}
+              >
+                {wordItem?.phonetics.text}
+              </Text>
+              <Volume2 className="ml-2" color={"#FFFFFFB3"} size={18} />
+            </TouchableOpacity>
+          </View>
+          <SaveBtn ifSaved={ifSaved} />
         </View>
-        <TouchableOpacity
-          style={{
-            width: 48,
-            height: 48,
-            borderRadius: 12,
-            backgroundColor: "#3f3339",
-          }}
-          className="flex justify-center items-center"
-        >
-          <Bookmark color={"#d1461e"} fill={"#d1461e"} />
-        </TouchableOpacity>
-      </View>
-      <View className=" flex flex-row ">
-        {wordItem.meanings.map((meaning, index) => (
-          <TouchableOpacity
-            style={{
-              height: 20,
-              backgroundColor: "#ffffff1E",
-              borderRadius: 2,
-            }}
-            className="px-1 mr-2 flex justify-center items-center"
-            key={index}
-          >
-            <Text
-              style={{
-                fontSize: 12,
-                color: "#fff",
-                opacity: 0.7,
-              }}
-            >
-              {meaning.partOfSpeech}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-      <View
-        className="w-full"
-        style={{
-          height: 142,
-        }}
-      >
-        <Image
-          className="absolute"
-          style={{
-            width: "100%",
-            height: "100%",
-            borderRadius: 12,
-          }}
-          source={{
-            uri: wordItem.imgUrl,
-          }}
-          resizeMode="cover"
-        />
-      </View>
-      <ScrollView className=" flex-1  w-full">
-        <View
-          style={{
-            backgroundColor: "#ffffff0a",
-            borderRadius: 12,
-          }}
-          className="p-4 w-full "
-        >
+        <View className=" flex flex-row ">
           {wordItem.meanings.map((meaning, index) => (
-            <View
-              style={
-                wordItem.meanings.length > 1 &&
-                index !== wordItem.meanings.length - 1 && { marginBottom: 16 }
-              }
-              className=" w-full"
+            <TouchableOpacity
+              style={{
+                height: 20,
+                backgroundColor: "#ffffff1E",
+                borderRadius: 2,
+              }}
+              className="px-1 mr-2 flex justify-center items-center"
               key={index}
             >
               <Text
-                className="font-bold"
                 style={{
+                  fontSize: 12,
                   color: "#fff",
                   opacity: 0.7,
                 }}
               >
                 {meaning.partOfSpeech}
               </Text>
-              <Text
-                style={{
-                  color: "#fff",
-                  opacity: 0.7,
-                }}
-                className="mt-2"
-              >
-                {meaning.definitions}
-              </Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
-      </ScrollView>
-      {/* FOOTER  */}
-      <View className="mt-auto opacity-0" />
-    </View>
+        {wordItem.imgUrl ? (
+          <View
+            className="w-full"
+            style={{
+              height: 142,
+            }}
+          >
+            <Image
+              className="absolute"
+              style={{
+                width: "100%",
+                height: "100%",
+                borderRadius: 12,
+              }}
+              source={{
+                uri: wordItem.imgUrl,
+              }}
+              resizeMode="cover"
+            />
+          </View>
+        ) : (
+          <View
+            style={{
+              borderRadius: 10,
+              height: 142,
+            }}
+            className="w-full overflow-hidden "
+          >
+            <Image
+              className="absolute"
+              style={{
+                width: "100%",
+                height: "100%",
+                borderRadius: 12,
+              }}
+              source={{
+                uri: "https://res.cloudinary.com/djcyhbk2e/image/upload/c_limit,f_auto,q_50,w_1400/v1/gvv/prod/yp2b0ocwenuvu8jjv1zz",
+              }}
+              resizeMode="cover"
+            />
+            <BlurView
+              className="w-full h-full flex justify-center items-center"
+              intensity={40}
+            >
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#E44814",
+                }}
+                className="rounded-full px-2 py-1"
+              >
+                <Text
+                  className="font-semibold"
+                  style={{
+                    color: "#fff",
+                    opacity: 0.9,
+                  }}
+                >
+                  Choose a picture
+                </Text>
+              </TouchableOpacity>
+            </BlurView>
+          </View>
+        )}
+        <ScrollView className=" flex-1  w-full">
+          <View
+            style={{
+              backgroundColor: "#ffffff0a",
+              borderRadius: 12,
+            }}
+            className="p-4 w-full "
+          >
+            {wordItem.meanings.map((meaning, index) => (
+              <View
+                style={
+                  wordItem.meanings.length > 1 &&
+                  index !== wordItem.meanings.length - 1 && { marginBottom: 16 }
+                }
+                className=" w-full"
+                key={index}
+              >
+                <Text
+                  className="font-bold"
+                  style={{
+                    color: "#fff",
+                    opacity: 0.7,
+                  }}
+                >
+                  {meaning.partOfSpeech}
+                </Text>
+                <Text
+                  style={{
+                    color: "#fff",
+                    opacity: 0.7,
+                  }}
+                  className="mt-2"
+                >
+                  {meaning?.definition || meaning?.definitions[0]?.definition}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+        {/* FOOTER  */}
+        <View className="mt-auto opacity-0" />
+      </View>
+    </LinearGradient>
   );
 };
 

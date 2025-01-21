@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
@@ -7,8 +7,12 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import MainScreen from "./MainScreen";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
 import WordListScreen from "../inventory/WordListScreen";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
+import { setSavedWordList } from "../../slices/userInfoSlice";
+import MyLoading from "../../components-shared/loading/MyLoading";
 
 const Drawer = createDrawerNavigator();
 
@@ -42,10 +46,56 @@ const CustomDrawerContent = (props) => {
   );
 };
 
-const DrawerEntryScreen = ({ route }) => {
-  const savedWord = route.params?.savedWord
-    ? route.params?.savedWord
-    : undefined;
+const DrawerEntryScreen = () => {
+  const [isSettingUp, setIsSettingUp] = useState(true);
+
+  const savedWordList = useSelector((state) => {
+    try {
+      return JSON.parse(state.userInfo.savedWordList); // Parse the stringified word list
+    } catch (error) {
+      console.log("Error parsing savedWordList:", error);
+      return [];
+    }
+  });
+
+  const dispatch = useDispatch();
+  const uid = auth.currentUser?.uid; // Get current user UID
+
+  useEffect(() => {
+    if (uid) {
+      fetchUserSavedWordList();
+    }
+  }, [uid]); // Re-run if UID changes (i.e., on login/logout)
+
+  const fetchUserSavedWordList = async () => {
+    if (!uid) return; // Guard against UID being unavailable
+
+    const wordListRef = collection(db, "users", uid, "wordList"); // Reference to the user's wordList subcollection
+    const wordListQuery = query(wordListRef, orderBy("timeStamp", "desc"));
+
+    // Listen for real-time changes to the wordList
+    const unsubscribe = onSnapshot(wordListQuery, (snapshot) => {
+      const wordsData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      // Dispatch the updated word list to the Redux store
+      dispatch(setSavedWordList(wordsData));
+      setIsSettingUp(false);
+    });
+
+    // Clean up the subscription when the component unmounts or when the user changes
+    return () => unsubscribe();
+  };
+
+  if (isSettingUp) {
+    return (
+      <View className="flex w-full h-full justify-center items-center">
+        <Text>Settingup...</Text>
+      </View>
+    );
+  }
 
   return (
     <Drawer.Navigator
@@ -67,7 +117,7 @@ const DrawerEntryScreen = ({ route }) => {
           ),
         }}
       >
-        {(props) => <MainScreen {...props} savedWord={savedWord} />}
+        {(props) => <MainScreen {...props} />}
       </Drawer.Screen>
       <Drawer.Screen
         name="WordList"

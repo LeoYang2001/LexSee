@@ -7,7 +7,6 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
-import { useNavigation } from "@react-navigation/native";
 
 const WordFlexCard = ({ wordItem, ifActive, setActiveCardId, navigation }) => {
   if (!wordItem) return null;
@@ -69,8 +68,10 @@ const WordFlexCard = ({ wordItem, ifActive, setActiveCardId, navigation }) => {
             </Text>
             <TouchableOpacity
               onPress={() => {
-                console.log(navigation);
-                navigation.navigate("Definition");
+                navigation.navigate("Definition", {
+                  wordItem: JSON.stringify(wordItem),
+                  ifSaved: true,
+                });
               }}
               className="p-1"
             >
@@ -98,7 +99,7 @@ const WordFlexCard = ({ wordItem, ifActive, setActiveCardId, navigation }) => {
                   backgroundColor: "#222833",
                   borderRadius: 2,
                 }}
-                className="flex px-1 justify-center border items-center mr-2"
+                className="flex px-1 justify-center items-center mr-2"
               >
                 <Text
                   style={{
@@ -112,17 +113,24 @@ const WordFlexCard = ({ wordItem, ifActive, setActiveCardId, navigation }) => {
             </View>
           )}
           {ifActive && (
-            <BlurView className="w-full flex-1 py-2 px-3 mt-2" intensity={40}>
-              <Text
-                style={{
-                  color: "#fff",
-                  opacity: 0.7,
-                  borderRadius: 10,
-                }}
-              >
-                {wordItem.meanings[0].definitions}
-              </Text>
-            </BlurView>
+            <View
+              style={{
+                borderRadius: 10,
+              }}
+              className="w-full flex-1  overflow-hidden mt-2"
+            >
+              <BlurView className="w-full h-full  py-2 px-3" intensity={40}>
+                <Text
+                  style={{
+                    color: "#fff",
+                    opacity: 0.7,
+                  }}
+                >
+                  {wordItem.meanings[0]?.definition ||
+                    wordItem.meanings[0]?.definitions[0]?.definition}
+                </Text>
+              </BlurView>
+            </View>
           )}
         </View>
       </Animated.View>
