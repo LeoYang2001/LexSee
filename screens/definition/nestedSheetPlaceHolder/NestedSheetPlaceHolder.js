@@ -7,6 +7,7 @@ import {
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
 import ExpalnationPage from "./ExpalnationPage";
+import ConversationPage from "./ConversationPage";
 
 const NestedSheetPlaceHolder = ({ pageTitle, setPageTitle }) => {
   const firstSheetRef = useRef(null);
@@ -68,7 +69,9 @@ const NestedSheetPlaceHolder = ({ pageTitle, setPageTitle }) => {
           enablePanDownToClose={false}
           // onDismiss={handleSwitchSheet}
         >
-          <BottomSheetView style={styles.contentContainer}></BottomSheetView>
+          <BottomSheetView style={styles.contentContainer}>
+            <ConversationPage />
+          </BottomSheetView>
         </BottomSheetModal>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>
