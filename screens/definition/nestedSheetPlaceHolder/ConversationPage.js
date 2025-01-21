@@ -1,52 +1,27 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  ScrollView,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import OpenAI from "openai";
-import { Bookmark, RefreshCcw, Volume2 } from "lucide-react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { Bookmark, Volume2 } from "lucide-react-native";
 import Constants from "expo-constants";
 import ConversationItem, {
   IniLoadingAnimation,
 } from "../components/ConversationItem";
+import SaveBtn from "../components/SaveBtn";
+import { LinearGradient } from "expo-linear-gradient";
 
-const ConversationPage = () => {
-  const mockWordItem = {
-    id: "culpable",
-    imgUrl: "https://cdn.langeek.co/photo/23505/original/?type=jpeg",
-    meanings: [
-      {
-        antonyms: [],
-        definitions: [
-          "Actuated by avarice; extremely greedy for wealth or material gain; immoderately desirous of accumulating property.",
-        ],
-        partOfSpeech: "adjective",
-        synonyms: [],
-      },
-      {
-        antonyms: [],
-        definitions: [
-          "Actuated by avarice; extremely greedy for wealth or material gain; immoderately desirous of accumulating property.",
-        ],
-        partOfSpeech: "adjective",
-        synonyms: [],
-      },
-    ],
-    phonetics: {
-      audio:
-        "https://api.dictionaryapi.dev/media/pronunciations/en/culpable-us.mp3",
-      license: {
-        name: "BY-SA 3.0",
-        url: "https://creativecommons.org/licenses/by-sa/3.0",
-      },
-      sourceUrl: "https://commons.wikimedia.org/w/index.php?curid=789670",
-      text: "/ˈkʌlpəbəl/",
-    },
-    timeStamp: "2024-11-03T23:14:17.405Z",
-  };
-
-  const selectedDefinition = mockWordItem.meanings[0].definitions;
+const ConversationPage = ({ wordItem, ifSaved }) => {
+  const selectedDefinition =
+    wordItem.meanings[0]?.definition ||
+    wordItem.meanings[0]?.definitions[0]?.definition;
 
   //   ******* FROM VERSION 1 ******
-  const { id, phonetics } = mockWordItem;
+  const { id } = wordItem;
   const [conversation, setConversation] = useState([]);
   const [displayedConversation, setDisplayedConversation] = useState([]);
   const [displayedIndex, setDisplayedIndex] = useState(0);
@@ -146,122 +121,125 @@ Please respond using this format exactly, with no more than 6 lines.`;
   //   ******* FROM VERSION 1 ******
 
   return (
-    <View className="w-full h-full pt-8 pb4 px-5 flex  flex-col gap-4 ">
-      <View className="w-full flex flex-row justify-between  items-center">
-        <View>
-          <Text
-            className="font-semibold"
-            style={{ fontSize: 28, color: "#fff" }}
-          >
-            {mockWordItem?.id}
-          </Text>
-          <TouchableOpacity className="py-2 flex flex-row items-center">
+    <LinearGradient
+      colors={["#242c3c", "#1d1f24"]}
+      style={{
+        borderRadius: 16,
+      }}
+      className="w-full h-full "
+    >
+      <View className="w-full h-full py-8 px-5 flex  flex-col  gap-y-4">
+        <View className="w-full flex flex-row justify-between  items-center">
+          <View>
             <Text
-              style={{
-                color: "#FFFFFFB3",
-                fontSize: 18,
-              }}
+              className="font-semibold"
+              style={{ fontSize: 28, color: "#fff" }}
             >
-              {mockWordItem?.phonetics.text}
+              {wordItem?.id}
             </Text>
-            <Volume2 className="ml-2" color={"#FFFFFFB3"} size={18} />
+            <TouchableOpacity className="py-2 flex flex-row items-center">
+              <Text
+                style={{
+                  color: "#FFFFFFB3",
+                  fontSize: 18,
+                }}
+              >
+                {wordItem?.phonetics.text}
+              </Text>
+              <Volume2 className="ml-2" color={"#FFFFFFB3"} size={18} />
+            </TouchableOpacity>
+          </View>
+          <SaveBtn ifSaved={ifSaved} />
+        </View>
+        <View className=" flex flex-row ">
+          {wordItem.meanings.map((meaning, index) => (
+            <TouchableOpacity
+              style={{
+                height: 20,
+                backgroundColor: "#ffffff1E",
+                borderRadius: 2,
+              }}
+              className="px-1 mr-2 flex justify-center items-center"
+              key={index}
+            >
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: "#fff",
+                  opacity: 0.7,
+                }}
+              >
+                {meaning.partOfSpeech}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* CONVERSATION GEN  */}
+        <View className="flex-1 w-full ">
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            className="  flex-1   "
+          >
+            {isLoading ? (
+              <View
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={[
+                  {
+                    alignSelf: true ? "flex-start" : "flex-end",
+                    // backgroundColor: true ? "#E0E0E0" : "#007AFF",
+                    paddingVertical: 10,
+                    paddingHorizontal: 20,
+                    borderRadius: 15,
+                    marginVertical: 6,
+                    maxWidth: "75%",
+                    backgroundColor: true ? "#545861" : "#f65827",
+                  },
+                  true
+                    ? {
+                        borderBottomLeftRadius: 0,
+                      }
+                    : {
+                        borderBottomRightRadius: 0,
+                      },
+                ]}
+              >
+                <IniLoadingAnimation />
+              </View>
+            ) : (
+              <>
+                {/* Display each line in the conversation array in a text-message style */}
+                {displayedConversation.map((line, index) => (
+                  <ConversationItem
+                    pushConversation={pushConversation}
+                    key={index}
+                    line={line}
+                    index={index}
+                  />
+                ))}
+              </>
+            )}
+          </ScrollView>
+          <TouchableOpacity
+            disabled={displayedConversation.length != conversation.length}
+            className="p-3 self-center mt-auto w-full flex justify-center items-center"
+            style={{
+              backgroundColor: "#49475E",
+              borderRadius: 9,
+            }}
+            onPress={() => {
+              createConversation();
+              setDisplayedIndex(0);
+            }}
+          >
+            <Text style={{ fontSize: 15 }} className="text-white">
+              Regenerate
+            </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={{
-            width: 48,
-            height: 48,
-            borderRadius: 12,
-            backgroundColor: "#3f3339",
-          }}
-          className="flex justify-center items-center"
-        >
-          <Bookmark color={"#d1461e"} fill={"#d1461e"} />
-        </TouchableOpacity>
       </View>
-      <View className=" flex flex-row ">
-        {mockWordItem.meanings.map((meaning, index) => (
-          <TouchableOpacity
-            style={{
-              height: 20,
-              backgroundColor: "#ffffff1E",
-              borderRadius: 2,
-            }}
-            className="px-1 mr-2 flex justify-center items-center"
-            key={index}
-          >
-            <Text
-              style={{
-                fontSize: 12,
-                color: "#fff",
-                opacity: 0.7,
-              }}
-            >
-              {meaning.partOfSpeech}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* CONVERSATION GEN  */}
-      <View className="  flex-1   ">
-        {isLoading ? (
-          <View
-            start={{ x: 0, y: 0.5 }}
-            end={{ x: 1, y: 0.5 }}
-            style={[
-              {
-                alignSelf: true ? "flex-start" : "flex-end",
-                // backgroundColor: true ? "#E0E0E0" : "#007AFF",
-                paddingVertical: 10,
-                paddingHorizontal: 20,
-                borderRadius: 15,
-                marginVertical: 6,
-                maxWidth: "75%",
-                backgroundColor: true ? "#545861" : "#f65827",
-              },
-              true
-                ? {
-                    borderBottomLeftRadius: 0,
-                  }
-                : {
-                    borderBottomRightRadius: 0,
-                  },
-            ]}
-          >
-            <IniLoadingAnimation />
-          </View>
-        ) : (
-          <>
-            {/* Display each line in the conversation array in a text-message style */}
-            {displayedConversation.map((line, index) => (
-              <ConversationItem
-                pushConversation={pushConversation}
-                key={index}
-                line={line}
-                index={index}
-              />
-            ))}
-          </>
-        )}
-        <TouchableOpacity
-          disabled={displayedConversation.length != conversation.length}
-          className="p-3 self-center mt-auto w-full flex justify-center items-center"
-          style={{
-            backgroundColor: "#49475E",
-            borderRadius: 9,
-          }}
-          onPress={() => {
-            createConversation();
-            setDisplayedIndex(0);
-          }}
-        >
-          <Text style={{ fontSize: 15 }} className="text-white">
-            Regenerate
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </LinearGradient>
   );
 };
 

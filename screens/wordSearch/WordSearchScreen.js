@@ -9,8 +9,9 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { ChevronLeft, CircleX, X } from "lucide-react-native";
+import { ChevronLeft, CircleX } from "lucide-react-native";
 import SearchedWordItem from "./components/SearchedWordItem";
+import { useFocusEffect } from "@react-navigation/native";
 
 const WordSearchScreen = ({ navigation }) => {
   //Search Bar Functions
@@ -21,9 +22,21 @@ const WordSearchScreen = ({ navigation }) => {
   //SearchedHistory will be fetched from firebase
   const [searchedHistory, setSearchedHistory] = useState([]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setInputText("");
+      return () => {
+        console.log("Screen is no longer focused");
+      };
+    }, [])
+  );
+
   //word suggestion API function
   useEffect(() => {
-    if (!inputText) setWordSuggestion([]);
+    if (!inputText) {
+      console.log("empty suggestions..");
+      setWordSuggestion([]);
+    }
     const fetchWordSuggestion = async () => {
       try {
         const res = await fetch(
@@ -44,6 +57,13 @@ const WordSearchScreen = ({ navigation }) => {
     }
     fetchWordSuggestion();
   }, [inputText]);
+
+  //auto focus the input
+  useEffect(() => {
+    if (inputRef?.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   //fetch history of seached words
   const mockedSearchedHistory = [
@@ -169,7 +189,11 @@ const WordSearchScreen = ({ navigation }) => {
             </View>
             <ScrollView className=" mt-4 flex-1 w-full">
               {mockedSearchedHistory.map((searchedWord, index) => (
-                <SearchedWordItem key={index} searchedWord={searchedWord} />
+                <SearchedWordItem
+                  navigation={navigation}
+                  key={index}
+                  searchedWord={searchedWord}
+                />
               ))}
             </ScrollView>
           </View>
@@ -180,7 +204,13 @@ const WordSearchScreen = ({ navigation }) => {
                 wordItem.word.length > 1 &&
                 wordItem.word.split(" ").length === 1
               ) {
-                return <SearchedWordItem key={index} searchedWord={wordItem} />;
+                return (
+                  <SearchedWordItem
+                    navigation={navigation}
+                    key={index}
+                    searchedWord={wordItem}
+                  />
+                );
               }
               return null;
             })}

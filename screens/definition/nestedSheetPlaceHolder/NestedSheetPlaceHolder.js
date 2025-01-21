@@ -9,7 +9,12 @@ import {
 import ExpalnationPage from "./ExpalnationPage";
 import ConversationPage from "./ConversationPage";
 
-const NestedSheetPlaceHolder = ({ pageTitle, setPageTitle }) => {
+const NestedSheetPlaceHolder = ({
+  pageTitle,
+  setPageTitle,
+  wordItem,
+  ifSaved,
+}) => {
   const firstSheetRef = useRef(null);
   const secondSheetRef = useRef(null);
 
@@ -57,7 +62,7 @@ const NestedSheetPlaceHolder = ({ pageTitle, setPageTitle }) => {
           // onDismiss={handleSwitchSheet}
         >
           <BottomSheetView style={styles.contentContainer}>
-            <ExpalnationPage />
+            <ExpalnationPage ifSaved={ifSaved} wordItem={wordItem} />
           </BottomSheetView>
         </BottomSheetModal>
 
@@ -70,7 +75,7 @@ const NestedSheetPlaceHolder = ({ pageTitle, setPageTitle }) => {
           // onDismiss={handleSwitchSheet}
         >
           <BottomSheetView style={styles.contentContainer}>
-            <ConversationPage />
+            <ConversationPage ifSaved={ifSaved} wordItem={wordItem} />
           </BottomSheetView>
         </BottomSheetModal>
       </BottomSheetModalProvider>
