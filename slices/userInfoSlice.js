@@ -9,6 +9,7 @@ const initialState = {
     // Add other profile fields here as needed
   },
   savedWordList: [],
+  searchHistory: [],
 };
 
 const userInfoSlice = createSlice({
@@ -22,8 +23,12 @@ const userInfoSlice = createSlice({
       // Save the word list as a stringified object
       state.savedWordList = JSON.stringify(action.payload);
     },
+    setSearchHistory: (state, action) => {
+      state.searchHistory = action.payload;
+    },
   },
 });
 
-export const { setUserProfile, setSavedWordList } = userInfoSlice.actions;
+export const { setUserProfile, setSavedWordList, setSearchHistory } =
+  userInfoSlice.actions;
 export default userInfoSlice.reducer;

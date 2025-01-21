@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import OpenAI from "openai";
-import { Bookmark, Volume2 } from "lucide-react-native";
+import { Volume2 } from "lucide-react-native";
 import Constants from "expo-constants";
 import ConversationItem, {
   IniLoadingAnimation,
