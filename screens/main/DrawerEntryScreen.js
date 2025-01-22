@@ -9,6 +9,8 @@ import {
 import MainScreen from "./MainScreen";
 import { auth } from "../../firebase";
 import WordListScreen from "../inventory/WordListScreen";
+import InventoryScreen from "../inventory/InventoryScreen";
+
 
 const Drawer = createDrawerNavigator();
 
@@ -71,7 +73,7 @@ const DrawerEntryScreen = ({ route }) => {
       </Drawer.Screen>
       <Drawer.Screen
         name="WordList"
-        component={WordListScreen}
+        component={InventoryScreen}
         options={{
           drawerIcon: ({ color, size }) => (
             <MaterialIcons name="home" color={color} size={size} />

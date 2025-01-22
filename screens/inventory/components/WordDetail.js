@@ -95,7 +95,7 @@ const WordDetail = ({
         style={{
           height: screenHeight,
         }}
-        className=" bg-black w-full flex justify-center items-center "
+        className="bg-black w-full flex justify-center items-center "
       >
         <ActivityIndicator color={"white"} />
       </View>
@@ -103,7 +103,7 @@ const WordDetail = ({
   else
     return (
       <View
-        style={{ height: screenHeight, borderRadius: 47 }}
+        style={{ height: screenHeight, borderRadius: 47}}
         className="w-full relative  overflow-hidden"
       >
         {/* Pagination Header */}
