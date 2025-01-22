@@ -5,25 +5,20 @@ import {
   Keyboard,
   ScrollView,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Search } from "lucide-react-native";
 
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import { auth, db } from "../../firebase";
 import Logo from "../../components-shared/Logo";
 import InventoryStatistic from "./components/InventoryStatistic";
 import WordFlexCard from "../../components-shared/WordFlexCard";
-import Constants from "expo-constants";
-import OpenAI from "openai";
 import { useSelector } from "react-redux";
 
 // Word suggestion API = https://api.datamuse.com/sug?s=d&max=40
 
-const MainScreen = ({ navigation, savedWord }) => {
+const MainScreen = ({ navigation }) => {
   //Active flexCard Id
   const [activeCardId, setActiveCardId] = useState(null);
-  const [latestWord, setLatestWord] = useState(null);
 
   const savedWordsFromStore = useSelector((state) => {
     try {
@@ -33,16 +28,6 @@ const MainScreen = ({ navigation, savedWord }) => {
       return [];
     }
   });
-
-  // ***TEST AI FUNCTIONS***
-  const chatgptApiKey =
-    Constants.expoConfig.extra.chatgptApiKey ||
-    process.env.EXPO_DOT_CHATGPT_KEY;
-  console.log("chatgptApiKey:");
-  console.log(chatgptApiKey);
-  // const openai = new OpenAI({
-  //   apiKey: chatgptApiKey,
-  // });
 
   return (
     <TouchableWithoutFeedback

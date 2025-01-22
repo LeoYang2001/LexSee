@@ -15,7 +15,7 @@ import {
   BottomSheetView,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-import { AlignLeft, RefreshCw, X } from "lucide-react-native";
+import { AlignLeft, X } from "lucide-react-native";
 import {
   collection,
   onSnapshot,

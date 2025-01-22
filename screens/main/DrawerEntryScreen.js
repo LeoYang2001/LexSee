@@ -18,7 +18,7 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setSavedWordList, setSearchHistory } from "../../slices/userInfoSlice";
 
 const Drawer = createDrawerNavigator();
@@ -73,7 +73,6 @@ const DrawerEntryScreen = () => {
 
       // Real-time listener for changes in the document
       const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-        console.log("fetch search history...");
         if (docSnap.exists()) {
           const userData = docSnap.data();
 
@@ -81,7 +80,6 @@ const DrawerEntryScreen = () => {
           const searchHistory = userData.searchHistory || [];
 
           // Update Redux or component state
-          console.log("Search history updated:", searchHistory);
           dispatch(setSearchHistory(searchHistory));
         } else {
           console.warn("User document does not exist.");
@@ -98,23 +96,42 @@ const DrawerEntryScreen = () => {
   const fetchUserSavedWordList = async () => {
     if (!uid) return; // Guard against UID being unavailable
 
-    const wordListRef = collection(db, "users", uid, "wordList"); // Reference to the user's wordList subcollection
-    const wordListQuery = query(wordListRef, orderBy("timeStamp", "desc"));
+    try {
+      // Reference to the user's wordList subcollection
+      const wordListRef = collection(db, "users", uid, "wordList");
+      const wordListQuery = query(wordListRef, orderBy("timeStamp", "desc"));
 
-    // Listen for real-time changes to the wordList
-    const unsubscribe = onSnapshot(wordListQuery, (snapshot) => {
-      const wordsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      // Listen for real-time changes to the wordList
+      const unsubscribe = onSnapshot(
+        wordListQuery,
+        (snapshot) => {
+          const wordsData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
 
-      // Dispatch the updated word list to the Redux store
-      dispatch(setSavedWordList(wordsData));
+          // Dispatch the updated word list to the Redux store
+          dispatch(setSavedWordList(wordsData));
+          setIsSettingUp(false);
+        },
+        (error) => {
+          console.error("Error listening to wordList snapshot:", error);
+          // Optionally, handle the error in the UI or with a Redux action
+          dispatch(
+            setError("Failed to fetch the word list. Please try again.")
+          );
+          setIsSettingUp(false);
+        }
+      );
+
+      // Clean up the subscription when the component unmounts or when the user changes
+      return () => unsubscribe();
+    } catch (error) {
+      console.error("Error fetching user saved word list:", error);
+      // Optionally, handle the error in the UI or with a Redux action
+      dispatch(setError("Failed to fetch the word list. Please try again."));
       setIsSettingUp(false);
-    });
-
-    // Clean up the subscription when the component unmounts or when the user changes
-    return () => unsubscribe();
+    }
   };
 
   if (isSettingUp) {
