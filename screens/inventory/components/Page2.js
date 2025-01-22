@@ -1,3 +1,5 @@
+//old file
+
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import OpenAI from "openai";
