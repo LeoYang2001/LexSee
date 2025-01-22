@@ -1,54 +1,30 @@
-import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { Audio } from "expo-av";
-import { Volume2, VolumeOff } from "lucide-react-native";
+import React from "react";
+import { Volume2 } from "lucide-react-native";
+import * as Speech from "expo-speech";
 
-const PronunciationButton = ({ audioUrl }) => {
-  const [sound, setSound] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  const playAudio = async () => {
-    if (!audioUrl) {
-      console.log("No audio available");
-      return;
-    }
-
-    if (sound) {
-      await sound.unloadAsync(); // Unload any previous sound
-    }
-
-    try {
-      const { sound: newSound } = await Audio.Sound.createAsync({
-        uri: audioUrl,
-      });
-      setSound(newSound);
-      setIsPlaying(true);
-
-      await newSound.playAsync();
-      newSound.setOnPlaybackStatusUpdate((status) => {
-        if (status.didJustFinish) {
-          setIsPlaying(false); // Reset the state when playback finishes
-        }
-      });
-    } catch (error) {
-      console.log("Error loading or playing sound:", error);
-      setIsPlaying(false);
-    }
+const PronunciationButton = ({ word, phonetics, size = 16 }) => {
+  const speak = () => {
+    const thingToSay = word;
+    Speech.speak(thingToSay);
   };
 
+  console.log(word);
   return (
-    <View>
-      <TouchableOpacity
-        onPress={playAudio}
-        className="p-2 rounded-xl bg-black flex justify-center items-center"
+    <TouchableOpacity
+      onPress={speak}
+      className="py-1 flex flex-row items-center"
+    >
+      <Text
+        style={{
+          color: "#FFFFFFB3",
+          fontSize: size,
+        }}
       >
-        {!isPlaying ? (
-          <Volume2 color={"white"} />
-        ) : (
-          <VolumeOff color={"white"} />
-        )}
-      </TouchableOpacity>
-    </View>
+        {phonetics}
+      </Text>
+      <Volume2 className="ml-2" color={"#FFFFFFB3"} size={size} />
+    </TouchableOpacity>
   );
 };
 

@@ -46,7 +46,6 @@ const ConversationPage = ({ wordItem, ifSaved }) => {
     Constants.expoConfig.extra.chatgptApiKey ||
     process.env.EXPO_DOT_CHATGPT_KEY;
 
-  console.log(`chatgptApiKey : ${chatgptApiKey}`);
   const openai = new OpenAI({
     apiKey: chatgptApiKey,
   });

@@ -4,6 +4,7 @@ import { Bookmark, Volume2 } from "lucide-react-native";
 import { BlurView } from "expo-blur";
 import SaveBtn from "../components/SaveBtn";
 import { LinearGradient } from "expo-linear-gradient";
+import PronunciationButton from "../../../components-shared/PronunciationButton";
 
 const ExpalnationPage = ({ wordItem, ifSaved }) => {
   return (
@@ -23,17 +24,11 @@ const ExpalnationPage = ({ wordItem, ifSaved }) => {
             >
               {wordItem?.id}
             </Text>
-            <TouchableOpacity className="py-2 flex flex-row items-center">
-              <Text
-                style={{
-                  color: "#FFFFFFB3",
-                  fontSize: 18,
-                }}
-              >
-                {wordItem?.phonetics.text}
-              </Text>
-              <Volume2 className="ml-2" color={"#FFFFFFB3"} size={18} />
-            </TouchableOpacity>
+            <PronunciationButton
+              word={wordItem.id}
+              phonetics={wordItem.phonetics.text}
+              size={20}
+            />
           </View>
           <SaveBtn ifSaved={ifSaved} />
         </View>
