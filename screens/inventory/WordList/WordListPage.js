@@ -1,18 +1,41 @@
-import {
-  ArrowRight,
-  ChevronDown,
-  Triangle,
-  Volume2,
-} from "lucide-react-native";
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { ChevronDown } from "lucide-react-native";
+import React, { useState } from "react";
+import { View, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 import WordCard from "./WordCard";
-import DateCard from "./DateCard";
 
 const WordListPage = () => {
+  const mockWordsList = [
+    {
+      word: "word1 ",
+      phonotics: "/wɜːd/",
+      timeStamp: "2024-12-07T14:31:19.391Z",
+    },
+    {
+      word: "word1 ",
+      phonotics: "/wɜːd/",
+      timeStamp: "2024-12-07T14:31:19.391Z",
+    },
+    ,
+    {
+      word: "word1 ",
+      phonotics: "/wɜːd/",
+      timeStamp: "2023-11-07T14:31:19.391Z",
+    },
+    ,
+    {
+      word: "word1 ",
+      phonotics: "/wɜːd/",
+      timeStamp: "2023-11-07T14:31:19.391Z",
+    },
+  ];
+
+  const [sortMethod, setSortMethod] = useState("desc");
+
+  const toggleSort = () => {
+    setSortMethod(sortMethod === "desc" ? "asc" : "desc");
+  };
+
   return (
     <View>
       {/*Sort*/}
@@ -20,11 +43,28 @@ const WordListPage = () => {
         style={{ width: "100%", height: 58 }}
         className="justify-around items-center flex flex-row"
       >
-        <TouchableOpacity className="flex flex-row flex-1 justify-center items-center">
+        <TouchableOpacity
+          onPress={toggleSort}
+          className="flex flex-row flex-1 justify-center items-center"
+        >
           <Text style={{ fontSize: 14, opacity: 0.7 }} className="text-white">
-            Descending time
+            {sortMethod === "desc" ? "Descending time" : "Ascending time"}
           </Text>
-          <ChevronDown color="white" size={10} />
+
+          <View
+            style={{
+              width: 0,
+              height: 0,
+              borderLeftWidth: 5,
+              borderRightWidth: 5,
+              borderBottomWidth: 8,
+              borderLeftColor: "transparent",
+              borderRightColor: "transparent",
+              borderBottomColor: "#ffffffa1",
+              marginLeft: 5,
+              transform: `rotate(${sortMethod === "desc" ? 180 : 0}deg)`,
+            }}
+          />
         </TouchableOpacity>
         <TouchableOpacity className="flex flex-row flex-1 justify-center items-center">
           <Text style={{ fontSize: 14, opacity: 0.7 }} className="text-white">
@@ -33,15 +73,16 @@ const WordListPage = () => {
           <ChevronDown color="white" size={10} />
         </TouchableOpacity>
       </View>
-      {/*date*/}
-      <DateCard date="2024/12/08"> </DateCard>
       {/*Card*/}
-      <WordCard word="Bluff" pronunciation="/blʌf/" />
-      <WordCard word="Infant" pronunciation="/ɪkˈsplɔː(r)/" />
-      <DateCard date="2024/12/08"> </DateCard>
-      <WordCard word="Bluff" pronunciation="/blʌf/" />
-      <DateCard date="2024/12/08"> </DateCard>
-      <WordCard word="Infant" pronunciation="/ɪkˈsplɔː(r)/" />
+      {mockWordsList.map((worditem, index) => {
+        return (
+          <WordCard
+            word={worditem.word}
+            pronunciation={worditem.phonotics}
+            key={index}
+          />
+        );
+      })}
     </View>
   );
 };
