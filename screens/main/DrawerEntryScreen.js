@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
@@ -7,10 +7,19 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import MainScreen from "./MainScreen";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
 import WordListScreen from "../inventory/WordListScreen";
 import InventoryScreen from "../inventory/InventoryScreen";
 
+import {
+  collection,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
+import { setSavedWordList, setSearchHistory } from "../../slices/userInfoSlice";
 
 const Drawer = createDrawerNavigator();
 
@@ -44,10 +53,77 @@ const CustomDrawerContent = (props) => {
   );
 };
 
-const DrawerEntryScreen = ({ route }) => {
-  const savedWord = route.params?.savedWord
-    ? route.params?.savedWord
-    : undefined;
+const DrawerEntryScreen = () => {
+  const [isSettingUp, setIsSettingUp] = useState(true);
+
+  const dispatch = useDispatch();
+  const uid = auth.currentUser?.uid; // Get current user UID
+
+  useEffect(() => {
+    if (uid) {
+      fetchUserSavedWordList();
+      fetchSearchHistory();
+    }
+  }, [uid]); // Re-run if UID changes (i.e., on login/logout)
+
+  const fetchSearchHistory = async () => {
+    if (!uid) return; // Guard against missing UID
+    try {
+      const userDocRef = doc(db, "users", uid); // Reference to the user's document
+
+      // Real-time listener for changes in the document
+      const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+        console.log("fetch search history...");
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+
+          // Access the searchHistory field
+          const searchHistory = userData.searchHistory || [];
+
+          // Update Redux or component state
+          console.log("Search history updated:", searchHistory);
+          dispatch(setSearchHistory(searchHistory));
+        } else {
+          console.warn("User document does not exist.");
+        }
+      });
+
+      // Return unsubscribe function to clean up listener when needed
+      return unsubscribe;
+    } catch (error) {
+      console.error("Error fetching search history:", error);
+    }
+  };
+
+  const fetchUserSavedWordList = async () => {
+    if (!uid) return; // Guard against UID being unavailable
+
+    const wordListRef = collection(db, "users", uid, "wordList"); // Reference to the user's wordList subcollection
+    const wordListQuery = query(wordListRef, orderBy("timeStamp", "desc"));
+
+    // Listen for real-time changes to the wordList
+    const unsubscribe = onSnapshot(wordListQuery, (snapshot) => {
+      const wordsData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      // Dispatch the updated word list to the Redux store
+      dispatch(setSavedWordList(wordsData));
+      setIsSettingUp(false);
+    });
+
+    // Clean up the subscription when the component unmounts or when the user changes
+    return () => unsubscribe();
+  };
+
+  if (isSettingUp) {
+    return (
+      <View className="flex w-full h-full justify-center items-center">
+        <Text>Settingup...</Text>
+      </View>
+    );
+  }
 
   return (
     <Drawer.Navigator
@@ -69,7 +145,7 @@ const DrawerEntryScreen = ({ route }) => {
           ),
         }}
       >
-        {(props) => <MainScreen {...props} savedWord={savedWord} />}
+        {(props) => <MainScreen {...props} />}
       </Drawer.Screen>
       <Drawer.Screen
         name="WordList"

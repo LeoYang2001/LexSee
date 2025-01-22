@@ -8,7 +8,6 @@ import { app, auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { AppRegistry } from "react-native";
 import { expo } from "./app.json";
-import Constants from "expo-constants";
 import LoginWelcomeScreen from "./screens/auth/LoginWelcomeScreen";
 import SignInScreen from "./screens/auth/SignInScreen";
 import SignUpScreen from "./screens/auth/SignUpScreen";
@@ -16,12 +15,15 @@ import EmailVerificationScreen from "./screens/auth/EmailVerificationScreen";
 import DrawerEntryScreen from "./screens/main/DrawerEntryScreen";
 import MainScreen from "./screens/main/MainScreen";
 import DefinitionScreen from "./screens/definition/DefinitionScreen";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import WordSearchScreen from "./screens/wordSearch/WordSearchScreen";
+import { Provider } from "react-redux";
+import store from "./store";
+import MyLoading from "./components-shared/loading/MyLoading";
 
 //Handling App Crash Cases
 
 const appName = expo.name;
-
-console.log(Constants.expoConfig.extra);
 
 function Loading({ navigation }) {
   React.useEffect(() => {
@@ -30,8 +32,6 @@ function Loading({ navigation }) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/auth.user
         const userVerified = user.emailVerified;
-        const uid = user.uid;
-        console.log(uid);
         if (userVerified) {
           navigation.replace("DrawerEntry");
         } else {
@@ -56,26 +56,31 @@ const Stack = createNativeStackNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-        initialRouteName="Loading"
-      >
-        <Stack.Screen name="Loading" component={Loading} />
-        <Stack.Screen name="LoginWelcome" component={LoginWelcomeScreen} />
-        <Stack.Screen name="SignIn" component={SignInScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="DrawerEntry" component={DrawerEntryScreen} />
-        <Stack.Screen name="Main" component={MainScreen} />
-        <Stack.Screen name="Definition" component={DefinitionScreen} />
-        <Stack.Screen
-          name="EmailVerification"
-          component={EmailVerificationScreen}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <GestureHandlerRootView>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+            }}
+            initialRouteName="Loading"
+          >
+            <Stack.Screen name="Loading" component={Loading} />
+            <Stack.Screen name="LoginWelcome" component={LoginWelcomeScreen} />
+            <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="DrawerEntry" component={DrawerEntryScreen} />
+            <Stack.Screen name="Main" component={MainScreen} />
+            <Stack.Screen name="WordSearch" component={WordSearchScreen} />
+            <Stack.Screen name="Definition" component={DefinitionScreen} />
+            <Stack.Screen
+              name="EmailVerification"
+              component={EmailVerificationScreen}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </GestureHandlerRootView>
+    </Provider>
   );
 }
 

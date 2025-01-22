@@ -102,7 +102,6 @@ const SignUpScreen = ({ navigation }) => {
           console.error("Error sending verification email:", error);
           setErrorMessage("Failed to send verification email");
         }
-        console.log(user);
       })
       .catch((error) => {
         const errorMessage = error.code;

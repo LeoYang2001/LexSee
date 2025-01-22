@@ -109,7 +109,6 @@ const SignInScreen = ({ navigation }) => {
                 ...doc.data(),
               }));
 
-              console.log(wordsData[0]);
               navigation.navigate("DrawerEntry", { savedWord: wordsData[0] }); // Navigate to the main app if verified
             });
           } catch (error) {
