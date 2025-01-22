@@ -38,9 +38,11 @@ const MainScreen = ({ navigation, savedWord }) => {
   const chatgptApiKey =
     Constants.expoConfig.extra.chatgptApiKey ||
     process.env.EXPO_DOT_CHATGPT_KEY;
-  const openai = new OpenAI({
-    apiKey: chatgptApiKey,
-  });
+  console.log("chatgptApiKey:");
+  console.log(chatgptApiKey);
+  // const openai = new OpenAI({
+  //   apiKey: chatgptApiKey,
+  // });
 
   return (
     <TouchableWithoutFeedback

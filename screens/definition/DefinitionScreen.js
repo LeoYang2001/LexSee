@@ -23,6 +23,8 @@ const DefinitionScreen = ({ navigation, route }) => {
   const chatgptApiKey =
     Constants.expoConfig.extra.chatgptApiKey ||
     process.env.EXPO_DOT_CHATGPT_KEY;
+  console.log("chatgptApiKey:");
+  console.log(chatgptApiKey);
   const openai = new OpenAI({
     apiKey: chatgptApiKey,
   });
