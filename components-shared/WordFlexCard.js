@@ -7,6 +7,7 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
+import PronunciationButton from "./PronunciationButton";
 
 const WordFlexCard = ({ wordItem, ifActive, setActiveCardId, navigation }) => {
   if (!wordItem) return null;
@@ -79,16 +80,10 @@ const WordFlexCard = ({ wordItem, ifActive, setActiveCardId, navigation }) => {
             </TouchableOpacity>
           </View>
           <View className="flex flex-row">
-            <TouchableOpacity className="py-1 flex flex-row">
-              <Text
-                style={{
-                  color: "#FFFFFFB3",
-                }}
-              >
-                {wordItem.phonetics.text}
-              </Text>
-              <Volume2 className="ml-2" color={"#FFFFFFB3"} size={16} />
-            </TouchableOpacity>
+            <PronunciationButton
+              word={wordItem.id}
+              phonetics={wordItem.phonetics.text}
+            />
           </View>
 
           {ifActive && (
