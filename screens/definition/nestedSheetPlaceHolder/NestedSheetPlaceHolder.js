@@ -8,6 +8,8 @@ import {
 } from "@gorhom/bottom-sheet";
 import ExpalnationPage from "./ExpalnationPage";
 import ConversationPage from "./ConversationPage";
+import { useDispatch } from "react-redux";
+import { isWordInSavedList } from "../../../slices/userInfoSlice";
 
 const NestedSheetPlaceHolder = ({
   pageTitle,

@@ -95,22 +95,7 @@ const SignInScreen = ({ navigation }) => {
         // Check if the user's email is verified
         if (user.emailVerified) {
           try {
-            //get the first letter
-            const wordListRef = collection(db, "users", user.uid, "wordList"); // Reference to the user's wordList subcollection
-
-            // Query the wordList collection and order by timestamp, in descending order (newest first)
-            const wordListQuery = query(
-              wordListRef,
-              orderBy("timeStamp", "desc")
-            );
-            onSnapshot(wordListQuery, (snapshot) => {
-              const wordsData = snapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-              }));
-
-              navigation.navigate("DrawerEntry", { savedWord: wordsData[0] }); // Navigate to the main app if verified
-            });
+            navigation.navigate("DrawerEntry"); // Navigate to the main app if verified
           } catch (error) {
             console.log(error);
             setisSigningIn(false);

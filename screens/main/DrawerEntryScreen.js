@@ -109,9 +109,10 @@ const DrawerEntryScreen = () => {
             id: doc.id,
             ...doc.data(),
           }));
-
+          console.log("fetching saved words", wordsData);
           // Dispatch the updated word list to the Redux store
           dispatch(setSavedWordList(wordsData));
+          console.log("theres a change has happened");
           setIsSettingUp(false);
         },
         (error) => {

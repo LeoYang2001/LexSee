@@ -15,6 +15,9 @@ import ConversationItem, {
 import SaveBtn from "../components/SaveBtn";
 import { LinearGradient } from "expo-linear-gradient";
 
+const imgPlaceHolderUrl =
+  "https://firebasestorage.googleapis.com/v0/b/lexseev2.firebasestorage.app/o/blurryImageGallery.png?alt=media&token=5c84a962-f121-4962-9cb7-d36fcc6d7ca9";
+
 const ConversationPage = ({ wordItem, ifSaved }) => {
   const selectedDefinition =
     wordItem.meanings[0]?.definition ||
@@ -148,7 +151,7 @@ Please respond using this format exactly, with no more than 6 lines.`;
               <Volume2 className="ml-2" color={"#FFFFFFB3"} size={18} />
             </TouchableOpacity>
           </View>
-          <SaveBtn ifSaved={ifSaved} />
+          <SaveBtn wordItem={wordItem} ifSaved={ifSaved} />
         </View>
         <View className=" flex flex-row ">
           {wordItem.meanings.map((meaning, index) => (

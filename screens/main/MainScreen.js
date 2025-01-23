@@ -22,7 +22,7 @@ const MainScreen = ({ navigation }) => {
 
   const savedWordsFromStore = useSelector((state) => {
     try {
-      return JSON.parse(state.userInfo.savedWordList); // Parse the stringified word list
+      return state.userInfo.savedWordList;
     } catch (error) {
       console.log("Error parsing savedWordList:", error);
       return [];
@@ -158,8 +158,8 @@ const MainScreen = ({ navigation }) => {
             </Text>
           </View>
           <ScrollView>
-            {savedWordsFromStore.length > 0 &&
-              savedWordsFromStore.map((word) => (
+            {savedWordsFromStore?.length > 0 &&
+              savedWordsFromStore?.map((word) => (
                 <WordFlexCard
                   navigation={navigation}
                   ifActive={activeCardId === word.id}
