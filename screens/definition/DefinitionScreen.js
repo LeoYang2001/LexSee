@@ -17,14 +17,10 @@ const DefinitionScreen = ({ navigation, route }) => {
     : route.params.wordItem;
   const [wordItem, setWordItem] = useState(initWordItem);
 
-  console.log(initWordItem);
-
   // *** AI FUNCTIONS***
   const chatgptApiKey =
     Constants.expoConfig.extra.chatgptApiKey ||
     process.env.EXPO_DOT_CHATGPT_KEY;
-  console.log("chatgptApiKey:");
-  console.log(chatgptApiKey);
   const openai = new OpenAI({
     apiKey: chatgptApiKey,
   });

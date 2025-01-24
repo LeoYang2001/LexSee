@@ -17,18 +17,6 @@ import { useSelector } from "react-redux";
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
 
-//compare saved and searched list and return a acceptable search history format
-const compareLists = (searchHistory, savedWordList) => {
-  // Create a Set of IDs from savedWordList for efficient lookup
-  const savedWordSet = new Set(savedWordList.map((word) => word.id));
-
-  // Map over searchHistory and check if each word exists in savedWordSet
-  return searchHistory.map((word) => ({
-    word,
-    ifSaved: savedWordSet.has(word),
-  }));
-};
-
 const WordSearchScreen = ({ navigation }) => {
   //Search Bar Functions
   const [inputText, setInputText] = useState("");
@@ -38,23 +26,15 @@ const WordSearchScreen = ({ navigation }) => {
   const uid = auth.currentUser?.uid;
 
   //SearchedHistory will be fetched from firebase
-  const searchHistory = useSelector((state) => {
-    try {
-      return state.userInfo.searchHistory; // Parse the stringified word list
-    } catch (error) {
-      console.log("Error parsing savedWordList:", error);
-      return [];
-    }
-  });
-
-  const savedWordList = useSelector((state) => {
-    try {
-      return JSON.parse(state.userInfo.savedWordList); // Parse the stringified word list
-    } catch (error) {
-      console.log("Error parsing savedWordList:", error);
-      return [];
-    }
-  });
+  const searchedHistory =
+    useSelector((state) => {
+      try {
+        return state.userInfo.searchedHistory; // Parse the stringified word list
+      } catch (error) {
+        console.log("Error parsing savedWordList from  searchHistory:", error);
+        return [];
+      }
+    }) || [];
 
   const clearHistoryFromFirebase = async () => {
     try {
@@ -94,12 +74,6 @@ const WordSearchScreen = ({ navigation }) => {
       console.error("Error clearing search history:", error);
     }
   };
-
-  const [searchedHistory, setSearchedHistory] = useState([]);
-
-  useEffect(() => {
-    setSearchedHistory(compareLists(searchHistory, savedWordList));
-  }, [searchHistory]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -248,13 +222,16 @@ const WordSearchScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             <ScrollView className=" mt-4 flex-1 w-full">
-              {searchedHistory.reverse().map((searchedWord, index) => (
-                <SearchedWordItem
-                  navigation={navigation}
-                  key={index}
-                  searchedWord={searchedWord}
-                />
-              ))}
+              {searchedHistory
+                .slice()
+                .reverse()
+                .map((searchedWord, index) => (
+                  <SearchedWordItem
+                    navigation={navigation}
+                    key={index}
+                    searchedWord={searchedWord}
+                  />
+                ))}
             </ScrollView>
           </View>
         ) : (

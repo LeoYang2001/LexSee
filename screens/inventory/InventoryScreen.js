@@ -33,16 +33,6 @@ const InventoryScreen = ({ navigation }) => {
     transform: [{ translateX: translateBarX.value }],
   }));
 
-  const savedWordList = useSelector((state) => {
-    try {
-      return JSON.parse(state.userInfo.savedWordList); // Parse the stringified word list
-    } catch (error) {
-      console.log("Error parsing savedWordList:", error);
-      return [];
-    }
-  });
-
-
   // Handle page change on pagination header click
   const handlePageChange = (menu) => {
     if (menu === "word") {

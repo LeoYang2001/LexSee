@@ -6,6 +6,9 @@ import SaveBtn from "../components/SaveBtn";
 import { LinearGradient } from "expo-linear-gradient";
 import PronunciationButton from "../../../components-shared/PronunciationButton";
 
+const imgPlaceHolderUrl =
+  "https://firebasestorage.googleapis.com/v0/b/lexseev2.firebasestorage.app/o/blurryImageGallery.png?alt=media&token=5c84a962-f121-4962-9cb7-d36fcc6d7ca9";
+
 const ExpalnationPage = ({ wordItem, ifSaved }) => {
   return (
     <LinearGradient
@@ -30,7 +33,11 @@ const ExpalnationPage = ({ wordItem, ifSaved }) => {
               size={20}
             />
           </View>
-          <SaveBtn ifSaved={ifSaved} />
+          <SaveBtn
+            wordItem={wordItem}
+            imgUrl={imgPlaceHolderUrl}
+            ifSaved={ifSaved}
+          />
         </View>
         <View className=" flex flex-row ">
           {wordItem.meanings.map((meaning, index) => (
@@ -91,7 +98,7 @@ const ExpalnationPage = ({ wordItem, ifSaved }) => {
                 borderRadius: 12,
               }}
               source={{
-                uri: "https://res.cloudinary.com/djcyhbk2e/image/upload/c_limit,f_auto,q_50,w_1400/v1/gvv/prod/yp2b0ocwenuvu8jjv1zz",
+                uri: imgPlaceHolderUrl,
               }}
               resizeMode="cover"
             />
