@@ -5,14 +5,11 @@ import { BlurView } from "expo-blur";
 import SaveBtn from "../components/SaveBtn";
 import { LinearGradient } from "expo-linear-gradient";
 import PronunciationButton from "../../../components-shared/PronunciationButton";
-import { auth } from "../../../firebase";
 
 const imgPlaceHolderUrl =
   "https://firebasestorage.googleapis.com/v0/b/lexseev2.firebasestorage.app/o/blurryImageGallery.png?alt=media&token=5c84a962-f121-4962-9cb7-d36fcc6d7ca9";
 
 const ExpalnationPage = ({ wordItem, ifSaved }) => {
-  const uid = auth.currentUser?.uid;
-
   return (
     <LinearGradient
       colors={["#242c3c", "#1d1f24"]}
@@ -37,7 +34,7 @@ const ExpalnationPage = ({ wordItem, ifSaved }) => {
             />
           </View>
           <SaveBtn
-            word={wordItem}
+            wordItem={wordItem}
             imgUrl={imgPlaceHolderUrl}
             ifSaved={ifSaved}
           />

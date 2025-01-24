@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, TouchableOpacity, Animated } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
 import { Bookmark } from "lucide-react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -9,9 +9,8 @@ import {
 import { auth, db } from "../../../firebase";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 
-const SaveBtn = ({ word, imgUrl }) => {
+const SaveBtn = ({ wordItem, imgUrl }) => {
   const uid = auth.currentUser?.uid;
-
   const dispatch = useDispatch();
   const savedWordsFromStore = useSelector((state) => {
     try {
@@ -22,77 +21,109 @@ const SaveBtn = ({ word, imgUrl }) => {
     }
   });
 
-  function checkIfWordExists(word) {
-    // Loop through each item in the data array
-    return savedWordsFromStore.some((wordItem) => wordItem.id === word);
-  }
-
   const [ifSaved, setifSaved] = useState(false);
 
+  const scaleAnim = useRef(new Animated.Value(1)).current; // Initial scale
+  const colorAnim = useRef(new Animated.Value(0)).current; // Initial color state (0 for not saved, 1 for saved)
+  const [iconColor, setIconColor] = useState("#66686b"); // Default unsaved color
+
   useEffect(() => {
-    setifSaved(checkIfWordExists(word.id));
+    setifSaved(checkIfWordExists(wordItem.id));
   }, [savedWordsFromStore]);
 
-  const addWord = async (word) => {
+  useEffect(() => {
+    // Trigger animation when ifSaved changes
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 1.2, // Slight stretch
+        friction: 2,
+        useNativeDriver: true,
+      }),
+      Animated.timing(colorAnim, {
+        toValue: ifSaved ? 1 : 0,
+        duration: 300,
+        useNativeDriver: false, // For non-layout properties like color
+      }),
+    ]).start(() => {
+      Animated.spring(scaleAnim, {
+        toValue: 1, // Return to original scale
+        friction: 2,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    // Interpolate color and set it as a static value
+    const interpolatedColor = colorAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["#66686b", "#d1461e"], // From not saved to saved color
+    });
+
+    colorAnim.addListener(({ value }) => {
+      const interpolated = interpolatedColor.__getValue();
+      setIconColor(interpolated); // Update state with computed hex color
+    });
+
+    return () => {
+      colorAnim.removeAllListeners();
+    };
+  }, [ifSaved]);
+
+  const checkIfWordExists = (word_id) =>
+    savedWordsFromStore.some((wordItem) => wordItem.id === word_id);
+
+  const addWord = async (wordItem) => {
     const packetizedWord = {
-      ...word,
+      ...wordItem,
       imgUrl,
       timeStamp: new Date().toISOString(),
     };
-    // Optimistically update Redux
     dispatch(addWordToSavedList(packetizedWord));
-
     try {
-      await setDoc(doc(db, "users", uid, "wordList", word.id), packetizedWord);
+      await setDoc(
+        doc(db, "users", uid, "wordList", wordItem.id),
+        packetizedWord
+      );
       console.log("Word saved successfully!");
     } catch (error) {
       console.error("Error saving word:", error);
     }
   };
 
-  const removeWord = async (word) => {
-    // Optimistically update Redux by removing the word
-    dispatch(removeWordFromSavedList(word));
-
-    const wordDocRef = doc(db, "users", uid, "wordList", word.id); // Reference to the specific word document
-
+  const removeWord = async (wordItem) => {
+    dispatch(removeWordFromSavedList(wordItem));
+    const wordDocRef = doc(db, "users", uid, "wordList", wordItem.id);
     try {
-      await deleteDoc(wordDocRef); // Delete the document
-      console.log(`Word with ID ${word.id} deleted successfully.`);
+      await deleteDoc(wordDocRef);
+      console.log(`Word with ID ${wordItem.id} deleted successfully.`);
     } catch (error) {
       console.error("Error deleting word:", error);
     }
   };
 
-  return ifSaved ? (
+  return (
     <TouchableOpacity
       style={{
         width: 48,
         height: 48,
         borderRadius: 12,
-        backgroundColor: "#3f3339",
+        backgroundColor: ifSaved ? "#3f3339" : "#39404e",
       }}
       className="flex justify-center items-center"
       onPress={() => {
-        removeWord(word);
+        if (ifSaved) {
+          removeWord(wordItem);
+        } else {
+          addWord(wordItem);
+        }
       }}
     >
-      <Bookmark color={"#d1461e"} fill={"#d1461e"} />
-    </TouchableOpacity>
-  ) : (
-    <TouchableOpacity
-      style={{
-        width: 48,
-        height: 48,
-        borderRadius: 12,
-        backgroundColor: "#39404e",
-      }}
-      className="flex justify-center items-center"
-      onPress={() => {
-        addWord(word);
-      }}
-    >
-      <Bookmark color={"#66686b"} fill={"#66686b"} />
+      <Animated.View
+        style={{
+          transform: [{ scale: scaleAnim }],
+        }}
+      >
+        <Bookmark color={iconColor} fill={iconColor} />
+      </Animated.View>
     </TouchableOpacity>
   );
 };
