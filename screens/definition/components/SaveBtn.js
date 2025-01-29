@@ -36,18 +36,17 @@ const SaveBtn = ({ wordItem, imgUrl }) => {
     Animated.parallel([
       Animated.spring(scaleAnim, {
         toValue: 1.2, // Slight stretch
-        friction: 2,
+        friction: 3,
         useNativeDriver: true,
       }),
       Animated.timing(colorAnim, {
         toValue: ifSaved ? 1 : 0,
-        duration: 300,
+        duration: 100,
         useNativeDriver: false, // For non-layout properties like color
       }),
     ]).start(() => {
       Animated.spring(scaleAnim, {
         toValue: 1, // Return to original scale
-        friction: 2,
         useNativeDriver: true,
       }).start();
     });
