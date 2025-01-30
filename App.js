@@ -20,6 +20,7 @@ import WordSearchScreen from "./screens/wordSearch/WordSearchScreen";
 import { Provider } from "react-redux";
 import store from "./store";
 import MyLoading from "./components-shared/loading/MyLoading";
+import InventoryScreen from "./screens/inventory/InventoryScreen";
 
 //Handling App Crash Cases
 
@@ -77,6 +78,7 @@ function App() {
               name="EmailVerification"
               component={EmailVerificationScreen}
             />
+            <Stack.Screen name="Inventory" component={InventoryScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </GestureHandlerRootView>

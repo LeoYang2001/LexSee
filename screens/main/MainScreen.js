@@ -128,7 +128,7 @@ const MainScreen = ({ navigation }) => {
         </TouchableOpacity>
         {/* Inventory Statistic  */}
         <View className="mt-8">
-          <InventoryStatistic />
+          <InventoryStatistic navigation={navigation} />
         </View>
         <View
           style={{

@@ -8,7 +8,6 @@ import {
 } from "@react-navigation/drawer";
 import MainScreen from "./MainScreen";
 import { auth, db } from "../../firebase";
-import WordListScreen from "../inventory/WordListScreen";
 import InventoryScreen from "../inventory/InventoryScreen";
 
 import {
@@ -20,6 +19,7 @@ import {
 } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { setSavedWordList, setSearchHistory } from "../../slices/userInfoSlice";
+import { setList } from "../../slices/languageSlice";
 
 const Drawer = createDrawerNavigator();
 
@@ -63,8 +63,24 @@ const DrawerEntryScreen = () => {
     if (uid) {
       fetchUserSavedWordList();
       fetchSearchHistory();
+      fetchLanguageList();
     }
   }, [uid]); // Re-run if UID changes (i.e., on login/logout)
+
+  const fetchLanguageList = async () => {
+    const apiPoint = `https://apifree.forvo.com/key/2319e40ba1cbae8dc8a250c59df43868/format/json/action/language-list/order/name`;
+    if (!uid) return;
+    try {
+      const response = await fetch(apiPoint);
+      const data = await response.json();
+
+      if (data?.items?.length > 0) {
+        dispatch(setList(data.items));
+      }
+    } catch (error) {
+      console.error("Error fetching language list:", error);
+    }
+  };
 
   const fetchSearchHistory = async () => {
     if (!uid) return; // Guard against missing UID
@@ -109,10 +125,8 @@ const DrawerEntryScreen = () => {
             id: doc.id,
             ...doc.data(),
           }));
-          console.log("fetching saved words", wordsData);
           // Dispatch the updated word list to the Redux store
           dispatch(setSavedWordList(wordsData));
-          console.log("theres a change has happened");
           setIsSettingUp(false);
         },
         (error) => {
