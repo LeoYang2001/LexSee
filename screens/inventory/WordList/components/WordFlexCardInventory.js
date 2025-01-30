@@ -6,7 +6,7 @@ import Animated, {
   withSpring,
   useAnimatedStyle,
 } from "react-native-reanimated";
-import PronunciationButton from "../../../components-shared/PronunciationButton";
+import PronunciationButton from "../../../../components-shared/PronunciationButton";
 
 const WordFlexCardInventory = ({ wordItem, navigation }) => {
   if (!wordItem) return null;

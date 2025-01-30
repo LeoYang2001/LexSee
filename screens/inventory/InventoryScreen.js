@@ -1,11 +1,5 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-  StyleSheet,
-} from "react-native";
-import React from "react";
+import { View, Text, TouchableOpacity, Dimensions } from "react-native";
+import React, { useState } from "react";
 
 import Animated, {
   useSharedValue,
@@ -42,8 +36,11 @@ const InventoryScreen = ({ navigation }) => {
     }
   };
 
+  //Story Creation related data
+  const [isGeneratingStory, setIsGeneratingStory] = useState(false);
+
   return (
-    <View className="bg-black  h-full w-full pt-16 flex flex-col ">
+    <View className="bg-black  overflow-hidden  h-full w-full pt-16 flex flex-col ">
       {/* HEADER  */}
       <View className="z-20 flex flex-row   items-center justify-between">
         <TouchableOpacity
@@ -115,10 +112,14 @@ const InventoryScreen = ({ navigation }) => {
         style={[{ width: 2 * SCREEN_WIDTH }, animatedStyle]}
       >
         <View className="h-full" style={{ width: SCREEN_WIDTH }}>
-          <WordListPage navigation={navigation} />
+          <WordListPage
+            setIsGeneratingStory={setIsGeneratingStory}
+            navigation={navigation}
+            handlePageChange={handlePageChange}
+          />
         </View>
         <View className="h-full " style={{ width: SCREEN_WIDTH }}>
-          <StoryListPage />
+          <StoryListPage isGeneratingStory={isGeneratingStory} />
         </View>
       </Animated.View>
     </View>

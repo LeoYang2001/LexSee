@@ -2,14 +2,16 @@ import { ChevronDown } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, Pressable } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import WordCard from "./WordCard";
 import { useSelector } from "react-redux";
-import WordCardForStory from "./WordCardForStory";
 import StoryToolBar from "../components/StoryToolBar";
+import WordCardForStory from "./components/WordCardForStory";
+import WordCard from "./components/WordCard";
 
 const groupWordsByDate = (wordsList) => {
   // Sort words by timestamp in descending order (latest first)
-  wordsList.sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp));
+  wordsList
+    .slice()
+    .sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp));
 
   // Group words by date
   const groupedWords = wordsList.reduce((acc, word) => {
@@ -30,7 +32,11 @@ const groupWordsByDate = (wordsList) => {
   return Object.values(groupedWords);
 };
 
-const WordListPage = ({ navigation }) => {
+const WordListPage = ({
+  navigation,
+  setIsGeneratingStory,
+  handlePageChange,
+}) => {
   const savedWordsFromStore = useSelector((state) => {
     try {
       return state.userInfo.savedWordList;
@@ -71,6 +77,7 @@ const WordListPage = ({ navigation }) => {
   };
 
   const resetSelection = (data) => {
+    console.log("resetting selection");
     return data.map((group) => ({
       ...group,
       wordsList: group.wordsList.map((word) => ({
@@ -84,7 +91,46 @@ const WordListPage = ({ navigation }) => {
     //hide toolbar
     setIfCreatingStory(false);
     //reset
-    resetSelection(sortedWordsList);
+    setSortedWordsList(resetSelection(sortedWordsList));
+  };
+
+  //get selected words
+  // Get selected words and transform the structure as required
+  const getSelectedWords = (data) => {
+    const currentTimestamp = new Date().toISOString(); // Get the current timestamp when the function is called
+
+    return {
+      lastEditedTimeStamp: currentTimestamp,
+      storyWords: data.flatMap(
+        (group) =>
+          group.wordsList
+            .filter((word) => word.ifSelectedForStory) // Filter selected words
+            .map(
+              ({ ifSelectedForStory, ...wordWithoutFlag }) => wordWithoutFlag
+            ) // Remove the property
+      ),
+    };
+  };
+
+  //Go to story page and create story
+  const handleCreatingStory = () => {
+    //step 0 get selected words
+    const selectedWords = getSelectedWords(sortedWordsList);
+    console.log(selectedWords);
+    //step 1 reset and hide toolBar
+    cancelToolBar();
+
+    //step 2: switch to page story and display loading component
+    handlePageChange("story");
+    setIsGeneratingStory(true);
+
+    //step 3: fetching story and update storyList (global variable)
+    setTimeout(() => {
+      console.log("Story fetched");
+
+      //step4: hide loading component
+      setIsGeneratingStory(false);
+    }, 3000); // Mimic a 3-second delay
   };
 
   const toggleSort = () => {
@@ -98,6 +144,7 @@ const WordListPage = ({ navigation }) => {
         <View className="absolute  w-full px-2 bottom-8 z-50">
           <StoryToolBar
             cancelToolBar={cancelToolBar}
+            handleCreatingStory={handleCreatingStory}
             sortedWordsList={sortedWordsList}
           />
         </View>
@@ -188,6 +235,7 @@ const WordListPage = ({ navigation }) => {
                       <Pressable
                         onLongPress={() => {
                           setIfCreatingStory(true);
+                          toggleWordSelection(wordItem.id);
                         }}
                       >
                         <WordCard
