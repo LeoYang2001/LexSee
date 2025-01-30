@@ -1,13 +1,11 @@
 import {
   View,
   Text,
-  Image,
   TouchableOpacity,
-  ActivityIndicator,
   Dimensions,
   StyleSheet,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import Animated, {
   useSharedValue,
@@ -17,9 +15,8 @@ import Animated, {
 import StoryListPage from "./StoryList/StoryListPage";
 import WordListPage from "./WordList/WordListPage";
 import { ChevronLeft, Search } from "lucide-react-native";
-import { useSelector } from "react-redux";
 
-const { width: SCREEN_WIDTH, height: screenHeight } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const InventoryScreen = ({ navigation }) => {
   const translateX = useSharedValue(0); // Shared value for horizontal translation
@@ -46,7 +43,7 @@ const InventoryScreen = ({ navigation }) => {
   };
 
   return (
-    <View className="bg-black  h-full w-full pt-16  ">
+    <View className="bg-black  h-full w-full pt-16 flex flex-col ">
       {/* HEADER  */}
       <View className="z-20 flex flex-row   items-center justify-between">
         <TouchableOpacity
@@ -114,24 +111,18 @@ const InventoryScreen = ({ navigation }) => {
 
       {/* Pages */}
       <Animated.View
-        className="h-full overflow-hidden flex-row "
+        className=" flex-1   overflow-hidden flex-row "
         style={[{ width: 2 * SCREEN_WIDTH }, animatedStyle]}
       >
-        <View style={{ width: SCREEN_WIDTH }}>
-          <WordListPage />
+        <View className="h-full" style={{ width: SCREEN_WIDTH }}>
+          <WordListPage navigation={navigation} />
         </View>
-        <View style={{ width: SCREEN_WIDTH }}>
+        <View className="h-full " style={{ width: SCREEN_WIDTH }}>
           <StoryListPage />
         </View>
       </Animated.View>
     </View>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 20,
-  },
-});
 
 export default InventoryScreen;

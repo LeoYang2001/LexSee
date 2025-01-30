@@ -1,12 +1,16 @@
-import { View, Text, ImageBackground } from "react-native";
+import { View, Text, ImageBackground, TouchableOpacity } from "react-native";
 import React from "react";
+import { useSelector } from "react-redux";
 
-const InventoryStatistic = () => {
-  const mockData = {
-    rank: "Beginner",
-    todayCount: 0,
-    total: 16,
-  };
+const InventoryStatistic = ({ navigation }) => {
+  const savedWordsFromStore = useSelector((state) => {
+    try {
+      return state.userInfo.savedWordList;
+    } catch (error) {
+      console.log("Error parsing savedWordList:", error);
+      return [];
+    }
+  });
 
   return (
     <View
@@ -20,7 +24,7 @@ const InventoryStatistic = () => {
       <View className=" h-full w-full z-20 flex flex-row justify-between items-center  px-6">
         <View className=" flex flex-col h-full gap-2  flex-1 justify-center items-start">
           <Text style={{ fontSize: 24 }} className=" font-semibold text-white">
-            {mockData.rank}
+            Beginner
           </Text>
           <Text
             style={{
@@ -32,9 +36,14 @@ const InventoryStatistic = () => {
             Rank
           </Text>
         </View>
-        <View className=" flex flex-col h-full gap-2   flex-1 justify-center items-center">
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Inventory");
+          }}
+          className=" flex flex-col h-full gap-2  ml-auto  flex-1 justify-center items-center"
+        >
           <Text style={{ fontSize: 24 }} className=" font-semibold text-white">
-            {mockData.todayCount}
+            {savedWordsFromStore.length}
           </Text>
           <Text
             style={{
@@ -43,12 +52,12 @@ const InventoryStatistic = () => {
             }}
             className="text-white"
           >
-            Today
+            Word
           </Text>
-        </View>
-        <View className=" flex flex-col h-full gap-2   flex-1 justify-center items-end">
+        </TouchableOpacity>
+        <TouchableOpacity className=" flex flex-col h-full gap-2   flex-1 justify-center items-center">
           <Text style={{ fontSize: 24 }} className=" font-semibold text-white">
-            {mockData.total}
+            0
           </Text>
           <Text
             style={{
@@ -57,9 +66,9 @@ const InventoryStatistic = () => {
             }}
             className="text-white"
           >
-            total
+            Story
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
       <ImageBackground
         style={{ width: 140, height: 110 }}
