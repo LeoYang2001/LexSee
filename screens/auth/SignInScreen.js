@@ -132,7 +132,7 @@ const SignInScreen = ({ navigation }) => {
       <View className="bg-black h-full w-full">
         {/* background */}
         <ImageBackground
-          style={{ height: "78%" }}
+          style={{ height: "75%" }}
           source={require("../../assets/signInBackground.png")}
           resizeMode="cover"
           className="flex flex-col justify-center"
@@ -144,7 +144,7 @@ const SignInScreen = ({ navigation }) => {
         >
           <View className="h-40"></View>
           <Text style={styles.registerText} className="text-white">
-            Register with Email
+            Sign in
           </Text>
           {/* inputs */}
           <View>
@@ -153,7 +153,7 @@ const SignInScreen = ({ navigation }) => {
             </Text>
             <View className="flex-row items-center rounded-2xl relative">
               <TextInput
-                className="w-full py-4 px-4 rounded-2xl bg-white/10 backdrop-blur-lg"
+                className="w-full py-4 px-4 rounded-2xl bg-white/10 backdrop-blur-lg text-white"
                 value={email}
                 onChangeText={setEmail}
               />
@@ -163,13 +163,13 @@ const SignInScreen = ({ navigation }) => {
             </Text>
             <View className="flex-row items-center relative">
               <TextInput
-                className="w-full py-4 px-4 rounded-2xl bg-white/10 backdrop-blur-lg"
+                className="w-full py-4 px-4 rounded-2xl bg-white/10 backdrop-blur-lg text-white"
                 value={password}
                 onChangeText={setPassword}
               />
             </View>
           </View>
-          {/* register button */}
+          {/* sign in button */}
           <View>
             <View className="py-4">
               <TouchableOpacity
@@ -177,7 +177,7 @@ const SignInScreen = ({ navigation }) => {
                 className="w-full py-4 px-4 items-center"
                 onPress={signIn}
               >
-                <Text style={styles.registerButtonText}>Register</Text>
+                <Text style={styles.registerButtonText}>Sign in</Text>
               </TouchableOpacity>
             </View>
 
@@ -187,8 +187,8 @@ const SignInScreen = ({ navigation }) => {
               }}
               className="flex-row justify-center items-center"
             >
-              <Text style={styles.SignInText}>Already have an account? </Text>
-              <Text className="font-semibold text-white">Sign In</Text>
+              <Text style={styles.SignInText}>Don't have an account? </Text>
+              <Text className="font-semibold text-white">Register</Text>
             </TouchableOpacity>
           </View>
           <View className="h-10"></View>
@@ -200,6 +200,24 @@ const SignInScreen = ({ navigation }) => {
             source={require("../../assets/LexSeeSignInLogo.png")}
             resizeMode="cover"
           ></Image>
+        </View>
+
+        {/* Error Message Card */}
+        <View className=" w-full absolute z-10 bottom-10">
+          <ErrorComp
+            timeDur={300}
+            setErrorMessage={setErrorMessage}
+            errorMessage={errorMessage}
+          />
+        </View>
+
+        {/* Success Message Card */}
+        <View className=" w-full absolute z-10 bottom-10">
+          <SuccessComp
+            timeDur={500}
+            setSuccessMessage={setSuccessMessage}
+            successMessage={successMessage}
+          />
         </View>
       </View>
     </TouchableWithoutFeedback>
