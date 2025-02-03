@@ -62,7 +62,7 @@ const WordFlexCardInventoryForStory = ({ wordItem, toggleWordSelection }) => {
               }}
             >
               <Image
-                source={require("../../../assets/check.png")}
+                source={require("../../../../assets/check.png")}
                 width={20}
                 height={20}
               />

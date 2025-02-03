@@ -12,6 +12,8 @@ const InventoryStatistic = ({ navigation }) => {
     }
   });
 
+  const savedStoryList = useSelector((state) => state.userInfo.savedStoryList);
+
   return (
     <View
       style={{
@@ -38,7 +40,7 @@ const InventoryStatistic = ({ navigation }) => {
         </View>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Inventory");
+            navigation.navigate("Inventory", { initialTab: "word" });
           }}
           className=" flex flex-col h-full gap-2  ml-auto  flex-1 justify-center items-center"
         >
@@ -55,9 +57,14 @@ const InventoryStatistic = ({ navigation }) => {
             Word
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity className=" flex flex-col h-full gap-2   flex-1 justify-center items-center">
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Inventory", { initialTab: "story" });
+          }}
+          className=" flex flex-col h-full gap-2   flex-1 justify-center items-center"
+        >
           <Text style={{ fontSize: 24 }} className=" font-semibold text-white">
-            0
+            {savedStoryList.length}
           </Text>
           <Text
             style={{

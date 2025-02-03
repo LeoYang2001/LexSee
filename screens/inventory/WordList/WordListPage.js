@@ -2,14 +2,26 @@ import { ChevronDown } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, Pressable } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import WordCard from "./WordCard";
 import { useSelector } from "react-redux";
-import WordCardForStory from "./WordCardForStory";
 import StoryToolBar from "../components/StoryToolBar";
+import WordCardForStory from "./components/WordCardForStory";
+import WordCard from "./components/WordCard";
+import OpenAI from "openai";
+import Constants from "expo-constants";
+import { fetchStory } from "../../../gptFunctions";
+import { auth } from "../../../firebase";
+// *** AI FUNCTIONS***
+const chatgptApiKey =
+  Constants.expoConfig.extra.chatgptApiKey || process.env.EXPO_DOT_CHATGPT_KEY;
+const openai = new OpenAI({
+  apiKey: chatgptApiKey,
+});
 
 const groupWordsByDate = (wordsList) => {
   // Sort words by timestamp in descending order (latest first)
-  wordsList.sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp));
+  wordsList
+    .slice()
+    .sort((a, b) => new Date(b.timeStamp) - new Date(a.timeStamp));
 
   // Group words by date
   const groupedWords = wordsList.reduce((acc, word) => {
@@ -30,7 +42,11 @@ const groupWordsByDate = (wordsList) => {
   return Object.values(groupedWords);
 };
 
-const WordListPage = ({ navigation }) => {
+const WordListPage = ({
+  navigation,
+  setIsGeneratingStory,
+  handlePageChange,
+}) => {
   const savedWordsFromStore = useSelector((state) => {
     try {
       return state.userInfo.savedWordList;
@@ -39,6 +55,8 @@ const WordListPage = ({ navigation }) => {
       return [];
     }
   });
+
+  const uid = auth.currentUser.uid;
 
   const wordsList_desc = groupWordsByDate(savedWordsFromStore);
   const wordsList_asc = groupWordsByDate(savedWordsFromStore).slice().reverse();
@@ -71,6 +89,7 @@ const WordListPage = ({ navigation }) => {
   };
 
   const resetSelection = (data) => {
+    console.log("resetting selection");
     return data.map((group) => ({
       ...group,
       wordsList: group.wordsList.map((word) => ({
@@ -84,7 +103,58 @@ const WordListPage = ({ navigation }) => {
     //hide toolbar
     setIfCreatingStory(false);
     //reset
-    resetSelection(sortedWordsList);
+    setSortedWordsList(resetSelection(sortedWordsList));
+  };
+
+  //get selected words
+  // Get selected words and transform the structure as required
+  const getSelectedWords = (data) => {
+    const currentTimestamp = new Date().toISOString(); // Get the current timestamp when the function is called
+
+    return {
+      lastEditedTimeStamp: currentTimestamp,
+      storyWords: data.flatMap(
+        (group) =>
+          group.wordsList
+            .filter((word) => word.ifSelectedForStory) // Filter selected words
+            .map(
+              ({ ifSelectedForStory, ...wordWithoutFlag }) => wordWithoutFlag
+            ) // Remove the property
+      ),
+    };
+  };
+
+  //Go to story page and create story
+  const handleCreatingStory = async () => {
+    //step 0 get selected words
+    const selectedWords = getSelectedWords(sortedWordsList);
+    const wordsForPrompt = selectedWords.storyWords.map((word) => word.id);
+    //step 1 reset and hide toolBar
+    cancelToolBar();
+
+    //step 2: switch to page story and display loading component
+    handlePageChange("story");
+    setIsGeneratingStory(true);
+    let fetchedStory;
+    //step 3: fetching story and update storyList (global variable)
+    try {
+      fetchedStory = await fetchStory(
+        openai,
+        wordsForPrompt,
+        (language = "English")
+      );
+      console.log("Fetched Story:", fetchedStory);
+    } catch (error) {
+      console.error("Error fetching story:", error);
+    }
+
+    //step 4:
+    setIsGeneratingStory(false);
+    //step 5: navigate to the corresponding story page
+    navigation.navigate("Story", {
+      storyData: { ...fetchedStory, selectedWords },
+      ifNewStory: true,
+    });
   };
 
   const toggleSort = () => {
@@ -98,6 +168,7 @@ const WordListPage = ({ navigation }) => {
         <View className="absolute  w-full px-2 bottom-8 z-50">
           <StoryToolBar
             cancelToolBar={cancelToolBar}
+            handleCreatingStory={handleCreatingStory}
             sortedWordsList={sortedWordsList}
           />
         </View>
@@ -188,6 +259,7 @@ const WordListPage = ({ navigation }) => {
                       <Pressable
                         onLongPress={() => {
                           setIfCreatingStory(true);
+                          toggleWordSelection(wordItem.id);
                         }}
                       >
                         <WordCard

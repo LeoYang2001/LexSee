@@ -10,6 +10,7 @@ const initialState = {
   savedWordList: [],
   searchHistory: [],
   searchedHistory: [], // Derived state: combines searchHistory with savedWordList
+  savedStoryList: [], // NEW: List of saved stories
 };
 
 const userInfoSlice = createSlice({
@@ -44,7 +45,6 @@ const userInfoSlice = createSlice({
       }
     },
     removeWordFromSavedList: (state, action) => {
-      // Optimistic update to the Redux state
       state.savedWordList = state.savedWordList.filter(
         (word) => word.id !== action.payload.id
       );
@@ -58,9 +58,26 @@ const userInfoSlice = createSlice({
       }
     },
     removeFromSearchHistory: (state, action) => {
-      // Optimistic update to the Redux state
       state.searchHistory = state.searchHistory.filter(
         (item) => item !== action.payload
+      );
+    },
+
+    // NEW: Actions for saved stories
+    setSavedStoryList: (state, action) => {
+      state.savedStoryList = action.payload;
+    },
+    addStoryToSavedList: (state, action) => {
+      const exists = state.savedStoryList.some(
+        (story) => story.storyId === action.payload.storyId
+      );
+      if (!exists) {
+        state.savedStoryList.push(action.payload);
+      }
+    },
+    removeStoryFromSavedList: (state, action) => {
+      state.savedStoryList = state.savedStoryList.filter(
+        (story) => story.storyId !== action.payload.storyId
       );
     },
   },
@@ -83,6 +100,9 @@ export const {
   removeWordFromSavedList,
   addToSearchHistory,
   removeFromSearchHistory,
+  setSavedStoryList,
+  addStoryToSavedList,
+  removeStoryFromSavedList,
 } = userInfoSlice.actions;
 
 export default userInfoSlice.reducer;
