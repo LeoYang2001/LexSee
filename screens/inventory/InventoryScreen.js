@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Dimensions } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Animated, {
   useSharedValue,
@@ -12,7 +12,9 @@ import { ChevronLeft, Search } from "lucide-react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-const InventoryScreen = ({ navigation }) => {
+const InventoryScreen = ({ navigation, route }) => {
+  const initialTab = route.params.initialTab;
+
   const translateX = useSharedValue(0); // Shared value for horizontal translation
   const translateBarX = useSharedValue(0); // Shared value for horizontal translation
 
@@ -35,6 +37,10 @@ const InventoryScreen = ({ navigation }) => {
       translateBarX.value = withTiming(78);
     }
   };
+
+  useEffect(() => {
+    handlePageChange(initialTab);
+  }, []);
 
   //Story Creation related data
   const [isGeneratingStory, setIsGeneratingStory] = useState(false);
@@ -119,7 +125,10 @@ const InventoryScreen = ({ navigation }) => {
           />
         </View>
         <View className="h-full " style={{ width: SCREEN_WIDTH }}>
-          <StoryListPage isGeneratingStory={isGeneratingStory} />
+          <StoryListPage
+            navigation={navigation}
+            isGeneratingStory={isGeneratingStory}
+          />
         </View>
       </Animated.View>
     </View>

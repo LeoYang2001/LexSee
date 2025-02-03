@@ -53,16 +53,22 @@ export const StoryFolderItemLoading = () => {
       }}
     >
       <SvgComponent />
-      <Text className="text-xl font-semibold text-white">{creatingText}</Text>
+      <Text className="text-lg mt-12  font-semibold text-white opacity-60">
+        {creatingText}
+      </Text>
     </View>
   );
 };
 
-const StoryFolderItem = ({ storyItem }) => {
+const StoryFolderItem = ({ storyItem, navigation }) => {
+  const selectedWords = storyItem?.selectedWords;
   const generateSymmetricDegrees = (n) => {
     if (n <= 0) return [];
+
+    let maxAbsDegree = 20; // Maximum allowed absolute degree
+    let step = Math.max(1, Math.floor(maxAbsDegree / (n / 2))); // Adjust step based on n
     const degrees = [];
-    const step = 7;
+
     for (let i = 0; i < n; i++) {
       const offset = Math.ceil(i / 2) * step * (i % 2 === 0 ? 1 : -1);
       degrees.push(offset);
@@ -71,18 +77,23 @@ const StoryFolderItem = ({ storyItem }) => {
     return degrees.sort((a, b) => a - b);
   };
 
-  const degreeArray = generateSymmetricDegrees(storyItem.storyWords.length);
-
+  const degreeArray = generateSymmetricDegrees(selectedWords.storyWords.length);
   return (
     <TouchableOpacity
-      className="w-full  mb-4 flex justify-center items-center"
+      onPress={() => {
+        navigation.navigate("Story", {
+          storyData: { ...storyItem },
+          ifNewStory: false,
+        });
+      }}
+      className="w-full  mb-4 flex  overflow-hidden justify-center items-center"
       style={{
         height: 188,
         borderRadius: 16,
         backgroundColor: "#15181E",
       }}
     >
-      {storyItem?.storyWords?.map((wordItem, index) => (
+      {selectedWords?.storyWords?.map((wordItem, index) => (
         <WordPicCard
           rotateDegree={degreeArray[index]}
           key={wordItem.id}
@@ -106,19 +117,24 @@ const StoryFolderItem = ({ storyItem }) => {
                 fontSize: 10,
               }}
             >
-              Last edited{" "}
-              {convertTimestampToDateFormat(storyItem.lastEditedTimeStamp)}
+              Last edited {convertTimestampToDateFormat(storyItem.createdAt)}
             </Text>
-            <Text
-              className="font-semibold"
+            <View
               style={{
-                fontSize: 18,
-                color: "#fff",
-                opacity: 0.9,
+                maxWidth: "90%",
               }}
             >
-              Story Name
-            </Text>
+              <Text
+                className="font-semibold"
+                style={{
+                  fontSize: 18,
+                  color: "#fff",
+                  opacity: 0.9,
+                }}
+              >
+                {storyItem.storyName}
+              </Text>
+            </View>
           </View>
           <View>
             <Text
@@ -129,7 +145,7 @@ const StoryFolderItem = ({ storyItem }) => {
                 opacity: 0.3,
               }}
             >
-              {storyItem.storyWords.length} Words
+              {selectedWords?.storyWords?.length} Words
             </Text>
           </View>
         </View>

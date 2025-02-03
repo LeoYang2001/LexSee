@@ -26,7 +26,7 @@ const StoryToolBar = ({
 
   const toolBarList = [
     {
-      label: "Add",
+      label: "Delete    ",
       icon: () => {
         return (
           <Bookmark color={"#fff"} fill={"#fff"} size={28} opacity={0.8} />

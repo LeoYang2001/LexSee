@@ -6,6 +6,16 @@ import { useSelector } from "react-redux";
 import StoryToolBar from "../components/StoryToolBar";
 import WordCardForStory from "./components/WordCardForStory";
 import WordCard from "./components/WordCard";
+import OpenAI from "openai";
+import Constants from "expo-constants";
+import { fetchStory } from "../../../gptFunctions";
+import { auth } from "../../../firebase";
+// *** AI FUNCTIONS***
+const chatgptApiKey =
+  Constants.expoConfig.extra.chatgptApiKey || process.env.EXPO_DOT_CHATGPT_KEY;
+const openai = new OpenAI({
+  apiKey: chatgptApiKey,
+});
 
 const groupWordsByDate = (wordsList) => {
   // Sort words by timestamp in descending order (latest first)
@@ -45,6 +55,8 @@ const WordListPage = ({
       return [];
     }
   });
+
+  const uid = auth.currentUser.uid;
 
   const wordsList_desc = groupWordsByDate(savedWordsFromStore);
   const wordsList_asc = groupWordsByDate(savedWordsFromStore).slice().reverse();
@@ -113,24 +125,36 @@ const WordListPage = ({
   };
 
   //Go to story page and create story
-  const handleCreatingStory = () => {
+  const handleCreatingStory = async () => {
     //step 0 get selected words
     const selectedWords = getSelectedWords(sortedWordsList);
-    console.log(selectedWords);
+    const wordsForPrompt = selectedWords.storyWords.map((word) => word.id);
     //step 1 reset and hide toolBar
     cancelToolBar();
 
     //step 2: switch to page story and display loading component
     handlePageChange("story");
     setIsGeneratingStory(true);
-
+    let fetchedStory;
     //step 3: fetching story and update storyList (global variable)
-    setTimeout(() => {
-      console.log("Story fetched");
+    try {
+      fetchedStory = await fetchStory(
+        openai,
+        wordsForPrompt,
+        (language = "English")
+      );
+      console.log("Fetched Story:", fetchedStory);
+    } catch (error) {
+      console.error("Error fetching story:", error);
+    }
 
-      //step4: hide loading component
-      setIsGeneratingStory(false);
-    }, 3000); // Mimic a 3-second delay
+    //step 4:
+    setIsGeneratingStory(false);
+    //step 5: navigate to the corresponding story page
+    navigation.navigate("Story", {
+      storyData: { ...fetchedStory, selectedWords },
+      ifNewStory: true,
+    });
   };
 
   const toggleSort = () => {
