@@ -23,6 +23,7 @@ import * as Haptics from "expo-haptics";
 import ErrorComp from "../../components-shared/ErrorComp";
 import SuccessComp from "../../components-shared/SuccessComp";
 import { User } from "lucide-react-native";
+import { BlurView } from "expo-blur";
 
 const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -149,31 +150,52 @@ const SignUpScreen = ({ navigation }) => {
               Email
             </Text>
             <View className="flex-row items-center rounded-2xl relative">
-              <TextInput
-                className="w-full py-4 px-4 rounded-2xl bg-white/10 backdrop-blur-lg text-white"
-                value={email}
-                onChangeText={setEmail}
-              />
+              <View
+                style={{ borderRadius: 16, overflow: "hidden" }}
+                className="w-full"
+              >
+                <BlurView className="py-4 px-4 bg-white/10">
+                  <TextInput
+                    className=" text-white"
+                    value={email}
+                    onChangeText={setEmail}
+                  />
+                </BlurView>
+              </View>
             </View>
             <Text className="mt-5 py-1" style={styles.emailText}>
               Password
             </Text>
             <View className="flex-row items-center relative">
-              <TextInput
-                className="w-full py-4 px-4 rounded-2xl bg-white/10 backdrop-blur-lg text-white"
-                value={password}
-                onChangeText={setPassword}
-              />
+              <View
+                style={{ borderRadius: 16, overflow: "hidden" }}
+                className="w-full"
+              >
+                <BlurView className="py-4 px-4 bg-white/10">
+                  <TextInput
+                    className=" text-white"
+                    value={password}
+                    onChangeText={setPassword}
+                  ></TextInput>
+                </BlurView>
+              </View>
             </View>
             <Text className="mt-5 py-1" style={styles.emailText}>
               Confirm Password
             </Text>
             <View className="flex-row items-center relative">
-              <TextInput
-                className="w-full py-4 px-4 rounded-2xl bg-white/10 backdrop-blur-lg text-white"
-                value={cfmPassword}
-                onChangeText={setCfmPassword}
-              />
+              <View
+                style={{ borderRadius: 16, overflow: "hidden" }}
+                className="w-full"
+              >
+                <BlurView className="py-4 px-4 bg-white/10">
+                  <TextInput
+                    className="text-white"
+                    value={cfmPassword}
+                    onChangeText={setCfmPassword}
+                  />
+                </BlurView>
+              </View>
             </View>
           </View>
           {/* Register button */}

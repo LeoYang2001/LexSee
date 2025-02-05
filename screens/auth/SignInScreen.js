@@ -23,6 +23,7 @@ import * as Haptics from "expo-haptics";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import ErrorComp from "../../components-shared/ErrorComp";
 import SuccessComp from "../../components-shared/SuccessComp";
+import { BlurView } from "expo-blur";
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -152,21 +153,35 @@ const SignInScreen = ({ navigation }) => {
               Email
             </Text>
             <View className="flex-row items-center rounded-2xl relative">
-              <TextInput
-                className="w-full py-4 px-4 rounded-2xl bg-white/10 backdrop-blur-lg text-white"
-                value={email}
-                onChangeText={setEmail}
-              />
+              <View
+                style={{ borderRadius: 16, overflow: "hidden" }}
+                className="w-full"
+              >
+                <BlurView className="py-4 px-4 bg-white/10">
+                  <TextInput
+                    className=" text-white "
+                    value={email}
+                    onChangeText={setEmail}
+                  />
+                </BlurView>
+              </View>
             </View>
             <Text className="mt-5 py-1" style={styles.emailText}>
               Password
             </Text>
             <View className="flex-row items-center relative">
-              <TextInput
-                className="w-full py-4 px-4 rounded-2xl bg-white/10 backdrop-blur-lg text-white"
-                value={password}
-                onChangeText={setPassword}
-              />
+              <View
+                style={{ borderRadius: 16, overflow: "hidden" }}
+                className="w-full"
+              >
+                <BlurView className="py-4 px-4 bg-white/10">
+                  <TextInput
+                    className="text-white"
+                    value={password}
+                    onChangeText={setPassword}
+                  />
+                </BlurView>
+              </View>
             </View>
           </View>
           {/* sign in button */}
