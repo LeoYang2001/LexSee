@@ -14,24 +14,26 @@ import ConversationItem, {
 } from "../components/ConversationItem";
 import SaveBtn from "../components/SaveBtn";
 import { LinearGradient } from "expo-linear-gradient";
+import { fetchConversation } from "../../../gptFunctions";
+import languageCodes from "../../../constants";
+import { useSelector } from "react-redux";
 
 const imgPlaceHolderUrl =
   "https://firebasestorage.googleapis.com/v0/b/lexseev2.firebasestorage.app/o/blurryImageGallery.png?alt=media&token=5c84a962-f121-4962-9cb7-d36fcc6d7ca9";
 
 const ConversationPage = ({ wordItem, ifSaved }) => {
-  const selectedDefinition =
-    wordItem.meanings[0]?.definition ||
-    wordItem.meanings[0]?.definitions[0]?.definition;
-
+  //SelectedLanguage
+  const selectedLanguage = useSelector(
+    (state) => state.userInfo.profile.selectedLanguage
+  );
   //   ******* FROM VERSION 1 ******
-  const { id } = wordItem;
   const [conversation, setConversation] = useState([]);
   const [displayedConversation, setDisplayedConversation] = useState([]);
   const [displayedIndex, setDisplayedIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    createConversation(selectedDefinition);
+    createConversation();
   }, []);
 
   useEffect(() => {
@@ -42,8 +44,6 @@ const ConversationPage = ({ wordItem, ifSaved }) => {
   useEffect(() => {
     setDisplayedConversation(conversation.slice(0, displayedIndex));
   }, [displayedIndex]);
-
-  console.log(Constants.expoConfig.extra);
 
   const chatgptApiKey =
     Constants.expoConfig.extra.chatgptApiKey ||
@@ -68,54 +68,11 @@ const ConversationPage = ({ wordItem, ifSaved }) => {
 
   const createConversation = async (definition = null) => {
     setIsLoading(true);
-    // Adjust the prompt based on whether a specific definition is provided
-    const userPrompt = definition
-      ? `Use the word "${id}" and its specific definition: "${definition}" to create a conversation between two people. 
-    
-Please follow these rules:
-- Limit the conversation to a maximum of 8 lines.
-- Each line should start and end with the "~" character.
-- Do not include any additional characters before or after the "~" symbols.
-- Keep the dialogue casual and natural, and use the word "${id}" in a way that reflects the provided definition.
-
-Example format:
-~Hey, did you see the movie last night?~
-~Yeah, I did! The plot was a bit obscure, though.~
-~Yeah, I know what you mean. The director is famous for creating obscure movies.~
-
-Please respond using this format exactly, with no more than 6 lines.`
-      : `Use the word "${id}" to create a conversation between two people. 
-
-Please follow these rules:
-- Limit the conversation to a maximum of 8 lines.
-- Each line should start and end with the "~" character.
-- Do not include any additional characters before or after the "~" symbols.
-- Keep the dialogue casual and natural, and use the word "${id}" at least once.
-
-Example format:
-~Hey, did you see the movie last night?~
-~Yeah, I did! The plot was a bit obscure, though.~
-~Yeah, I know what you mean. The director is famous for creating obscure movies.~
-
-Please respond using this format exactly, with no more than 6 lines.`;
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: "You are a helpful assistant." },
-        { role: "user", content: userPrompt },
-      ],
-    });
-
-    const responseText = completion.choices[0].message.content;
-    // Split response by newline and remove empty lines, then set as conversation array
-    const conversationLines = responseText
-      .split("\n")
-      .filter(
-        (line) => line.trim().startsWith("~") && line.trim().endsWith("~")
-      )
-      .map((line) => line.trim().slice(1, -1)); // Removes the first and last character (~) from each line
-
+    const conversationLines = await fetchConversation(
+      openai,
+      (word = wordItem.id),
+      (language = languageCodes[selectedLanguage])
+    );
     setConversation(conversationLines);
     setIsLoading(false);
   };
@@ -151,7 +108,11 @@ Please respond using this format exactly, with no more than 6 lines.`;
               <Volume2 className="ml-2" color={"#FFFFFFB3"} size={18} />
             </TouchableOpacity>
           </View>
-          <SaveBtn wordItem={wordItem} ifSaved={ifSaved} />
+          <SaveBtn
+            wordItem={wordItem}
+            imgUrl={imgPlaceHolderUrl}
+            ifSaved={ifSaved}
+          />
         </View>
         <View className=" flex flex-row ">
           {wordItem.meanings.map((meaning, index) => (

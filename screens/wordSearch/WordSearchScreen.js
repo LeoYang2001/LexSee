@@ -16,6 +16,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
+import languageCodes from "../../constants";
 
 const WordSearchScreen = ({ navigation }) => {
   //Search Bar Functions
@@ -23,7 +24,38 @@ const WordSearchScreen = ({ navigation }) => {
   const [wordSuggestion, setWordSuggestion] = useState([]);
   const inputRef = useRef(null);
 
+  //SelectedLanguage
+  const selectedLanguage = useSelector(
+    (state) => state.userInfo.profile.selectedLanguage
+  );
+
+  //fetch word suggestions based on selected language
+  const fetchWordSuggestion = async () => {
+    if (selectedLanguage !== "en") return;
+    try {
+      const res = await fetch(
+        `https://api.datamuse.com/sug?s=${inputText.trim()}&max=40`
+      );
+      const rs = await res.json();
+      if (rs.length > 0) setWordSuggestion(rs);
+      else setWordSuggestion([]);
+    } catch (error) {
+      console.log("word suggestion api error: ");
+      console.log(error);
+    }
+  };
+
   const uid = auth.currentUser?.uid;
+
+  const handleSearchWord = (word) => {
+    //if its not in wordsList, navigate to definition with wordItem = searchedWord.word
+    navigation.navigate("Definition", {
+      wordItem: word,
+      ifSaved: false,
+    });
+    //else, it's been saved, fetch wordItem from savedWordList
+    // and pass wordItem to the definition page
+  };
 
   //SearchedHistory will be fetched from firebase
   const searchedHistory =
@@ -91,19 +123,6 @@ const WordSearchScreen = ({ navigation }) => {
       console.log("empty suggestions..");
       setWordSuggestion([]);
     }
-    const fetchWordSuggestion = async () => {
-      try {
-        const res = await fetch(
-          `https://api.datamuse.com/sug?s=${inputText.trim()}&max=40`
-        );
-        const rs = await res.json();
-        if (rs.length > 0) setWordSuggestion(rs);
-        else setWordSuggestion([]);
-      } catch (error) {
-        console.log("word suggestion api error: ");
-        console.log(error);
-      }
-    };
 
     if (inputText.length === 0) {
       setWordSuggestion([]);
@@ -152,7 +171,7 @@ const WordSearchScreen = ({ navigation }) => {
                 }}
                 className=" mr-2"
               >
-                English
+                {languageCodes[selectedLanguage]}
               </Text>
               <View
                 style={{
@@ -183,6 +202,11 @@ const WordSearchScreen = ({ navigation }) => {
             className="text-lg w-full py-2 px-4 text-white "
             value={inputText}
             onChangeText={setInputText}
+            onEndEditing={() => {
+              if (inputText.trim()) {
+                handleSearchWord(inputText.trim());
+              }
+            }}
           />
           {inputText && (
             <Pressable
@@ -227,9 +251,9 @@ const WordSearchScreen = ({ navigation }) => {
                 .reverse()
                 .map((searchedWord, index) => (
                   <SearchedWordItem
-                    navigation={navigation}
                     key={index}
                     searchedWord={searchedWord}
+                    handleSearchWord={handleSearchWord}
                   />
                 ))}
             </ScrollView>

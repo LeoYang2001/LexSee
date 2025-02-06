@@ -4,7 +4,7 @@ const initialState = {
   profile: {
     uid: "",
     imgUrl: "",
-    language: "",
+    selectedLanguage: "en",
     // Add other profile fields here as needed
   },
   savedWordList: [],

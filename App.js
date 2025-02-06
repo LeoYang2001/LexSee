@@ -19,9 +19,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import WordSearchScreen from "./screens/wordSearch/WordSearchScreen";
 import { Provider } from "react-redux";
 import store from "./store";
-import MyLoading from "./components-shared/loading/MyLoading";
 import InventoryScreen from "./screens/inventory/InventoryScreen";
 import StoryScreen from "./screens/inventory/story/StoryScreen";
+import LanguageSelectionScreen from "./screens/languageSelection/LanguageSelectionScreen";
 
 //Handling App Crash Cases
 
@@ -81,6 +81,10 @@ function App() {
             />
             <Stack.Screen name="Inventory" component={InventoryScreen} />
             <Stack.Screen name="Story" component={StoryScreen} />
+            <Stack.Screen
+              name="LanguageSelection"
+              component={LanguageSelectionScreen}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </GestureHandlerRootView>
