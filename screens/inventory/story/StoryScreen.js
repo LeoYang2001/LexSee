@@ -117,7 +117,7 @@ const StoryContentTyping = ({ storyData }) => {
 const StoryScreen = ({ navigation, route }) => {
   const uid = auth?.currentUser?.uid;
   const [isHighlight, setIsHighlight] = useState(false);
-  const [isSavingStory, setIsSavingStory] = useState(false);
+  const [isSavingStory, setIsSavingStory] = useState(true);
 
   const storyData = route?.params?.storyData;
   const ifNewStory = route?.params?.ifNewStory;

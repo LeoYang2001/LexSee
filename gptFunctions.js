@@ -111,3 +111,85 @@ export const fetchStory = async (
   const responseObject = convertJsonToObject(responseText);
   return responseObject;
 };
+
+export const fetchConversation = async (
+  openai,
+  word,
+  language = "English",
+  definition = null
+) => {
+  console.log("Fetching conversation...");
+
+  try {
+    if (!openai || !openai.chat || !openai.chat.completions) {
+      throw new Error("Invalid OpenAI instance provided.");
+    }
+
+    if (!word) {
+      throw new Error("No words selected for conversation generation.");
+    }
+
+    // Adjust the prompt based on whether a specific definition is provided
+    const userPrompt = definition
+      ? `Create a conversation between two people in **${language}** using the word "${word}" and its specific definition: "${definition}". 
+
+Please follow these rules:
+- The conversation must be entirely in **${language}**.
+- Limit the conversation to a maximum of 8 lines.
+- Each line should start and end with the "~" character.
+- Do not include any additional characters before or after the "~" symbols.
+- Keep the dialogue casual and natural, and use the word "${selectedWords}" in a way that reflects the provided definition.
+
+Example format (in ${language}):
+~Hey, did you see the movie last night?~
+~Yeah, I did! The plot was a bit obscure, though.~
+~Yeah, I know what you mean. The director is famous for creating obscure movies.~
+
+Please respond using this format exactly, with no more than 8 lines.`
+      : `Create a conversation between two people in **${language}** using the word "${word}". 
+
+Please follow these rules:
+- The conversation must be entirely in **${language}**.
+- Limit the conversation to a maximum of 8 lines.
+- Each line should start and end with the "~" character.
+- Do not include any additional characters before or after the "~" symbols.
+- Keep the dialogue casual and natural, and use the word "${word}" at least once.
+
+Example format (in ${language}):
+~Hey, did you see the movie last night?~
+~Yeah, I did! The plot was a bit obscure, though.~
+~Yeah, I know what you mean. The director is famous for creating obscure movies.~
+
+Please respond using this format exactly, with no more than 8 lines.`;
+
+    // Call OpenAI API
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: "You are a helpful assistant." },
+        { role: "user", content: userPrompt },
+      ],
+    });
+
+    // Validate response
+    if (!completion || !completion.choices || completion.choices.length === 0) {
+      throw new Error("No response received from OpenAI.");
+    }
+
+    const responseText = completion.choices[0].message.content;
+    console.log("AI Response:", responseText);
+
+    // Process and format the conversation lines
+    const conversationLines = responseText
+      .split("\n")
+      .filter(
+        (line) => line.trim().startsWith("~") && line.trim().endsWith("~")
+      )
+      .map((line) => line.trim().slice(1, -1)); // Removes "~" from start and end
+
+    return conversationLines;
+  } catch (error) {
+    console.error("Error fetching conversation:", error.message);
+    return [];
+  }
+};

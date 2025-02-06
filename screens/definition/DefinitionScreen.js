@@ -7,9 +7,16 @@ import OpenAI from "openai";
 import Constants from "expo-constants";
 import { auth, db } from "../../firebase";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { useSelector } from "react-redux";
+import languageCodes from "../../constants";
 
 const DefinitionScreen = ({ navigation, route }) => {
   const [pageTitle, setPageTitle] = useState("Explanation");
+
+  //SelectedLanguage
+  const selectedLanguage = useSelector(
+    (state) => state.userInfo.profile.selectedLanguage
+  );
 
   const ifSaved = route.params.ifSaved;
   const initWordItem = ifSaved
@@ -75,7 +82,7 @@ const DefinitionScreen = ({ navigation, route }) => {
           const fetchedWord = await fetchDefinition(
             openai,
             wordItem,
-            "English"
+            languageCodes[selectedLanguage]
           );
           console.log("Fetched Word:", fetchedWord);
           if (!fetchedWord) {

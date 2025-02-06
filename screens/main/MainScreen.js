@@ -13,12 +13,17 @@ import Logo from "../../components-shared/Logo";
 import InventoryStatistic from "./components/InventoryStatistic";
 import WordFlexCard from "../../components-shared/WordFlexCard";
 import { useSelector } from "react-redux";
+import languageCodes from "../../constants";
 
 // Word suggestion API = https://api.datamuse.com/sug?s=d&max=40
 
 const MainScreen = ({ navigation }) => {
   //Active flexCard Id
   const [activeCardId, setActiveCardId] = useState(null);
+
+  const selectedLanguage = useSelector(
+    (state) => state.userInfo.profile.selectedLanguage
+  );
 
   const savedWordsFromStore = useSelector((state) => {
     try {
@@ -62,7 +67,12 @@ const MainScreen = ({ navigation }) => {
             </View>
           </View>
           <View className="flex flex-row gap-4 items-center">
-            <TouchableOpacity className=" flex flex-row   items-center justify-center">
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("LanguageSelection");
+              }}
+              className=" flex flex-row   items-center justify-center"
+            >
               <Text
                 style={{
                   opacity: 0.7,
@@ -70,7 +80,7 @@ const MainScreen = ({ navigation }) => {
                 }}
                 className=" mr-2"
               >
-                English
+                {languageCodes[selectedLanguage]}
               </Text>
               <View
                 style={{

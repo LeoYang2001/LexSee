@@ -10,6 +10,7 @@ import OpenAI from "openai";
 import Constants from "expo-constants";
 import { fetchStory } from "../../../gptFunctions";
 import { auth } from "../../../firebase";
+import languageCodes from "../../../constants";
 // *** AI FUNCTIONS***
 const chatgptApiKey =
   Constants.expoConfig.extra.chatgptApiKey || process.env.EXPO_DOT_CHATGPT_KEY;
@@ -55,6 +56,10 @@ const WordListPage = ({
       return [];
     }
   });
+
+  const selectedLanguage = useSelector(
+    (state) => state.userInfo.profile.selectedLanguage
+  );
 
   const uid = auth.currentUser.uid;
 
@@ -141,7 +146,7 @@ const WordListPage = ({
       fetchedStory = await fetchStory(
         openai,
         wordsForPrompt,
-        (language = "English")
+        (language = languageCodes[selectedLanguage])
       );
       console.log("Fetched Story:", fetchedStory);
     } catch (error) {

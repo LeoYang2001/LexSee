@@ -12,7 +12,6 @@ import {
 import React, { useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
-  onIdTokenChanged,
   sendEmailVerification,
 } from "firebase/auth";
 import { auth } from "../../firebase";

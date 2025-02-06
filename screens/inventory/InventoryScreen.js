@@ -48,7 +48,7 @@ const InventoryScreen = ({ navigation, route }) => {
   return (
     <View className="bg-black  overflow-hidden  h-full w-full pt-16 flex flex-col ">
       {/* HEADER  */}
-      <View className="z-20 flex flex-row   items-center justify-between">
+      <View className="z-20 flex flex-row  mb-2  items-center justify-between">
         <TouchableOpacity
           className=" p-2"
           onPress={() => {
