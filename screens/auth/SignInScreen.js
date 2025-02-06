@@ -8,6 +8,8 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   StyleSheet,
+  ImageBackground,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
@@ -21,6 +23,7 @@ import * as Haptics from "expo-haptics";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import ErrorComp from "../../components-shared/ErrorComp";
 import SuccessComp from "../../components-shared/SuccessComp";
+import { BlurView } from "expo-blur";
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -127,97 +130,92 @@ const SignInScreen = ({ navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View className="flex-1 relative flex px-10 items-center py-10">
+      <View className="bg-black h-full w-full">
+        {/* background */}
+        <ImageBackground
+          style={{ height: "75%" }}
+          source={require("../../assets/signInBackground.png")}
+          resizeMode="cover"
+          className="flex flex-col justify-center"
+        ></ImageBackground>
+
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          className="flex-1 justify-between w-full mb-40"
+          className="justify-around w-full h-full absolute px-4"
         >
-          <Text
-            style={styles.outlinedText}
-            className="text-5xl font-bold mt-14"
-          >
-            Sign In
+          <View className="h-40"></View>
+          <Text style={styles.registerText} className="text-white">
+            Sign in
           </Text>
-          <View className="mb-10">
-            {/* Email Input */}
-            <View className="mt-10 flex-row items-center rounded-2xl border-2 relative">
-              <Animated.View
-                style={{
-                  top: emailLabelTop,
-                  left: emailLabelLeft,
-                }}
-                className="absolute ml-4 z-0"
+          {/* inputs */}
+          <View>
+            <Text className="mt-5 py-1" style={styles.emailText}>
+              Email
+            </Text>
+            <View className="flex-row items-center rounded-2xl relative">
+              <View
+                style={{ borderRadius: 16, overflow: "hidden" }}
+                className="w-full"
               >
-                <Text
-                  style={{ fontSize: 14, color: emailLabel ? "black" : "grey" }}
-                  className="font-semibold"
-                >
-                  Email
-                </Text>
-              </Animated.View>
-              <TextInput
-                onBlur={() => {
-                  if (!email) setEmailLabel(false);
-                }}
-                onFocus={() => setEmailLabel(true)}
-                className="z-10 bg-transparent w-full py-4 px-4 rounded-2xl"
-                value={email}
-                onChangeText={setEmail}
-              />
+                <BlurView className="py-4 px-4 bg-white/10">
+                  <TextInput
+                    className=" text-white "
+                    value={email}
+                    onChangeText={setEmail}
+                  />
+                </BlurView>
+              </View>
+            </View>
+            <Text className="mt-5 py-1" style={styles.emailText}>
+              Password
+            </Text>
+            <View className="flex-row items-center relative">
+              <View
+                style={{ borderRadius: 16, overflow: "hidden" }}
+                className="w-full"
+              >
+                <BlurView className="py-4 px-4 bg-white/10">
+                  <TextInput
+                    className="text-white"
+                    value={password}
+                    onChangeText={setPassword}
+                  />
+                </BlurView>
+              </View>
+            </View>
+          </View>
+          {/* sign in button */}
+          <View>
+            <View className="py-4">
+              <TouchableOpacity
+                style={styles.registerButton}
+                className="w-full py-4 px-4 items-center"
+                onPress={signIn}
+              >
+                <Text style={styles.registerButtonText}>Sign in</Text>
+              </TouchableOpacity>
             </View>
 
-            {/* Password Input */}
-            <View className="mt-10 flex-row items-center rounded-2xl border-2 relative">
-              <Animated.View
-                style={{
-                  top: passwordLabelTop,
-                  left: passwordLabelLeft,
-                }}
-                className="absolute ml-4 z-0"
-              >
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: passwordLabel ? "black" : "grey",
-                  }}
-                  className="font-semibold"
-                >
-                  Password
-                </Text>
-              </Animated.View>
-              <TextInput
-                onBlur={() => {
-                  if (!password) setPasswordLabel(false);
-                }}
-                onFocus={() => setPasswordLabel(true)}
-                className="z-10 bg-transparent w-full py-4 px-4 rounded-2xl"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
-            </View>
-
-            {/* Sign In Button */}
             <TouchableOpacity
-              disabled={errorMessage || isSigningIn}
-              className="bg-black rounded-2xl flex justify-center items-center mt-10 py-4 px-4"
-              onPress={signIn}
+              onPress={() => {
+                navigation.navigate("SignUp");
+              }}
+              className="flex-row justify-center items-center"
             >
-              <Text className="text-white font-bold">
-                {isSigningIn ? "Signing In..." : "Sign In"}
-              </Text>
-            </TouchableOpacity>
-
-            {/* Forgot Password Button */}
-            <TouchableOpacity
-              onPress={handlePasswordReset}
-              className="justify-center items-center mt-2"
-            >
-              <Text>Forgot Password?</Text>
+              <Text style={styles.SignInText}>Don't have an account? </Text>
+              <Text className="font-semibold text-white">Register</Text>
             </TouchableOpacity>
           </View>
+          <View className="h-10"></View>
         </KeyboardAvoidingView>
-        {/* Forgot Password Button */}
+        {/* Logo */}
+        <View className="absolute bottom-5 w-full flex-row justify-center">
+          <Image
+            style={{ height: 24, width: 60 }}
+            source={require("../../assets/LexSeeSignInLogo.png")}
+            resizeMode="cover"
+          ></Image>
+        </View>
 
         {/* Error Message Card */}
         <View className=" w-full absolute z-10 bottom-10">
@@ -236,25 +234,35 @@ const SignInScreen = ({ navigation }) => {
             successMessage={successMessage}
           />
         </View>
-
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("SignUp");
-          }}
-        >
-          <Text>Don't have an account?</Text>
-        </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
-  outlinedText: {
+  registerText: {
+    fontSize: 28,
+    fontWeight: "600",
     color: "white",
-    textShadowColor: "black",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 1,
+  },
+  emailText: {
+    fontSize: 14,
+    color: "white",
+    opacity: 0.7,
+  },
+  registerButton: {
+    backgroundColor: "#FA541C",
+    borderRadius: 9,
+  },
+  registerButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "white",
+  },
+  SignInText: {
+    fontSize: 14,
+    color: "white",
+    opacity: 0.7,
   },
 });
 
