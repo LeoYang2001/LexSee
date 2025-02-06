@@ -1,11 +1,5 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-  StyleSheet,
-} from "react-native";
-import React from "react";
+import { View, Text, TouchableOpacity, Dimensions } from "react-native";
+import React, { useEffect, useState } from "react";
 
 import Animated, {
   useSharedValue,
@@ -18,7 +12,9 @@ import { ChevronLeft, Search } from "lucide-react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-const InventoryScreen = ({ navigation }) => {
+const InventoryScreen = ({ navigation, route }) => {
+  const initialTab = route.params.initialTab;
+
   const translateX = useSharedValue(0); // Shared value for horizontal translation
   const translateBarX = useSharedValue(0); // Shared value for horizontal translation
 
@@ -42,8 +38,15 @@ const InventoryScreen = ({ navigation }) => {
     }
   };
 
+  useEffect(() => {
+    handlePageChange(initialTab);
+  }, []);
+
+  //Story Creation related data
+  const [isGeneratingStory, setIsGeneratingStory] = useState(false);
+
   return (
-    <View className="bg-black  h-full w-full pt-16 flex flex-col ">
+    <View className="bg-black  overflow-hidden  h-full w-full pt-16 flex flex-col ">
       {/* HEADER  */}
       <View className="z-20 flex flex-row   items-center justify-between">
         <TouchableOpacity
@@ -115,10 +118,17 @@ const InventoryScreen = ({ navigation }) => {
         style={[{ width: 2 * SCREEN_WIDTH }, animatedStyle]}
       >
         <View className="h-full" style={{ width: SCREEN_WIDTH }}>
-          <WordListPage navigation={navigation} />
+          <WordListPage
+            setIsGeneratingStory={setIsGeneratingStory}
+            navigation={navigation}
+            handlePageChange={handlePageChange}
+          />
         </View>
         <View className="h-full " style={{ width: SCREEN_WIDTH }}>
-          <StoryListPage />
+          <StoryListPage
+            navigation={navigation}
+            isGeneratingStory={isGeneratingStory}
+          />
         </View>
       </Animated.View>
     </View>

@@ -3,8 +3,8 @@ import { View, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { ArrowRight, Volume2 } from "lucide-react-native";
-import PronunciationButton from "../../../components-shared/PronunciationButton";
-import WordFlexCardInventory from "../components/WordFlexCardInventory";
+import PronunciationButton from "../../../../components-shared/PronunciationButton";
+import WordFlexCardInventory from "./WordFlexCardInventory";
 
 const WordCard = ({ wordItem, ifGraphic, navigation, setIfCreatingStory }) => {
   if (ifGraphic)

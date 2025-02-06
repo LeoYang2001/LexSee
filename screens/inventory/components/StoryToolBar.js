@@ -12,7 +12,11 @@ const countSelectedWords = (groupedWords) => {
   }, 0);
 };
 
-const StoryToolBar = ({ sortedWordsList, cancelToolBar }) => {
+const StoryToolBar = ({
+  sortedWordsList,
+  cancelToolBar,
+  handleCreatingStory,
+}) => {
   const [selectedNum, setSelectedNum] = useState(0);
   useEffect(() => {
     if (sortedWordsList) {
@@ -22,7 +26,7 @@ const StoryToolBar = ({ sortedWordsList, cancelToolBar }) => {
 
   const toolBarList = [
     {
-      label: "Add",
+      label: "Delete    ",
       icon: () => {
         return (
           <Bookmark color={"#fff"} fill={"#fff"} size={28} opacity={0.8} />
@@ -37,7 +41,9 @@ const StoryToolBar = ({ sortedWordsList, cancelToolBar }) => {
           <Bookmark color={"#fff"} fill={"#fff"} size={28} opacity={0.8} />
         );
       },
-      handleEvent: () => {},
+      handleEvent: () => {
+        handleCreatingStory();
+      },
     },
     {
       label: "Cancel",

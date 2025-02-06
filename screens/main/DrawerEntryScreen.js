@@ -18,8 +18,13 @@ import {
   query,
 } from "firebase/firestore";
 import { useDispatch } from "react-redux";
-import { setSavedWordList, setSearchHistory } from "../../slices/userInfoSlice";
+import {
+  setSavedStoryList,
+  setSavedWordList,
+  setSearchHistory,
+} from "../../slices/userInfoSlice";
 import { setList } from "../../slices/languageSlice";
+import { CookingPot } from "lucide-react-native";
 
 const Drawer = createDrawerNavigator();
 
@@ -60,11 +65,16 @@ const DrawerEntryScreen = () => {
   const uid = auth.currentUser?.uid; // Get current user UID
 
   useEffect(() => {
-    if (uid) {
-      fetchUserSavedWordList();
-      fetchSearchHistory();
-      fetchLanguageList();
-    }
+    const setUpGlobalVariable = async () => {
+      if (uid) {
+        await fetchUserSavedWordList();
+        await fetchSearchHistory();
+        await fetchLanguageList();
+        await fetchUserSavedStoryList();
+        setIsSettingUp(false);
+      }
+    };
+    setUpGlobalVariable();
   }, [uid]); // Re-run if UID changes (i.e., on login/logout)
 
   const fetchLanguageList = async () => {
@@ -127,7 +137,6 @@ const DrawerEntryScreen = () => {
           }));
           // Dispatch the updated word list to the Redux store
           dispatch(setSavedWordList(wordsData));
-          setIsSettingUp(false);
         },
         (error) => {
           console.error("Error listening to wordList snapshot:", error);
@@ -135,7 +144,6 @@ const DrawerEntryScreen = () => {
           dispatch(
             setError("Failed to fetch the word list. Please try again.")
           );
-          setIsSettingUp(false);
         }
       );
 
@@ -145,7 +153,44 @@ const DrawerEntryScreen = () => {
       console.error("Error fetching user saved word list:", error);
       // Optionally, handle the error in the UI or with a Redux action
       dispatch(setError("Failed to fetch the word list. Please try again."));
-      setIsSettingUp(false);
+    }
+  };
+
+  const fetchUserSavedStoryList = async () => {
+    if (!uid) return; // Ensure UID is available
+
+    try {
+      // Reference to the user's storyList subcollection
+      const storyListRef = collection(db, "users", uid, "storyList");
+      const storyListQuery = query(storyListRef, orderBy("createdAt", "desc"));
+
+      // Listen for real-time changes in the storyList
+      const unsubscribe = onSnapshot(
+        storyListQuery,
+        (snapshot) => {
+          const storiesData = snapshot.docs.map((doc) => ({
+            id: doc.id, // storyId from Firestore
+            ...doc.data(), // The packetizedStory object
+          }));
+
+          // Dispatch the updated story list to Redux
+          dispatch(setSavedStoryList(storiesData));
+        },
+        (error) => {
+          console.error("Error listening to storyList snapshot:", error);
+          dispatch(
+            setError("Failed to fetch the saved stories. Please try again.")
+          );
+        }
+      );
+
+      // Clean up the subscription when the component unmounts or the user changes
+      return () => unsubscribe();
+    } catch (error) {
+      console.error("Error fetching user saved story list:", error);
+      dispatch(
+        setError("Failed to fetch the saved stories. Please try again.")
+      );
     }
   };
 

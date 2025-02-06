@@ -3,8 +3,8 @@ import { View, Text, Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { ArrowRight, Volume2 } from "lucide-react-native";
-import PronunciationButton from "../../../components-shared/PronunciationButton";
-import WordFlexCardInventoryForStory from "../components/WordFlexCardInventoryForStory";
+import PronunciationButton from "../../../../components-shared/PronunciationButton";
+import WordFlexCardInventoryForStory from "./WordFlexCardInventoryForStory";
 
 const WordCardForStory = ({
   wordItem,
@@ -63,7 +63,7 @@ const WordCardForStory = ({
                 }}
               >
                 <Image
-                  source={require("../../../assets/check.png")}
+                  source={require("../../../../assets/check.png")}
                   width={20}
                   height={20}
                 />

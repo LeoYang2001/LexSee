@@ -11,10 +11,6 @@ const PronunciationButton = ({ word, phonetics, size = 16 }) => {
 
   const [audioUrl, setAudioUrl] = useState(null);
 
-  useEffect(() => {
-    fetchPronunciation();
-  }, []);
-
   const fetchPronunciation = async () => {
     try {
       const response = await fetch(pronunciationApiPoint);
@@ -36,6 +32,7 @@ const PronunciationButton = ({ word, phonetics, size = 16 }) => {
   };
 
   const playSound = async () => {
+    await fetchPronunciation();
     if (!audioUrl) return alert("fetching audio, please wait");
     try {
       console.log("Loading Sound");
