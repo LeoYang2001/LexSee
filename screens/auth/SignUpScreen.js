@@ -172,6 +172,7 @@ const SignUpScreen = ({ navigation }) => {
               >
                 <BlurView className="py-4 px-4 bg-white/10">
                   <TextInput
+                    secureTextEntry
                     className=" text-white"
                     value={password}
                     onChangeText={setPassword}
@@ -189,6 +190,7 @@ const SignUpScreen = ({ navigation }) => {
               >
                 <BlurView className="py-4 px-4 bg-white/10">
                   <TextInput
+                    secureTextEntry
                     className="text-white"
                     value={cfmPassword}
                     onChangeText={setCfmPassword}
