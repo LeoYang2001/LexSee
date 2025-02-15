@@ -253,7 +253,7 @@ const WordSearchScreen = ({ navigation }) => {
                   <SearchedWordItem
                     key={index}
                     searchedWord={searchedWord}
-                    handleSearchWord={handleSearchWord}
+                    navigation={navigation}
                   />
                 ))}
             </ScrollView>
