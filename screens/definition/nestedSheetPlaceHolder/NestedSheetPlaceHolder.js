@@ -14,6 +14,8 @@ const NestedSheetPlaceHolder = ({
   setPageTitle,
   wordItem,
   ifSaved,
+  navigation,
+  imgPlaceHolderUrl,
 }) => {
   const firstSheetRef = useRef(null);
   const secondSheetRef = useRef(null);
@@ -62,7 +64,12 @@ const NestedSheetPlaceHolder = ({
           // onDismiss={handleSwitchSheet}
         >
           <BottomSheetView style={styles.contentContainer}>
-            <ExpalnationPage ifSaved={ifSaved} wordItem={wordItem} />
+            <ExpalnationPage
+              navigation={navigation}
+              imgPlaceHolderUrl={imgPlaceHolderUrl}
+              ifSaved={ifSaved}
+              wordItem={wordItem}
+            />
           </BottomSheetView>
         </BottomSheetModal>
 
@@ -75,7 +82,11 @@ const NestedSheetPlaceHolder = ({
           // onDismiss={handleSwitchSheet}
         >
           <BottomSheetView style={styles.contentContainer}>
-            <ConversationPage ifSaved={ifSaved} wordItem={wordItem} />
+            <ConversationPage
+              imgPlaceHolderUrl={imgPlaceHolderUrl}
+              ifSaved={ifSaved}
+              wordItem={wordItem}
+            />
           </BottomSheetView>
         </BottomSheetModal>
       </BottomSheetModalProvider>
