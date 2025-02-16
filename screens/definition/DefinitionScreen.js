@@ -10,8 +10,27 @@ import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import languageCodes from "../../constants";
 
+const initialImgPlaceHolderUrl =
+  "https://firebasestorage.googleapis.com/v0/b/lexseev2.firebasestorage.app/o/blurryImageGallery.png?alt=media&token=5c84a962-f121-4962-9cb7-d36fcc6d7ca9";
+
 const DefinitionScreen = ({ navigation, route }) => {
   const [pageTitle, setPageTitle] = useState("Explanation");
+
+  console.log(route);
+
+  const [imgPlaceHolderUrl, setImgPlaceHolderUrl] = useState(
+    initialImgPlaceHolderUrl
+  );
+
+  useEffect(() => {
+    console.log(route);
+    const updatedImgPlaceHolderUrl = route.params?.imgPlaceHolderUrl;
+    if (updatedImgPlaceHolderUrl) {
+      setImgPlaceHolderUrl(updatedImgPlaceHolderUrl);
+    }
+    console.log("imgPlaceHolderUrl:::");
+    console.log(imgPlaceHolderUrl);
+  }, [route]);
 
   //SelectedLanguage
   const selectedLanguage = useSelector(
@@ -107,7 +126,7 @@ const DefinitionScreen = ({ navigation, route }) => {
       className="w-full h-full relative"
     >
       {/* Header  */}
-      <View className=" pt-10  flex flex-row items-center px-4 justify-between">
+      <View className=" pt-10  flex flex-row items-center px-4  justify-between">
         <TouchableOpacity
           className=" p-2"
           onPress={() => {
@@ -122,7 +141,7 @@ const DefinitionScreen = ({ navigation, route }) => {
             color: "#fff",
             opacity: 0.5,
           }}
-          className="text-lg text-red-500  py-4"
+          className="text-lg text-red-500 py-4"
         >
           {pageTitle}
         </Text>
@@ -137,10 +156,12 @@ const DefinitionScreen = ({ navigation, route }) => {
         className="w-full absolute bottom-0"
       >
         <NestedSheetPlaceHolder
+          imgPlaceHolderUrl={imgPlaceHolderUrl}
           wordItem={wordItem}
           ifSaved={ifSaved}
           setPageTitle={setPageTitle}
           pageTitle={pageTitle}
+          navigation={navigation}
         />
       </View>
     </View>

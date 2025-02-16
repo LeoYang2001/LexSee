@@ -1,15 +1,22 @@
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import React from "react";
-import { Bookmark, Volume2 } from "lucide-react-native";
+import { Bookmark, ImageUp, Volume2 } from "lucide-react-native";
 import { BlurView } from "expo-blur";
 import SaveBtn from "../components/SaveBtn";
 import { LinearGradient } from "expo-linear-gradient";
 import PronunciationButton from "../../../components-shared/PronunciationButton";
 
-const imgPlaceHolderUrl =
+const initialImgPlaceHolderUrl =
   "https://firebasestorage.googleapis.com/v0/b/lexseev2.firebasestorage.app/o/blurryImageGallery.png?alt=media&token=5c84a962-f121-4962-9cb7-d36fcc6d7ca9";
 
-const ExpalnationPage = ({ wordItem, ifSaved }) => {
+const ExpalnationPage = ({
+  wordItem,
+  ifSaved,
+  navigation,
+  imgPlaceHolderUrl,
+}) => {
+  const ifTemplatePic = imgPlaceHolderUrl === initialImgPlaceHolderUrl;
+
   return (
     <LinearGradient
       colors={["#242c3c", "#1d1f24"]}
@@ -102,27 +109,52 @@ const ExpalnationPage = ({ wordItem, ifSaved }) => {
               }}
               resizeMode="cover"
             />
-            <BlurView
-              className="w-full h-full flex justify-center items-center"
-              intensity={40}
-            >
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#E44814",
-                }}
-                className="rounded-full px-2 py-1"
+            {ifTemplatePic ? (
+              <BlurView
+                className="w-full h-full flex justify-center items-center"
+                intensity={40}
               >
-                <Text
-                  className="font-semibold"
+                <TouchableOpacity
                   style={{
-                    color: "#fff",
-                    opacity: 0.9,
+                    backgroundColor: "#E44814",
+                  }}
+                  className="rounded-full px-2 py-1"
+                  onPress={() => {
+                    navigation.navigate("ImageGallery", {
+                      word: wordItem.id,
+                    });
                   }}
                 >
-                  Choose a picture
-                </Text>
+                  <Text
+                    className="font-semibold"
+                    style={{
+                      color: "#fff",
+                      opacity: 0.9,
+                    }}
+                  >
+                    Choose a picture
+                  </Text>
+                </TouchableOpacity>
+              </BlurView>
+            ) : (
+              <TouchableOpacity
+                style={{
+                  width: 40,
+                  height: 34,
+                  borderTopLeftRadius: 10,
+                  borderBottomRightRadius: 10,
+                  backgroundColor: "rgba(0,0,0,0.35)",
+                }}
+                className=" absolute right-0 bottom-0 flex justify-center items-center"
+                onPress={() => {
+                  navigation.navigate("ImageGallery", {
+                    word: wordItem.id,
+                  });
+                }}
+              >
+                <ImageUp color={"#fff"} opacity={0.9} />
               </TouchableOpacity>
-            </BlurView>
+            )}
           </View>
         )}
         <ScrollView className=" flex-1  w-full">

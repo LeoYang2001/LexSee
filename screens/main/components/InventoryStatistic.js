@@ -24,8 +24,11 @@ const InventoryStatistic = ({ navigation }) => {
       className="w-full  relative"
     >
       <View className=" h-full w-full z-20 flex flex-row justify-between items-center  px-6">
-        <View className=" flex flex-col h-full gap-2  flex-1 justify-center items-start">
-          <Text style={{ fontSize: 24 }} className=" font-semibold text-white">
+        <View className=" flex flex-col h-full gap-2   flex-1 justify-center items-start">
+          <Text
+            style={{ fontSize: 24 }}
+            className="   font-semibold text-white"
+          >
             Beginner
           </Text>
           <Text
@@ -42,7 +45,7 @@ const InventoryStatistic = ({ navigation }) => {
           onPress={() => {
             navigation.navigate("Inventory", { initialTab: "word" });
           }}
-          className=" flex flex-col h-full gap-2  ml-auto  flex-1 justify-center items-center"
+          className=" flex flex-col h-full gap-2  ml-auto   justify-center items-center"
         >
           <Text style={{ fontSize: 24 }} className=" font-semibold text-white">
             {savedWordsFromStore.length}

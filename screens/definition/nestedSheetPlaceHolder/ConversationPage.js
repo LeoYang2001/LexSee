@@ -18,10 +18,7 @@ import { fetchConversation } from "../../../gptFunctions";
 import languageCodes from "../../../constants";
 import { useSelector } from "react-redux";
 
-const imgPlaceHolderUrl =
-  "https://firebasestorage.googleapis.com/v0/b/lexseev2.firebasestorage.app/o/blurryImageGallery.png?alt=media&token=5c84a962-f121-4962-9cb7-d36fcc6d7ca9";
-
-const ConversationPage = ({ wordItem, ifSaved }) => {
+const ConversationPage = ({ wordItem, ifSaved, imgPlaceHolderUrl }) => {
   //SelectedLanguage
   const selectedLanguage = useSelector(
     (state) => state.userInfo.profile.selectedLanguage

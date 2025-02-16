@@ -22,6 +22,7 @@ import store from "./store";
 import InventoryScreen from "./screens/inventory/InventoryScreen";
 import StoryScreen from "./screens/inventory/story/StoryScreen";
 import LanguageSelectionScreen from "./screens/languageSelection/LanguageSelectionScreen";
+import ImageGalleryScreen from "./screens/imageGallery/ImageGalleryScreen";
 
 //Handling App Crash Cases
 
@@ -85,6 +86,7 @@ function App() {
               name="LanguageSelection"
               component={LanguageSelectionScreen}
             />
+            <Stack.Screen name="ImageGallery" component={ImageGalleryScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </GestureHandlerRootView>
