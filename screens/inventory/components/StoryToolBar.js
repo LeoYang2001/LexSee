@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Bookmark } from "lucide-react-native";
+import * as Haptics from "expo-haptics";
 
 const countSelectedWords = (groupedWords) => {
   return groupedWords.reduce((totalCount, group) => {
@@ -105,7 +106,11 @@ const StoryToolBar = ({
       <View className="h-full  flex flex-row items-center ">
         {toolBarList.map((toolBarItem) => (
           <TouchableOpacity
-            onPress={toolBarItem.handleEvent}
+            onPress={() => {
+              toolBarItem.handleEvent();
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              console.log("light feedback");
+            }}
             style={{
               width: 72,
             }}

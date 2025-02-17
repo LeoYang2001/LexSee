@@ -2,9 +2,8 @@ import React from "react";
 import { View, Text, Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
-import { ArrowRight, Volume2 } from "lucide-react-native";
-import PronunciationButton from "../../../../components-shared/PronunciationButton";
 import WordFlexCardInventoryForStory from "./WordFlexCardInventoryForStory";
+import * as Haptics from "expo-haptics";
 
 const WordCardForStory = ({
   wordItem,
@@ -25,6 +24,8 @@ const WordCardForStory = ({
       <TouchableOpacity
         onPress={() => {
           toggleWordSelection(wordItem.id);
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          console.log("light feedback");
         }}
       >
         <LinearGradient

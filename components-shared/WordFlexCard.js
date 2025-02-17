@@ -8,6 +8,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
 import PronunciationButton from "./PronunciationButton";
+import * as Haptics from "expo-haptics";
 
 const WordFlexCard = ({ wordItem, ifActive, setActiveCardId, navigation }) => {
   if (!wordItem) return null;
@@ -35,6 +36,8 @@ const WordFlexCard = ({ wordItem, ifActive, setActiveCardId, navigation }) => {
       }}
       className="w-full flex flex-col relative mb-4"
       onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        console.log("light feedback");
         if (!ifActive) {
           setActiveCardId(wordItem.id);
         } else {

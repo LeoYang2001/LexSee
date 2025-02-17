@@ -11,6 +11,8 @@ import Constants from "expo-constants";
 import { fetchStory } from "../../../gptFunctions";
 import { auth } from "../../../firebase";
 import languageCodes from "../../../constants";
+import * as Haptics from "expo-haptics";
+
 // *** AI FUNCTIONS***
 const chatgptApiKey =
   Constants.expoConfig.extra.chatgptApiKey || process.env.EXPO_DOT_CHATGPT_KEY;
@@ -265,6 +267,10 @@ const WordListPage = ({
                         onLongPress={() => {
                           setIfCreatingStory(true);
                           toggleWordSelection(wordItem.id);
+                          Haptics.impactAsync(
+                            Haptics.ImpactFeedbackStyle.Medium
+                          );
+                          console.log("medium feedback");
                         }}
                       >
                         <WordCard
