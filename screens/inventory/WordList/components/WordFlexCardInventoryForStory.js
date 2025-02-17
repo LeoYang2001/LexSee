@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Image, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Check } from "lucide-react-native";
+import * as Haptics from "expo-haptics";
 
 const WordFlexCardInventoryForStory = ({ wordItem, toggleWordSelection }) => {
   if (!wordItem) return null;
@@ -9,6 +9,8 @@ const WordFlexCardInventoryForStory = ({ wordItem, toggleWordSelection }) => {
     <TouchableOpacity
       onPress={() => {
         toggleWordSelection(wordItem.id);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        console.log("light feedback");
       }}
       style={{
         width: "100%",

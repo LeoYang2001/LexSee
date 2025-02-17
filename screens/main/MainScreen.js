@@ -14,6 +14,7 @@ import InventoryStatistic from "./components/InventoryStatistic";
 import WordFlexCard from "../../components-shared/WordFlexCard";
 import { useSelector } from "react-redux";
 import languageCodes from "../../constants";
+import * as Haptics from "expo-haptics";
 
 // Word suggestion API = https://api.datamuse.com/sug?s=d&max=40
 
@@ -130,6 +131,8 @@ const MainScreen = ({ navigation }) => {
           className={`w-full relative z-20  mt-8  `}
           onPress={() => {
             navigation.navigate("WordSearch");
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            console.log("light feedback");
           }}
         >
           <View className=" h-full pl-4 flex flex-row items-center">

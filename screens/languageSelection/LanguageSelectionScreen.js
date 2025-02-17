@@ -29,7 +29,7 @@ const LanguageSelectionScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <ScrollView className="w-full flex-1">
-        {availableLanguages.map((languageOption) => {
+        {availableLanguages.map((languageOption, index) => {
           const lanItem = languageCodes[languageOption];
           const ifCurSelected = languageOption === selectedLanguage;
           if (ifCurSelected) {
@@ -51,6 +51,7 @@ const LanguageSelectionScreen = ({ navigation }) => {
           } else {
             return (
               <TouchableOpacity
+                key={languageOption}
                 onPress={() => {
                   const updatedProfile = {
                     ...userProfile,

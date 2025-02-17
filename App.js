@@ -4,7 +4,7 @@ import * as React from "react";
 import { View, Text, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { app, auth } from "./firebase";
+import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { AppRegistry } from "react-native";
 import { expo } from "./app.json";
