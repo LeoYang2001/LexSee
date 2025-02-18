@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { Bookmark } from "lucide-react-native";
+import * as Haptics from "expo-haptics";
 
 const SearchedWordItem = ({ searchedWord, navigation }) => {
   const handleSearchWord = (word) => {
@@ -21,6 +22,8 @@ const SearchedWordItem = ({ searchedWord, navigation }) => {
       }}
       onPress={() => {
         handleSearchWord(searchedWord.word);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        console.log("light feedback");
       }}
     >
       <Text

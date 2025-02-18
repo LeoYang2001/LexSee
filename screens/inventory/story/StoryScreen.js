@@ -183,7 +183,7 @@ const StoryScreen = ({ navigation, route }) => {
         </View>
       </View>
       {/* STORY CONTENT  */}
-      <ScrollView className="flex-1 p-4">
+      <ScrollView className="flex-1 p-4 pb-8">
         <StoryContent isHighlight={isHighlight} storyData={storyData} />
         {/* <StoryContentTyping storyData={storyData} /> */}
       </ScrollView>

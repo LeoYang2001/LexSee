@@ -203,7 +203,7 @@ const WordSearchScreen = ({ navigation }) => {
             value={inputText}
             onChangeText={setInputText}
             onEndEditing={() => {
-              if (inputText.trim()) {
+              if (inputText.trim() && selectedLanguage !== "en") {
                 handleSearchWord(inputText.trim());
               }
             }}

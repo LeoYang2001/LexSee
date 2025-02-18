@@ -1,6 +1,7 @@
 import { View, Text, ImageBackground, TouchableOpacity } from "react-native";
 import React from "react";
 import { useSelector } from "react-redux";
+import * as Haptics from "expo-haptics";
 
 const InventoryStatistic = ({ navigation }) => {
   const savedWordsFromStore = useSelector((state) => {
@@ -44,6 +45,8 @@ const InventoryStatistic = ({ navigation }) => {
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("Inventory", { initialTab: "word" });
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            console.log("light feedback");
           }}
           className=" flex flex-col h-full gap-2  ml-auto   justify-center items-center"
         >
@@ -63,6 +66,8 @@ const InventoryStatistic = ({ navigation }) => {
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("Inventory", { initialTab: "story" });
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            console.log("light feedback");
           }}
           className=" flex flex-col h-full gap-2   flex-1 justify-center items-center"
         >
