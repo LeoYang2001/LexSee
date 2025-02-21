@@ -57,6 +57,7 @@ const WordListPage = ({
   navigation,
   setIsGeneratingStory,
   handlePageChange,
+  inputVal,
 }) => {
   const savedWordsFromStore = useSelector((state) => {
     try {
@@ -85,6 +86,8 @@ const WordListPage = ({
 
   const [sortMethod, setSortMethod] = useState("desc");
   const [sortedWordsList, setSortedWordsList] = useState(wordsList_desc);
+  //filtered words
+  const [filteredWordsList, setFilteredWordsList] = useState([]);
 
   const [ifGraphic, setIfGraphic] = useState(false);
   const [ifCreatingStory, setIfCreatingStory] = useState(false);
@@ -99,6 +102,23 @@ const WordListPage = ({
       );
     }
   }, [savedWordsFromStore]);
+
+  // search words function
+  const filterWordsFromSortedList = (inputVal, sortedWordsList) => {
+    // Flatten wordsList from sortedWordsList
+    const allWords = sortedWordsList.flatMap((entry) => entry.wordsList);
+
+    // Apply filtering based on inputVal
+    return allWords.filter((wordObj) =>
+      wordObj.id.toLowerCase().includes(inputVal.toLowerCase())
+    );
+  };
+
+  useEffect(() => {
+    const filteredWords = filterWordsFromSortedList(inputVal, sortedWordsList);
+    console.log(filteredWords);
+    setFilteredWordsList(filteredWords);
+  }, [inputVal, sortedWordsList]);
 
   useEffect(() => {
     if (sortMethod === "desc") {
@@ -122,7 +142,6 @@ const WordListPage = ({
   };
 
   const resetSelection = (data) => {
-    console.log("resetting selection");
     return data.map((group) => ({
       ...group,
       wordsList: group.wordsList.map((word) => ({
@@ -261,127 +280,184 @@ const WordListPage = ({
             />
           </View>
         )}
-        {/*Sort*/}
-        <View
-          style={{ width: "100%", height: 58 }}
-          className="justify-between items-center px-4 flex flex-row"
-        >
-          <TouchableOpacity
-            disabled={ifCreatingStory}
-            onPress={toggleSort}
-            className="flex flex-row flex-1 justify-center items-center"
-          >
-            <Text
-              style={{ fontSize: 14, opacity: ifCreatingStory ? 0.2 : 0.7 }}
-              className="text-white"
-            >
-              {sortMethod === "desc" ? "Descending time" : "Ascending time"}
-            </Text>
 
-            <View
-              style={{
-                width: 0,
-                height: 0,
-                borderLeftWidth: 5,
-                borderRightWidth: 5,
-                borderBottomWidth: 8,
-                borderLeftColor: "transparent",
-                borderRightColor: "transparent",
-                borderBottomColor: "#ffffffa1",
-                marginLeft: 5,
-                opacity: ifCreatingStory ? 0.2 : 1,
-                transform: `rotate(${sortMethod === "desc" ? 180 : 0}deg)`,
-              }}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setIfGraphic(!ifGraphic);
-            }}
-            className="flex flex-row flex-1 justify-center items-center"
+        {inputVal.trim() ? (
+          <ScrollView
+            className="flex-1 w-full pt-4"
+            alwaysBounceVertical={true}
           >
-            <Text style={{ fontSize: 14, opacity: 0.7 }} className="text-white">
-              Graphics context
-            </Text>
+            {filteredWordsList.map((wordItem) => {
+              return (
+                <View className=" mx-4 " key={wordItem.id}>
+                  {ifCreatingStory ? (
+                    <WordCardForStory
+                      toggleWordSelection={toggleWordSelection}
+                      navigation={navigation}
+                      ifGraphic={ifGraphic}
+                      wordItem={wordItem}
+                    />
+                  ) : (
+                    <Pressable
+                      onPress={() => {
+                        if (ifGraphic) {
+                          handleActiveCardToggle(wordItem);
+                        }
+                      }}
+                      onLongPress={() => {
+                        setIfCreatingStory(true);
+                        toggleWordSelection(wordItem.id);
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                        console.log("medium feedback");
+                      }}
+                    >
+                      <WordCard
+                        navigation={navigation}
+                        ifGraphic={ifGraphic}
+                        wordItem={wordItem}
+                        activeCardId={activeCardId}
+                      />
+                    </Pressable>
+                  )}
+                </View>
+              );
+            })}
+            {ifCreatingStory && (
+              <View
+                className="w-full  opacity-0"
+                style={{
+                  height: 120,
+                }}
+              />
+            )}
+          </ScrollView>
+        ) : (
+          <>
+            {/*Sort*/}
             <View
-              style={{
-                width: 0,
-                height: 0,
-                borderLeftWidth: 5,
-                borderRightWidth: 5,
-                borderBottomWidth: 8,
-                borderLeftColor: "transparent",
-                borderRightColor: "transparent",
-                borderBottomColor: "#ffffffa1",
-                marginLeft: 5,
-                transform: `rotate(${!ifGraphic ? 180 : 0}deg)`,
-              }}
-            />
-          </TouchableOpacity>
-        </View>
-        {/*Card*/}
-        <ScrollView className="flex-1 w-full" alwaysBounceVertical={true}>
-          {sortedWordsList.map((dateItem) => {
-            return (
-              <View className="border mb-3 mx-4 " key={dateItem.date}>
+              style={{ width: "100%", height: 58 }}
+              className="justify-between items-center px-4 flex flex-row"
+            >
+              <TouchableOpacity
+                disabled={ifCreatingStory}
+                onPress={toggleSort}
+                className="flex flex-row flex-1 justify-center items-center"
+              >
                 <Text
-                  style={{
-                    color: "#fff",
-                    opacity: 0.6,
-                  }}
-                  className="text-white mb-4"
+                  style={{ fontSize: 14, opacity: ifCreatingStory ? 0.2 : 0.7 }}
+                  className="text-white"
                 >
-                  {dateItem.date}
+                  {sortMethod === "desc" ? "Descending time" : "Ascending time"}
                 </Text>
-                {dateItem?.wordsList.map((wordItem) => {
-                  return (
-                    <View key={wordItem.id}>
-                      {ifCreatingStory ? (
-                        <WordCardForStory
-                          toggleWordSelection={toggleWordSelection}
-                          navigation={navigation}
-                          ifGraphic={ifGraphic}
-                          wordItem={wordItem}
-                        />
-                      ) : (
-                        <Pressable
-                          onPress={() => {
-                            if (ifGraphic) {
-                              handleActiveCardToggle(wordItem);
-                            }
-                          }}
-                          onLongPress={() => {
-                            setIfCreatingStory(true);
-                            toggleWordSelection(wordItem.id);
-                            Haptics.impactAsync(
-                              Haptics.ImpactFeedbackStyle.Medium
-                            );
-                            console.log("medium feedback");
-                          }}
-                        >
-                          <WordCard
-                            navigation={navigation}
-                            ifGraphic={ifGraphic}
-                            wordItem={wordItem}
-                            activeCardId={activeCardId}
-                          />
-                        </Pressable>
-                      )}
-                    </View>
-                  );
-                })}
-              </View>
-            );
-          })}
-          {ifCreatingStory && (
-            <View
-              className="w-full  opacity-0"
-              style={{
-                height: 120,
-              }}
-            />
-          )}
-        </ScrollView>
+
+                <View
+                  style={{
+                    width: 0,
+                    height: 0,
+                    borderLeftWidth: 5,
+                    borderRightWidth: 5,
+                    borderBottomWidth: 8,
+                    borderLeftColor: "transparent",
+                    borderRightColor: "transparent",
+                    borderBottomColor: "#ffffffa1",
+                    marginLeft: 5,
+                    opacity: ifCreatingStory ? 0.2 : 1,
+                    transform: `rotate(${sortMethod === "desc" ? 180 : 0}deg)`,
+                  }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setIfGraphic(!ifGraphic);
+                }}
+                className="flex flex-row flex-1 justify-center items-center"
+              >
+                <Text
+                  style={{ fontSize: 14, opacity: 0.7 }}
+                  className="text-white"
+                >
+                  Graphics context
+                </Text>
+                <View
+                  style={{
+                    width: 0,
+                    height: 0,
+                    borderLeftWidth: 5,
+                    borderRightWidth: 5,
+                    borderBottomWidth: 8,
+                    borderLeftColor: "transparent",
+                    borderRightColor: "transparent",
+                    borderBottomColor: "#ffffffa1",
+                    marginLeft: 5,
+                    transform: `rotate(${!ifGraphic ? 180 : 0}deg)`,
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+            {/*Card*/}
+            <ScrollView className="flex-1 w-full" alwaysBounceVertical={true}>
+              {sortedWordsList.map((dateItem) => {
+                return (
+                  <View className="border mb-3 mx-4 " key={dateItem.date}>
+                    <Text
+                      style={{
+                        color: "#fff",
+                        opacity: 0.6,
+                      }}
+                      className="text-white mb-4"
+                    >
+                      {dateItem.date}
+                    </Text>
+                    {dateItem?.wordsList.map((wordItem) => {
+                      return (
+                        <View key={wordItem.id}>
+                          {ifCreatingStory ? (
+                            <WordCardForStory
+                              toggleWordSelection={toggleWordSelection}
+                              navigation={navigation}
+                              ifGraphic={ifGraphic}
+                              wordItem={wordItem}
+                            />
+                          ) : (
+                            <Pressable
+                              onPress={() => {
+                                if (ifGraphic) {
+                                  handleActiveCardToggle(wordItem);
+                                }
+                              }}
+                              onLongPress={() => {
+                                setIfCreatingStory(true);
+                                toggleWordSelection(wordItem.id);
+                                Haptics.impactAsync(
+                                  Haptics.ImpactFeedbackStyle.Medium
+                                );
+                                console.log("medium feedback");
+                              }}
+                            >
+                              <WordCard
+                                navigation={navigation}
+                                ifGraphic={ifGraphic}
+                                wordItem={wordItem}
+                                activeCardId={activeCardId}
+                              />
+                            </Pressable>
+                          )}
+                        </View>
+                      );
+                    })}
+                  </View>
+                );
+              })}
+              {ifCreatingStory && (
+                <View
+                  className="w-full  opacity-0"
+                  style={{
+                    height: 120,
+                  }}
+                />
+              )}
+            </ScrollView>
+          </>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
