@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Bookmark } from "lucide-react-native";
@@ -17,6 +17,7 @@ const StoryToolBar = ({
   sortedWordsList,
   cancelToolBar,
   handleCreatingStory,
+  handleDeleteWords,
 }) => {
   const [selectedNum, setSelectedNum] = useState(0);
   useEffect(() => {
@@ -33,7 +34,23 @@ const StoryToolBar = ({
           <Bookmark color={"#fff"} fill={"#fff"} size={28} opacity={0.8} />
         );
       },
-      handleEvent: () => {},
+      handleEvent: () => {
+        Alert.alert(
+          "Confirm Deletion",
+          "Are you sure you want to delete these words?",
+          [
+            {
+              text: "Cancel",
+              onPress: () => () => {},
+              style: "cancel",
+            },
+            {
+              text: "OK",
+              onPress: () => handleDeleteWords(),
+            },
+          ]
+        );
+      },
     },
     {
       label: "New story",

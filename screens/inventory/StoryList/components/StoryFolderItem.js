@@ -1,8 +1,12 @@
-import { View, TouchableOpacity, Image, Text } from "react-native";
+import { View, TouchableOpacity, Image, Text, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import SvgComponent from "./SvgComponent";
 import { convertTimestampToDateFormat } from "../../../../utilities";
 import { EllipsisVertical } from "lucide-react-native";
+import { auth, db } from "../../../../firebase";
+import { deleteDoc, doc } from "firebase/firestore";
+import { useDispatch } from "react-redux";
+import { removeStoryFromSavedList } from "../../../../slices/userInfoSlice";
 
 const WordPicCard = ({ imgUrl, rotateDegree }) => {
   return (
@@ -61,6 +65,10 @@ export const StoryFolderItemLoading = () => {
 };
 
 const StoryFolderItem = ({ storyItem, navigation }) => {
+  const uid = auth?.currentUser?.uid;
+
+  const dispatch = useDispatch();
+
   const selectedWords = storyItem?.selectedWords;
   const generateSymmetricDegrees = (n) => {
     if (n <= 0) return [];
@@ -75,6 +83,44 @@ const StoryFolderItem = ({ storyItem, navigation }) => {
     }
 
     return degrees.sort((a, b) => a - b);
+  };
+
+  const handleDeleteStory = (storyItem) => {
+    // Show confirmation dialog using Alert
+    Alert.alert(
+      "Confirm Deletion",
+      "Are you sure you want to delete this story?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Story deletion cancelled."),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => deleteStoryById(uid, storyItem),
+        },
+      ]
+    );
+  };
+
+  const deleteStoryById = async (uid, story) => {
+    const storyId = story.id;
+    if (!uid || !storyId) {
+      console.error("Invalid parameters: uid and storyId are required.");
+      return;
+    }
+
+    dispatch(removeStoryFromSavedList(story));
+
+    try {
+      const storyDocRef = doc(db, "users", uid, "storyList", storyId);
+      await deleteDoc(storyDocRef);
+      console.log(`Story with ID ${storyId} deleted successfully.`);
+    } catch (error) {
+      console.error("Error deleting story:", error);
+      alert("Failed to delete the story. Please try again.");
+    }
   };
 
   const degreeArray = generateSymmetricDegrees(selectedWords.storyWords.length);
@@ -149,7 +195,12 @@ const StoryFolderItem = ({ storyItem, navigation }) => {
             </Text>
           </View>
         </View>
-        <TouchableOpacity className="  py-3 flex flex-col justify-center mt-4 items-center">
+        <TouchableOpacity
+          onPress={() => {
+            handleDeleteStory(storyItem);
+          }}
+          className="  py-3 flex flex-col justify-center mt-4 items-center"
+        >
           <EllipsisVertical color={"#B9CEF0"} opacity={0.7} />
         </TouchableOpacity>
       </View>

@@ -49,6 +49,12 @@ const userInfoSlice = createSlice({
         (word) => word.id !== action.payload.id
       );
     },
+    removeMultipleWordsFromSavedList: (state, action) => {
+      const wordIdsToRemove = new Set(action.payload.map((word) => word.id));
+      state.savedWordList = state.savedWordList.filter(
+        (word) => !wordIdsToRemove.has(word.id)
+      );
+    },
     addToSearchHistory: (state, action) => {
       const exists = state.searchHistory.some(
         (item) => item === action.payload.id
@@ -103,6 +109,7 @@ export const {
   setSavedStoryList,
   addStoryToSavedList,
   removeStoryFromSavedList,
+  removeMultipleWordsFromSavedList,
 } = userInfoSlice.actions;
 
 export default userInfoSlice.reducer;

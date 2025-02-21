@@ -28,6 +28,7 @@ const InventoryScreen = ({ navigation, route }) => {
 
   // Handle page change on pagination header click
   const handlePageChange = (menu) => {
+    if (!menu) return;
     if (menu === "word") {
       translateX.value = withTiming(0); // Animate to the clicked page
       translateBarX.value = withTiming(0); // Animate to the clicked page

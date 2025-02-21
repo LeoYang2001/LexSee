@@ -2,17 +2,21 @@ import { ChevronDown } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, Pressable } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import StoryToolBar from "../components/StoryToolBar";
 import WordCardForStory from "./components/WordCardForStory";
 import WordCard from "./components/WordCard";
 import OpenAI from "openai";
 import Constants from "expo-constants";
 import { fetchStory } from "../../../gptFunctions";
-import { auth } from "../../../firebase";
+import { auth, db } from "../../../firebase";
 import languageCodes from "../../../constants";
 import * as Haptics from "expo-haptics";
-
+import {
+  removeMultipleWordsFromSavedList,
+  removeWordFromSavedList,
+} from "../../../slices/userInfoSlice";
+import { deleteDoc, doc } from "firebase/firestore";
 // *** AI FUNCTIONS***
 const chatgptApiKey =
   Constants.expoConfig.extra.chatgptApiKey || process.env.EXPO_DOT_CHATGPT_KEY;
@@ -64,15 +68,32 @@ const WordListPage = ({
   );
 
   const uid = auth.currentUser.uid;
+  const dispatch = useDispatch();
 
-  const wordsList_desc = groupWordsByDate(savedWordsFromStore);
-  const wordsList_asc = groupWordsByDate(savedWordsFromStore).slice().reverse();
+  // const wordsList_desc = ;
+  const [wordsList_desc, setWordsList_desc] = useState(
+    groupWordsByDate(savedWordsFromStore)
+  );
+  const [wordsList_asc, setWordsList_asc] = useState(
+    groupWordsByDate(savedWordsFromStore).slice().reverse()
+  );
+  // const wordsList_asc = ;
 
   const [sortMethod, setSortMethod] = useState("desc");
   const [sortedWordsList, setSortedWordsList] = useState(wordsList_desc);
 
   const [ifGraphic, setIfGraphic] = useState(false);
   const [ifCreatingStory, setIfCreatingStory] = useState(false);
+
+  useEffect(() => {
+    if (sortMethod === "desc") {
+      setSortedWordsList(groupWordsByDate(savedWordsFromStore));
+    } else {
+      setSortedWordsList(
+        groupWordsByDate(savedWordsFromStore).slice().reverse()
+      );
+    }
+  }, [savedWordsFromStore]);
 
   useEffect(() => {
     if (sortMethod === "desc") {
@@ -111,6 +132,33 @@ const WordListPage = ({
     setIfCreatingStory(false);
     //reset
     setSortedWordsList(resetSelection(sortedWordsList));
+  };
+
+  const removeWords = async (words) => {
+    if (!Array.isArray(words) || words.length === 0) {
+      console.error("No words provided for deletion.");
+      return;
+    }
+
+    try {
+      // Optimistically update Redux (removes all words at once)
+      dispatch(removeMultipleWordsFromSavedList(words));
+      // Iterate through words and delete each one
+      for (const word of words) {
+        if (!word?.id) {
+          console.warn("Skipping word with missing ID:", word);
+          continue;
+        }
+
+        const wordDocRef = doc(db, "users", uid, "wordList", word.id);
+        await deleteDoc(wordDocRef);
+        console.log(`Word with ID ${word.id} deleted successfully.`);
+      }
+
+      console.log("All words deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting words:", error);
+    }
   };
 
   //get selected words
@@ -164,6 +212,17 @@ const WordListPage = ({
     });
   };
 
+  const handleDeleteWords = async () => {
+    //step 0 get selected words
+    const selectedWords = getSelectedWords(sortedWordsList);
+    const wordsBatch = selectedWords.storyWords;
+
+    //step 1 delete words batch
+    await removeWords(wordsBatch);
+    //step 2 reset and hide toolBar
+    cancelToolBar();
+  };
+
   const toggleSort = () => {
     setSortMethod(sortMethod === "desc" ? "asc" : "desc");
   };
@@ -176,6 +235,7 @@ const WordListPage = ({
           <StoryToolBar
             cancelToolBar={cancelToolBar}
             handleCreatingStory={handleCreatingStory}
+            handleDeleteWords={handleDeleteWords}
             sortedWordsList={sortedWordsList}
           />
         </View>
