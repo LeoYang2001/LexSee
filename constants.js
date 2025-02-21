@@ -27,4 +27,7 @@ const languageCodes = {
   hu: "Hungarian",
 };
 
+export const initialImgPlaceHolderUrl =
+  "https://firebasestorage.googleapis.com/v0/b/lexseev2.firebasestorage.app/o/blurryImageGallery.png?alt=media&token=5c84a962-f121-4962-9cb7-d36fcc6d7ca9";
+
 export default languageCodes;

@@ -23,7 +23,6 @@ const DefinitionScreen = ({ navigation, route }) => {
   );
 
   useEffect(() => {
-    console.log(route);
     const updatedImgPlaceHolderUrl = route.params?.imgPlaceHolderUrl;
     if (updatedImgPlaceHolderUrl) {
       setImgPlaceHolderUrl(updatedImgPlaceHolderUrl);
