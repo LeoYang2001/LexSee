@@ -1,6 +1,12 @@
 import { ChevronDown } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import StoryToolBar from "../components/StoryToolBar";
@@ -12,11 +18,9 @@ import { fetchStory } from "../../../gptFunctions";
 import { auth, db } from "../../../firebase";
 import languageCodes from "../../../constants";
 import * as Haptics from "expo-haptics";
-import {
-  removeMultipleWordsFromSavedList,
-  removeWordFromSavedList,
-} from "../../../slices/userInfoSlice";
+import { removeMultipleWordsFromSavedList } from "../../../slices/userInfoSlice";
 import { deleteDoc, doc } from "firebase/firestore";
+
 // *** AI FUNCTIONS***
 const chatgptApiKey =
   Constants.expoConfig.extra.chatgptApiKey || process.env.EXPO_DOT_CHATGPT_KEY;
@@ -84,6 +88,7 @@ const WordListPage = ({
 
   const [ifGraphic, setIfGraphic] = useState(false);
   const [ifCreatingStory, setIfCreatingStory] = useState(false);
+  const [activeCardId, setActiveCardId] = useState(null);
 
   useEffect(() => {
     if (sortMethod === "desc") {
@@ -227,135 +232,158 @@ const WordListPage = ({
     setSortMethod(sortMethod === "desc" ? "asc" : "desc");
   };
 
-  return (
-    <View className=" h-full flex-1 flex-col relative">
-      {/* Story ToolBar Component  */}
-      {ifCreatingStory && (
-        <View className="absolute  w-full px-2 bottom-8 z-50">
-          <StoryToolBar
-            cancelToolBar={cancelToolBar}
-            handleCreatingStory={handleCreatingStory}
-            handleDeleteWords={handleDeleteWords}
-            sortedWordsList={sortedWordsList}
-          />
-        </View>
-      )}
-      {/*Sort*/}
-      <View
-        style={{ width: "100%", height: 58 }}
-        className="justify-between items-center px-4 flex flex-row"
-      >
-        <TouchableOpacity
-          disabled={ifCreatingStory}
-          onPress={toggleSort}
-          className="flex flex-row flex-1 justify-center items-center"
-        >
-          <Text
-            style={{ fontSize: 14, opacity: ifCreatingStory ? 0.2 : 0.7 }}
-            className="text-white"
-          >
-            {sortMethod === "desc" ? "Descending time" : "Ascending time"}
-          </Text>
+  const handleActiveCardToggle = (wordItem) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    console.log("light feedback");
+    if (activeCardId === wordItem.id) {
+      setActiveCardId(null);
+    } else {
+      setActiveCardId(wordItem.id);
+      console.log(wordItem.id);
+    }
+  };
 
-          <View
-            style={{
-              width: 0,
-              height: 0,
-              borderLeftWidth: 5,
-              borderRightWidth: 5,
-              borderBottomWidth: 8,
-              borderLeftColor: "transparent",
-              borderRightColor: "transparent",
-              borderBottomColor: "#ffffffa1",
-              marginLeft: 5,
-              opacity: ifCreatingStory ? 0.2 : 1,
-              transform: `rotate(${sortMethod === "desc" ? 180 : 0}deg)`,
-            }}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setIfGraphic(!ifGraphic);
-          }}
-          className="flex flex-row flex-1 justify-center items-center"
+  return (
+    <TouchableWithoutFeedback
+      onPress={() => {
+        setActiveCardId(null);
+      }}
+    >
+      <View className=" h-full flex-1 flex-col relative">
+        {/* Story ToolBar Component  */}
+        {ifCreatingStory && (
+          <View className="absolute  w-full px-2 bottom-8 z-50">
+            <StoryToolBar
+              cancelToolBar={cancelToolBar}
+              handleCreatingStory={handleCreatingStory}
+              handleDeleteWords={handleDeleteWords}
+              sortedWordsList={sortedWordsList}
+            />
+          </View>
+        )}
+        {/*Sort*/}
+        <View
+          style={{ width: "100%", height: 58 }}
+          className="justify-between items-center px-4 flex flex-row"
         >
-          <Text style={{ fontSize: 14, opacity: 0.7 }} className="text-white">
-            Graphics context
-          </Text>
-          <View
-            style={{
-              width: 0,
-              height: 0,
-              borderLeftWidth: 5,
-              borderRightWidth: 5,
-              borderBottomWidth: 8,
-              borderLeftColor: "transparent",
-              borderRightColor: "transparent",
-              borderBottomColor: "#ffffffa1",
-              marginLeft: 5,
-              transform: `rotate(${!ifGraphic ? 180 : 0}deg)`,
+          <TouchableOpacity
+            disabled={ifCreatingStory}
+            onPress={toggleSort}
+            className="flex flex-row flex-1 justify-center items-center"
+          >
+            <Text
+              style={{ fontSize: 14, opacity: ifCreatingStory ? 0.2 : 0.7 }}
+              className="text-white"
+            >
+              {sortMethod === "desc" ? "Descending time" : "Ascending time"}
+            </Text>
+
+            <View
+              style={{
+                width: 0,
+                height: 0,
+                borderLeftWidth: 5,
+                borderRightWidth: 5,
+                borderBottomWidth: 8,
+                borderLeftColor: "transparent",
+                borderRightColor: "transparent",
+                borderBottomColor: "#ffffffa1",
+                marginLeft: 5,
+                opacity: ifCreatingStory ? 0.2 : 1,
+                transform: `rotate(${sortMethod === "desc" ? 180 : 0}deg)`,
+              }}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setIfGraphic(!ifGraphic);
             }}
-          />
-        </TouchableOpacity>
-      </View>
-      {/*Card*/}
-      <ScrollView className="flex-1 w-full" alwaysBounceVertical={true}>
-        {sortedWordsList.map((dateItem) => {
-          return (
-            <View className="border mb-3 mx-4 " key={dateItem.date}>
-              <Text
-                style={{
-                  color: "#fff",
-                  opacity: 0.6,
-                }}
-                className="text-white mb-4"
-              >
-                {dateItem.date}
-              </Text>
-              {dateItem?.wordsList.map((wordItem) => {
-                return (
-                  <View key={wordItem.id}>
-                    {ifCreatingStory ? (
-                      <WordCardForStory
-                        toggleWordSelection={toggleWordSelection}
-                        navigation={navigation}
-                        ifGraphic={ifGraphic}
-                        wordItem={wordItem}
-                      />
-                    ) : (
-                      <Pressable
-                        onLongPress={() => {
-                          setIfCreatingStory(true);
-                          toggleWordSelection(wordItem.id);
-                          Haptics.impactAsync(
-                            Haptics.ImpactFeedbackStyle.Medium
-                          );
-                          console.log("medium feedback");
-                        }}
-                      >
-                        <WordCard
+            className="flex flex-row flex-1 justify-center items-center"
+          >
+            <Text style={{ fontSize: 14, opacity: 0.7 }} className="text-white">
+              Graphics context
+            </Text>
+            <View
+              style={{
+                width: 0,
+                height: 0,
+                borderLeftWidth: 5,
+                borderRightWidth: 5,
+                borderBottomWidth: 8,
+                borderLeftColor: "transparent",
+                borderRightColor: "transparent",
+                borderBottomColor: "#ffffffa1",
+                marginLeft: 5,
+                transform: `rotate(${!ifGraphic ? 180 : 0}deg)`,
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+        {/*Card*/}
+        <ScrollView className="flex-1 w-full" alwaysBounceVertical={true}>
+          {sortedWordsList.map((dateItem) => {
+            return (
+              <View className="border mb-3 mx-4 " key={dateItem.date}>
+                <Text
+                  style={{
+                    color: "#fff",
+                    opacity: 0.6,
+                  }}
+                  className="text-white mb-4"
+                >
+                  {dateItem.date}
+                </Text>
+                {dateItem?.wordsList.map((wordItem) => {
+                  return (
+                    <View key={wordItem.id}>
+                      {ifCreatingStory ? (
+                        <WordCardForStory
+                          toggleWordSelection={toggleWordSelection}
                           navigation={navigation}
                           ifGraphic={ifGraphic}
                           wordItem={wordItem}
                         />
-                      </Pressable>
-                    )}
-                  </View>
-                );
-              })}
-            </View>
-          );
-        })}
-        {ifCreatingStory && (
-          <View
-            className="w-full  opacity-0"
-            style={{
-              height: 120,
-            }}
-          />
-        )}
-      </ScrollView>
-    </View>
+                      ) : (
+                        <Pressable
+                          onPress={() => {
+                            if (ifGraphic) {
+                              handleActiveCardToggle(wordItem);
+                            }
+                          }}
+                          onLongPress={() => {
+                            setIfCreatingStory(true);
+                            toggleWordSelection(wordItem.id);
+                            Haptics.impactAsync(
+                              Haptics.ImpactFeedbackStyle.Medium
+                            );
+                            console.log("medium feedback");
+                          }}
+                        >
+                          <WordCard
+                            navigation={navigation}
+                            ifGraphic={ifGraphic}
+                            wordItem={wordItem}
+                            activeCardId={activeCardId}
+                          />
+                        </Pressable>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
+            );
+          })}
+          {ifCreatingStory && (
+            <View
+              className="w-full  opacity-0"
+              style={{
+                height: 120,
+              }}
+            />
+          )}
+        </ScrollView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

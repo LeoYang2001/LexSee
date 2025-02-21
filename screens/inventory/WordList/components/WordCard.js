@@ -6,10 +6,14 @@ import { ArrowRight, Volume2 } from "lucide-react-native";
 import PronunciationButton from "../../../../components-shared/PronunciationButton";
 import WordFlexCardInventory from "./WordFlexCardInventory";
 
-const WordCard = ({ wordItem, ifGraphic, navigation, setIfCreatingStory }) => {
+const WordCard = ({ wordItem, ifGraphic, navigation, activeCardId }) => {
   if (ifGraphic)
     return (
-      <WordFlexCardInventory wordItem={wordItem} navigation={navigation} />
+      <WordFlexCardInventory
+        activeCardId={activeCardId}
+        wordItem={wordItem}
+        navigation={navigation}
+      />
     );
   else
     return (
