@@ -7,11 +7,12 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Text,
+  SectionList,
 } from "react-native";
 
 const ImageList = ({
   images_result,
-  onSaveWord,
+  selectedImgs,
   fetchMoreImages,
   page,
   handleConfirmPop,
@@ -26,7 +27,7 @@ const ImageList = ({
     handleConfirmPop(imgUrl);
   };
 
-  const renderItem = ({ item }) => (
+  const renderImageItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
         handleImagePress(item.link);
@@ -37,19 +38,86 @@ const ImageList = ({
     </TouchableOpacity>
   );
 
+  const sections = [
+    {
+      title: "Top Views",
+      data: selectedImgs,
+      renderItem: ({ item, index }) => {
+        console.log(index);
+        const label = (() => {
+          switch (index) {
+            case 0:
+              return "Most selected";
+            case 1:
+              return "Second most selected";
+            case 2:
+              return "Third most selected";
+            default:
+              return "other";
+          }
+        })();
+        return (
+          <TouchableOpacity
+            onPress={() => {
+              handleImagePress(item.imgUrl);
+            }}
+            style={styles.imageContainer}
+          >
+            <Image source={{ uri: item.imgUrl }} style={styles.image} />
+            <View
+              style={{
+                borderTopLeftRadius: 10,
+                borderBottomRightRadius: 10,
+                backgroundColor: "#250C0430",
+              }}
+              className="absolute right-0 bottom-0 p-2"
+            >
+              <Text className="text-white">{label}</Text>
+            </View>
+          </TouchableOpacity>
+        );
+      },
+    },
+    {
+      title: "Images",
+      data: images_result,
+      renderItem: ({ item }) => (
+        <FlatList
+          data={images_result} // Data for images
+          renderItem={renderImageItem} // Image rendering function
+          keyExtractor={(item, index) => index.toString()}
+          numColumns={2} // Two images per row
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={() => (
+            <View style={{ padding: 10 }}>
+              <ActivityIndicator animating size="small" />
+            </View>
+          )}
+        />
+      ),
+    },
+  ];
+
   return (
     <>
-      {/* ConfirmBtn Here:  */}
-
-      <FlatList
-        data={images_result}
-        renderItem={renderItem}
+      <SectionList
+        sections={sections}
         keyExtractor={(item, index) => index.toString()}
-        numColumns={2}
+        renderItem={({ item }) =>
+          item.link ? (
+            renderImageItem({ item }) // Render images for the Images section
+          ) : (
+            <View style={{ padding: 10 }}>
+              {/* Render static content for Top Views */}
+              <Text>demo</Text>
+            </View>
+          )
+        }
+        renderSectionHeader={({ section }) => <></>}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={() => (
-          // Loading indicator for pagination
           <View style={{ padding: 10 }}>
             <ActivityIndicator animating size="small" />
           </View>

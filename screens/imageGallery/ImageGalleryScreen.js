@@ -4,11 +4,15 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Pressable,
+  StyleSheet,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ChevronLeft } from "lucide-react-native";
 import ImageList from "./components/ImageList";
 import ConfirmButton from "./components/ConfirmButton";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const ImageGalleryScreen = ({ navigation, route }) => {
   const promptWord = route.params.word;
@@ -16,7 +20,7 @@ const ImageGalleryScreen = ({ navigation, route }) => {
   const [imagesResults, setimagesResults] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true); // To know if there are more images to load
-
+  const [selectedImgs, setSelectedImgs] = useState([]);
   //States control confirmBtn popup
   const [ifConfirmBtn, setIfConfirmBtn] = useState(false);
   const [confirmImg, setConfirmImg] = useState(null);
@@ -44,7 +48,36 @@ const ImageGalleryScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     handleSearchImage(promptWord);
+    fetchSelectedImgs(promptWord);
   }, [promptWord]);
+
+  //SelectedImg fetch
+  const fetchSelectedImgs = async (wordId) => {
+    const wordDocRef = doc(db, "savedImgUrls", wordId); // Reference to the word document in Firestore
+
+    try {
+      const wordDocSnap = await getDoc(wordDocRef); // Get the current data for the word
+      if (wordDocSnap.exists()) {
+        const wordData = wordDocSnap.data();
+
+        let imgUrls = wordData.savedImgUrl || []; // Default to an empty array if no saved images
+
+        // Sort images by count in descending order
+        imgUrls.sort((a, b) => b.count - a.count);
+
+        // Get the top 3 most selected images with imgUrl and count
+        const topImages = imgUrls.slice(0, 3);
+
+        console.log(`Top 3 images for word ${wordId}:`, topImages);
+        setSelectedImgs(topImages);
+        return topImages;
+      } else {
+        console.log(`Word document not found: ${wordId}`);
+      }
+    } catch (error) {
+      console.error("Error fetching selected images:", error);
+    }
+  };
 
   //IMAGE SEARCH function
   const handleSearchImage = async (urlWord, newPage = 1) => {
@@ -52,7 +85,7 @@ const ImageGalleryScreen = ({ navigation, route }) => {
       const apiKey = "AIzaSyBTVL3kl1d0u7sg0h9VjYsiQtot58DPwQ0";
       const cx = "2121e0d2556664ff3";
       const response = await fetch(
-        `https://www.googleapis.com/customsearch/v1?q=${urlWord}&cx=${cx}&searchType=image&key=${apiKey}&start=${
+        `https://www.googleapis.com/customsearch/v1?q=the+illustration+of+${urlWord}&cx=${cx}&searchType=image&key=${apiKey}&start=${
           (newPage - 1) * 10 + 1
         }`
       );
@@ -125,8 +158,24 @@ const ImageGalleryScreen = ({ navigation, route }) => {
             </View>
           ) : (
             <View className="flex-1 w-full ">
+              {/* <View>
+              {selectedImgs.map((imgItem, index) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleConfirmPop(imgItem.imgUrl);
+                  }}
+                  style={styles.imageContainer}
+                >
+                  <Image
+                    source={{ uri: imgItem.imgUrl }}
+                    style={styles.image}
+                  />
+                </TouchableOpacity>
+              ))}
+              </View> */}
               {imagesResults.length > 0 && (
                 <ImageList
+                  selectedImgs={selectedImgs}
                   handleConfirmPop={handleConfirmPop}
                   onSaveWord={handleSavingWord}
                   images_result={imagesResults}
@@ -160,5 +209,18 @@ const ImageGalleryScreen = ({ navigation, route }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  imageContainer: {
+    flex: 1,
+    margin: 5,
+  },
+  image: {
+    width: "100%",
+    height: 170,
+    resizeMode: "cover",
+    borderRadius: 10,
+  },
+});
 
 export default ImageGalleryScreen;

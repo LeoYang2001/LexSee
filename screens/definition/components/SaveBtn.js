@@ -7,7 +7,8 @@ import {
   removeWordFromSavedList,
 } from "../../../slices/userInfoSlice";
 import { auth, db } from "../../../firebase";
-import { deleteDoc, doc, setDoc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { initialImgPlaceHolderUrl } from "../../../constants";
 
 const SaveBtn = ({ wordItem, imgUrl }) => {
   const uid = auth.currentUser?.uid;
@@ -70,7 +71,66 @@ const SaveBtn = ({ wordItem, imgUrl }) => {
   const checkIfWordExists = (word_id) =>
     savedWordsFromStore.some((wordItem) => wordItem.id === word_id);
 
+  const trackSavedImgUrl = async (savedImg, wordItem) => {
+    const wordId = wordItem.id; // Assuming wordItem has a 'word' property that identifies the word
+    const wordDocRef = doc(db, "savedImgUrls", wordId); // Reference to the word document in Firestore
+
+    try {
+      const wordDocSnap = await getDoc(wordDocRef); // Get the current data for the word
+      if (wordDocSnap.exists()) {
+        const wordData = wordDocSnap.data();
+
+        let imgUrls = wordData.savedImgUrl || []; // Default to an empty array if no saved images
+
+        // Check if the imgUrl already exists
+        const existingImgIndex = imgUrls.findIndex(
+          (img) => img.imgUrl === savedImg
+        );
+
+        if (existingImgIndex !== -1) {
+          // If imgUrl exists, increment the count
+          imgUrls[existingImgIndex].count += 1;
+        } else {
+          // If imgUrl doesn't exist, add a new entry with count 1
+          imgUrls.push({ imgUrl: savedImg, count: 1 });
+        }
+
+        // Update the word document with the updated imgUrls array
+        await updateDoc(wordDocRef, {
+          savedImgUrl: imgUrls,
+        });
+
+        console.log(
+          `Image URL saved for word: ${wordItem.id}. Updated imgUrls.`
+        );
+      } else {
+        // If the word does not exist, create a new document with the imgUrl
+        await setDoc(wordDocRef, {
+          savedImgUrl: [{ imgUrl: savedImg, count: 1 }], // Initialize with the first image and count 1
+        });
+
+        console.log(`New word added: ${wordItem.word}, with image.`);
+      }
+    } catch (error) {
+      console.error("Error updating word:", error);
+    }
+  };
+
   const addWord = async (wordItem) => {
+    const ifTemplate = imgUrl === initialImgPlaceHolderUrl;
+
+    //step 0 check if img is templateimg
+    if (!ifTemplate) {
+      await trackSavedImgUrl((savedImg = imgUrl), wordItem);
+    } else {
+      console.log("Skipping image as it is a template image.");
+    }
+
+    //if imgUrl is template img, skip this step
+
+    //otherwise, increment this word imgCount in datebase imgSavedCount (id == word (string), imgUrlSavedTop3 )
+    //this feature is to track the most 3 saved imgUrl for a givin word, with this info,
+    // we can help user to speed up the process of selecting images by prompt the top 3 imgs url
     const packetizedWord = {
       ...wordItem,
       imgUrl,
