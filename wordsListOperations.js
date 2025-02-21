@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
   addWordToSavedList,
+  removeMultipleWordsFromSavedList,
   removeWordFromSavedList,
 } from "./slices/userInfoSlice";
 import { deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore";
@@ -38,4 +39,32 @@ const removeWord = async (word) => {
   }
 };
 
-export default { addWord, removeWord };
+const removeWords = async (words) => {
+  if (!Array.isArray(words) || words.length === 0) {
+    console.error("No words provided for deletion.");
+    return;
+  }
+
+  try {
+    // Optimistically update Redux (removes all words at once)
+    // dispatch(removeMultipleWordsFromSavedList(words));
+
+    // Iterate through words and delete each one
+    for (const word of words) {
+      if (!word?.id) {
+        console.warn("Skipping word with missing ID:", word);
+        continue;
+      }
+
+      const wordDocRef = doc(db, "users", uid, "wordList", word.id);
+      await deleteDoc(wordDocRef);
+      console.log(`Word with ID ${word.id} deleted successfully.`);
+    }
+
+    console.log("All words deleted successfully.");
+  } catch (error) {
+    console.error("Error deleting words:", error);
+  }
+};
+
+export default { addWord, removeWord, removeWords };
