@@ -80,7 +80,7 @@ export const fetchStory = async (
   const formattedWords = selectedWords.join(",");
   const userPrompt = `
   I have just learned the following words: ${formattedWords}. Please generate a short but detailed and engaging passage that naturally includes all these words in ${language}. This passage should help me consolidate my understanding and self-test the meanings of these words.
-  
+
   Special Instructions:
     1. Write the passage entirely in ${language}.
     2. Ensure the passage is at least 6-8 sentences long, providing enough context for each word to be clearly understood.
@@ -90,14 +90,18 @@ export const fetchStory = async (
     6. **Return only a properly formatted JSON object**. Do not include any extra text, explanations, or comments outside the JSON object.
     7. **Strictly adhere to JSON syntax**. Ensure that the JSON keys are quoted correctly and the structure is valid. Wrap the entire JSON response between "~" symbols (e.g., ~{...}~).
     8. Do not include any additional characters or words that are not part of the JSON response.
-    9. The JSON should contain a "storyName" (prompt an appropriate name for this story) and a "story" field with the generated passage.
+    9. The JSON should contain the following keys:
+      - "storyName": A name for the story based on the selected words.
+      - "story": The passage with selected words wrapped in "<>".
+      - "storyPieces": An array that splits the passage into each word, space, and punctuation mark separately. Ensure that the selected words are wrapped in "<>", while other words and punctuation are kept as they are.
   
-    JSON format:
-    ~{
-      "storyName": "Story generated with <selectedWords>",
-      "story": "Your generated passage using <selectedWords> naturally in a well-structured and engaging context."
-    }~
-  `;
+  JSON format:
+  ~{
+    "storyName": "A name for the story based on the selected words",
+    "story": "Your generated passage where each selected word is wrapped in < >.",
+    "storyPieces": ["word1", " ", "word2", ",", " ", "<selectedWord>", " ", "word3", "."]
+  }~
+`;
   const completion = await openai.chat.completions.create({
     model: "gpt-4o",
     messages: [

@@ -244,7 +244,7 @@ const WordListPage = ({
     //step 1 delete words batch
     await removeWords(wordsBatch);
     //step 2 reset and hide toolBar
-    cancelToolBar();
+    // cancelToolBar();
   };
 
   const toggleSort = () => {

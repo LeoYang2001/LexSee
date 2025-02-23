@@ -15,21 +15,14 @@ import { collection, doc, setDoc } from "firebase/firestore";
 
 const StoryContent = ({ isHighlight, storyData }) => {
   const renderStoryText = () => {
-    const words = storyData.story.split(" "); // Split story into words by space
+    const words = storyData.storyPieces; // Split story into words by space
     const regex = /^<[^>]+>$/;
 
     return words.map((word, index) => {
-      const wordWithoutPunctuation = word.replace(/[.,!?;:()"'`]/g, "");
-      let isHighlighted = regex.test(wordWithoutPunctuation.trim());
-      const ifPunctuation = /[.!?;:,]$/.test(word);
+      let isHighlighted = regex.test(word.trim());
 
       if (isHighlighted) {
-        const formattedHighlightedWord = ifPunctuation
-          ? [
-              word.replace(/[<>]/g, "").slice(0, -1),
-              word.replace(/[<>]/g, "")[word.replace(/[<>]/g, "").length - 1],
-            ]
-          : [word.replace(/[<>]/g, "")];
+        const wordWithoutBrackets = word.replace(/[<>]/g, "");
         return (
           <TouchableOpacity className="flex flex-row items-center" key={index}>
             <Text
@@ -41,33 +34,8 @@ const StoryContent = ({ isHighlight, storyData }) => {
                 marginRight: 2, // Space out words slightly
               }}
             >
-              {formattedHighlightedWord[0]}
+              {wordWithoutBrackets}
             </Text>
-            {formattedHighlightedWord.length > 1 ? (
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#fff",
-                  opacity: 0.8,
-                  lineHeight: 24,
-                  marginRight: 2, // Space out words slightly
-                }}
-              >
-                {formattedHighlightedWord[1]}{" "}
-              </Text>
-            ) : (
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#fff",
-                  opacity: 0.8,
-                  lineHeight: 24,
-                  marginRight: 2, // Space out words slightly
-                }}
-              >
-                {" "}
-              </Text>
-            )}
           </TouchableOpacity>
         );
       } else
@@ -87,7 +55,7 @@ const StoryContent = ({ isHighlight, storyData }) => {
                 marginRight: 2, // Space out words slightly
               }}
             >
-              {word}{" "}
+              {word}
             </Text>
           </Pressable>
         );
