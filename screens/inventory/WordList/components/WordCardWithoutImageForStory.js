@@ -13,15 +13,11 @@ const WordCardWithoutImageForStory = ({ wordItem, toggleWordSelection }) => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         console.log("light feedback");
       }}
-      style={{
-        width: "100%",
-        borderRadius: 12,
-      }}
       className="w-full flex flex-col relative mb-4"
     >
       <LinearGradient
-        colors={["#23272F", "#242424"]}
-        style={{ height: 79, borderRadius: 8 }}
+        colors={["#23272f", "#242424"]}
+        style={{ height: 79, borderRadius: 12 }}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         className="mb-4"
