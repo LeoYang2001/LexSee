@@ -17,7 +17,7 @@ import Animated, {
 import StoryListPage from "./StoryList/StoryListPage";
 import WordListPage from "./WordList/WordListPage";
 import { ChevronLeft, Search } from "lucide-react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { PanGestureHandler, TextInput } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -71,6 +71,26 @@ const InventoryScreen = ({ navigation, route }) => {
   useEffect(() => {
     handlePageChange(initialTab);
   }, []);
+
+  const onGestureEvent = (event) => {
+    if (ifSearch) return;
+    const { translationX } = event.nativeEvent;
+    translateX.value =
+      translationX - (currentTab === "story" ? SCREEN_WIDTH : 0);
+  };
+
+  const onGestureEnd = (event) => {
+    if (ifSearch) return;
+
+    const { translationX, velocityX } = event.nativeEvent;
+    if (translationX < -100 || velocityX < -500) {
+      handlePageChange("story");
+    } else if (translationX > 50 || velocityX > 500) {
+      handlePageChange("word");
+    } else {
+      handlePageChange(currentTab);
+    }
+  };
 
   //Story Creation related data
   const [isGeneratingStory, setIsGeneratingStory] = useState(false);
@@ -199,27 +219,32 @@ const InventoryScreen = ({ navigation, route }) => {
           </Animated.View>
         </View>
 
-        {/* Pages */}
-        <Animated.View
-          className=" flex-1   overflow-hidden flex-row "
-          style={[{ width: 2 * SCREEN_WIDTH }, animatedStyle]}
+        <PanGestureHandler
+          onGestureEvent={onGestureEvent}
+          onEnded={onGestureEnd}
         >
-          <View className="h-full" style={{ width: SCREEN_WIDTH }}>
-            <WordListPage
-              ifSearch={ifSearch}
-              inputVal={inputVal}
-              setIsGeneratingStory={setIsGeneratingStory}
-              navigation={navigation}
-              handlePageChange={handlePageChange}
-            />
-          </View>
-          <View className="h-full " style={{ width: SCREEN_WIDTH }}>
-            <StoryListPage
-              navigation={navigation}
-              isGeneratingStory={isGeneratingStory}
-            />
-          </View>
-        </Animated.View>
+          {/* Pages */}
+          <Animated.View
+            className=" flex-1   overflow-hidden flex-row "
+            style={[{ width: 2 * SCREEN_WIDTH }, animatedStyle]}
+          >
+            <View className="h-full" style={{ width: SCREEN_WIDTH }}>
+              <WordListPage
+                ifSearch={ifSearch}
+                inputVal={inputVal}
+                setIsGeneratingStory={setIsGeneratingStory}
+                navigation={navigation}
+                handlePageChange={handlePageChange}
+              />
+            </View>
+            <View className="h-full " style={{ width: SCREEN_WIDTH }}>
+              <StoryListPage
+                navigation={navigation}
+                isGeneratingStory={isGeneratingStory}
+              />
+            </View>
+          </Animated.View>
+        </PanGestureHandler>
       </View>
     </TouchableWithoutFeedback>
   );

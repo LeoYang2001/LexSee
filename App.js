@@ -23,6 +23,7 @@ import InventoryScreen from "./screens/inventory/InventoryScreen";
 import StoryScreen from "./screens/inventory/story/StoryScreen";
 import LanguageSelectionScreen from "./screens/languageSelection/LanguageSelectionScreen";
 import ImageGalleryScreen from "./screens/imageGallery/ImageGalleryScreen";
+import InventoryScreenUpdate from "./screens/inventory/InventoryScreenUpdate";
 
 //Handling App Crash Cases
 
@@ -81,6 +82,7 @@ function App() {
               component={EmailVerificationScreen}
             />
             <Stack.Screen name="Inventory" component={InventoryScreen} />
+            {/* <Stack.Screen name="Inventory" component={InventoryScreenUpdate} /> */}
             <Stack.Screen name="Story" component={StoryScreen} />
             <Stack.Screen
               name="LanguageSelection"
