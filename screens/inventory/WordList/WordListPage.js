@@ -289,7 +289,7 @@ const WordListPage = ({
           >
             {filteredWordsList.map((wordItem) => {
               return (
-                <View className=" mx-4 " key={wordItem.id}>
+                <Pressable className=" mx-4 " key={wordItem.id}>
                   {ifCreatingStory ? (
                     <WordCardForStory
                       toggleWordSelection={toggleWordSelection}
@@ -319,7 +319,7 @@ const WordListPage = ({
                       />
                     </Pressable>
                   )}
-                </View>
+                </Pressable>
               );
             })}
             {ifCreatingStory && (
@@ -398,7 +398,7 @@ const WordListPage = ({
             <ScrollView className="flex-1 w-full" alwaysBounceVertical={true}>
               {sortedWordsList.map((dateItem) => {
                 return (
-                  <View className="border mb-3 mx-4 " key={dateItem.date}>
+                  <Pressable className=" mb-3 mx-4  " key={dateItem.date}>
                     <Text
                       style={{
                         color: "#fff",
@@ -445,7 +445,7 @@ const WordListPage = ({
                         </View>
                       );
                     })}
-                  </View>
+                  </Pressable>
                 );
               })}
               {ifCreatingStory && (
