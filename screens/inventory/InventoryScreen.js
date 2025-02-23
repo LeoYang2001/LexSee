@@ -119,6 +119,8 @@ const InventoryScreen = ({ navigation, route }) => {
                 className="justify-center items-center"
                 onPress={() => {
                   handlePageChange("word");
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  console.log("light feedback");
                 }}
               >
                 <Text
@@ -136,6 +138,8 @@ const InventoryScreen = ({ navigation, route }) => {
                 className="justify-center items-center"
                 onPress={() => {
                   handlePageChange("story");
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  console.log("light feedback");
                 }}
               >
                 <Text
