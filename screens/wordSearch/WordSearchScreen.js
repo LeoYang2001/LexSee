@@ -29,6 +29,28 @@ const WordSearchScreen = ({ navigation }) => {
     (state) => state.userInfo.profile.selectedLanguage
   );
 
+  //savedWordsFromStore
+  const savedWordsFromStore = useSelector((state) => {
+    try {
+      return state.userInfo.savedWordList;
+    } catch (error) {
+      console.log("Error parsing savedWordList:", error);
+      return [];
+    }
+  });
+
+  function formatWordsSuggestionList(
+    wordsSuggestionResult,
+    savedWordsFromStore
+  ) {
+    const savedWordsSet = new Set(savedWordsFromStore.map((item) => item.id));
+
+    return wordsSuggestionResult.map((wordObj) => ({
+      ...wordObj,
+      ifSaved: savedWordsSet.has(wordObj.word),
+    }));
+  }
+
   //fetch word suggestions based on selected language
   const fetchWordSuggestion = async () => {
     if (selectedLanguage !== "en") return;
@@ -37,8 +59,14 @@ const WordSearchScreen = ({ navigation }) => {
         `https://api.datamuse.com/sug?s=${inputText.trim()}&max=40`
       );
       const rs = await res.json();
-      if (rs.length > 0) setWordSuggestion(rs);
-      else setWordSuggestion([]);
+      if (rs.length > 0) {
+        console.log(rs);
+        const formattedWordsSuggestion = formatWordsSuggestionList(
+          rs,
+          savedWordsFromStore
+        );
+        setWordSuggestion(formattedWordsSuggestion);
+      } else setWordSuggestion([]);
     } catch (error) {
       console.log("word suggestion api error: ");
       console.log(error);
