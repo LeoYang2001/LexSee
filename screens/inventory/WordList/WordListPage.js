@@ -252,6 +252,7 @@ const WordListPage = ({
   };
 
   const handleActiveCardToggle = (wordItem) => {
+    console.log(wordItem);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     console.log("light feedback");
     if (activeCardId === wordItem.id) {
