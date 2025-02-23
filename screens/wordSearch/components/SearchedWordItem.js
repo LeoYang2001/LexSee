@@ -5,7 +5,6 @@ import * as Haptics from "expo-haptics";
 
 const SearchedWordItem = ({ searchedWord, navigation }) => {
   const handleSearchWord = (word) => {
-    console.log(word);
     //if its not in wordsList, navigate to definition with wordItem = searchedWord.word
     navigation.navigate("Definition", {
       wordItem: word,
