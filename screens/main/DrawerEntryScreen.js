@@ -26,62 +26,15 @@ import {
   setSearchHistory,
 } from "../../slices/userInfoSlice";
 import { setList } from "../../slices/languageSlice";
-import { BookOpenText, LogOut, SunMoon, User } from "lucide-react-native";
+import { CircleHelp, Headset, Moon, Power } from "lucide-react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import Logo from "../../components-shared/Logo";
 
 const Drawer = createDrawerNavigator();
-
-const drawerOptions = [
-  {
-    label: "Theme Color",
-    ifNested: true,
-    NestedLabels: [
-      {
-        label: "Dark",
-        ifNested: false,
-        onClick: () => {
-          console.log("change themecolor to dark");
-        },
-      },
-      {
-        label: "Light",
-        ifNested: false,
-        onClick: () => {
-          console.log("change themecolor to light");
-        },
-      },
-    ],
-    icon: () => {
-      return <SunMoon color={"white"} opacity={0.7} />;
-    },
-  },
-  {
-    label: "Guidance",
-    ifNested: false,
-    NestedLabels: [],
-    onClick: () => {
-      console.log("open guidance");
-    },
-    icon: () => {
-      return <BookOpenText color={"white"} opacity={0.7} />;
-    },
-  },
-  {
-    label: "Contact Us",
-    ifNested: false,
-    NestedLabels: [],
-    onClick: () => {
-      console.log("Contact Us");
-    },
-    icon: () => {
-      return <User color={"white"} opacity={0.7} />;
-    },
-  },
-];
 
 const CustomDrawerContent = (props) => {
   const userInfo = auth.currentUser;
@@ -90,6 +43,69 @@ const CustomDrawerContent = (props) => {
   const tab1Height = useSharedValue(0);
   const tab2Height = useSharedValue(0);
   const tab3Height = useSharedValue(0);
+
+  const signOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        props.navigation.navigate("LoginWelcome");
+        props.navigation.closeDrawer();
+      })
+      .catch((error) => {
+        console.error("Sign out error:", error);
+      });
+  };
+  const drawerOptions = [
+    {
+      label: "Theme Color",
+      ifNested: true,
+      NestedLabels: [
+        {
+          label: "Dark (To be developed)",
+          ifNested: false,
+          onClick: () => {
+            console.log("change themecolor to dark");
+          },
+        },
+      ],
+      icon: () => {
+        return <Moon color={"white"} size={20} opacity={0.7} />;
+      },
+    },
+    {
+      label: "Guidance",
+      ifNested: false,
+      NestedLabels: [],
+      onClick: () => {
+        console.log("open guidance");
+      },
+      icon: () => {
+        return <CircleHelp color={"white"} size={20} opacity={0.7} />;
+      },
+    },
+    {
+      label: "Contact Us",
+      ifNested: false,
+      NestedLabels: [],
+      onClick: () => {
+        console.log("Contact Us");
+      },
+      icon: () => {
+        return <Headset color={"white"} size={20} opacity={0.7} />;
+      },
+    },
+    {
+      label: "Sign Out",
+      ifNested: false,
+      NestedLabels: [],
+      onClick: () => {
+        signOut();
+      },
+      icon: () => {
+        return <Power color={"white"} size={20} opacity={0.7} />;
+      },
+    },
+  ];
 
   const handleTabPress = (tab) => {
     if (!tab) {
@@ -120,18 +136,6 @@ const CustomDrawerContent = (props) => {
   const tab3Style = useAnimatedStyle(() => ({ height: tab3Height.value }));
 
   const tabStyles = [tab1Style, tab2Style, tab3Style];
-
-  const signOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        props.navigation.navigate("LoginWelcome");
-        props.navigation.closeDrawer();
-      })
-      .catch((error) => {
-        console.error("Sign out error:", error);
-      });
-  };
 
   return (
     <TouchableWithoutFeedback
@@ -242,6 +246,7 @@ const CustomDrawerContent = (props) => {
                         <Text
                           style={{
                             fontSize: 14,
+                            color: "#FA541C",
                           }}
                           className="text-white opacity-90 font-semibold ml-2 "
                         >
@@ -257,7 +262,7 @@ const CustomDrawerContent = (props) => {
         </View>
 
         {/* Sign Out Button */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{
             height: 40,
           }}
@@ -273,7 +278,28 @@ const CustomDrawerContent = (props) => {
           >
             Sign Out
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+
+        {/* Second Version Banner */}
+        <View
+          style={{
+            height: 38,
+            paddingBottom: 10,
+            backgroundColor: "#26282f",
+          }}
+          className=" bottom-0 absolute w-full  flex flex-row justify-center pt-1"
+        >
+          <View className="relative">
+            <View className="absolute left-3  bottom-1">
+              <Logo size={14} opacity={0.6} />
+            </View>
+            <Text
+              style={{ color: "#fff", opacity: 0.5, fontSize: 12, zIndex: 10 }}
+            >
+              LexSee Version 2.0
+            </Text>
+          </View>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );

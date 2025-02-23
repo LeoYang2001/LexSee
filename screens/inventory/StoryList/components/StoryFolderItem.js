@@ -2,7 +2,7 @@ import { View, TouchableOpacity, Image, Text, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import SvgComponent from "./SvgComponent";
 import { convertTimestampToDateFormat } from "../../../../utilities";
-import { EllipsisVertical } from "lucide-react-native";
+import { Trash2 } from "lucide-react-native";
 import { auth, db } from "../../../../firebase";
 import { deleteDoc, doc } from "firebase/firestore";
 import { useDispatch } from "react-redux";
@@ -92,13 +92,13 @@ const StoryFolderItem = ({ storyItem, navigation }) => {
       "Are you sure you want to delete this story?",
       [
         {
+          text: "OK",
+          onPress: () => deleteStoryById(uid, storyItem),
+        },
+        {
           text: "Cancel",
           onPress: () => console.log("Story deletion cancelled."),
           style: "cancel",
-        },
-        {
-          text: "OK",
-          onPress: () => deleteStoryById(uid, storyItem),
         },
       ]
     );
@@ -201,7 +201,7 @@ const StoryFolderItem = ({ storyItem, navigation }) => {
           }}
           className="  py-3 flex flex-col justify-center mt-4 items-center"
         >
-          <EllipsisVertical color={"#B9CEF0"} opacity={0.7} />
+          <Trash2 color={"#B9CEF0"} opacity={0.7} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
