@@ -21,13 +21,6 @@ const WordCardWithoutImageForStory = ({ wordItem, toggleWordSelection }) => {
         end={{ x: 1, y: 0 }}
         className="mb-4"
       >
-        <View
-          style={{
-            backgroundColor: "rgba(0,0,0,0.4)",
-            borderRadius: 12,
-          }}
-          className="w-full h-full"
-        ></View>
         <View className="w-full h-full p-4 absolute z-20  justify-between items-center flex flex-row">
           <View className="flex flex-col  h-full">
             <Text
