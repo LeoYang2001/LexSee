@@ -18,6 +18,7 @@ import StoryListPage from "./StoryList/StoryListPage";
 import WordListPage from "./WordList/WordListPage";
 import { ChevronLeft, Search } from "lucide-react-native";
 import { TextInput } from "react-native-gesture-handler";
+import * as Haptics from "expo-haptics";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -163,6 +164,8 @@ const InventoryScreen = ({ navigation, route }) => {
                 onPress={() => {
                   setIfSearch(true);
                   inputWidthValue.value = SCREEN_WIDTH - 50;
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  console.log("light feedback");
                 }}
                 style={{
                   backgroundColor: ifSearch ? "#1f2022" : "transparent",
