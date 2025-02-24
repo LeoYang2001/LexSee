@@ -6,7 +6,7 @@ export default {
     slug: "lexsee",
     version: "1.0.1",
     orientation: "portrait",
-    icon: "./assets/bookmark.png",
+    icon: "./assets/LexSeeV2_logo.png",
     userInterfaceStyle: "light",
     splash: {
       image: "./assets/splash.png",
