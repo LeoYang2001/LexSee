@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -78,6 +79,7 @@ const CustomDrawerContent = (props) => {
       NestedLabels: [],
       onClick: () => {
         console.log("open guidance");
+        alert("This feature is under development");
       },
       icon: () => {
         return <CircleHelp color={"white"} size={20} opacity={0.7} />;
@@ -89,6 +91,7 @@ const CustomDrawerContent = (props) => {
       NestedLabels: [],
       onClick: () => {
         console.log("Contact Us");
+        alert("This feature is under development");
       },
       icon: () => {
         return <Headset color={"white"} size={20} opacity={0.7} />;
@@ -163,7 +166,7 @@ const CustomDrawerContent = (props) => {
                   borderRadius: 12,
                 }}
                 source={{
-                  uri: `https://plus.unsplash.com/premium_photo-1683121366070-5ceb7e007a97?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D`,
+                  uri: `https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png`,
                 }}
                 resizeMode="cover"
               />
@@ -443,8 +446,15 @@ const DrawerEntryScreen = () => {
 
   if (isSettingUp) {
     return (
-      <View className="flex w-full h-full justify-center items-center">
-        <Text>Settingup...</Text>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#191D24",
+        }}
+      >
+        <ActivityIndicator size={"small"} color={"#F54A14"} />
       </View>
     );
   }

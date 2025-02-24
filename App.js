@@ -49,8 +49,15 @@ function Loading({ navigation }) {
   }, []);
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <ActivityIndicator size={"small"} />
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#191D24",
+      }}
+    >
+      <ActivityIndicator size={"small"} color={"#F54A14"} />
     </View>
   );
 }
