@@ -163,6 +163,14 @@ const DefinitionScreen = ({ navigation, route }) => {
           navigation={navigation}
         />
       </View>
+      {/* Word Saved Notification  */}
+      {/* <View className="absolute bottom-16 flex flex-row justify-center w-full border border-red-50 ">
+        <View className=" mx-4 my-2 ">
+          <Text className="text-3xl font-semibold text-white opacity-50">
+            Word Saved
+          </Text>
+        </View>
+      </View> */}
     </View>
   ) : (
     <View

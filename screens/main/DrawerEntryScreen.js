@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   TouchableWithoutFeedback,
+  Alert,
   ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -56,6 +57,23 @@ const CustomDrawerContent = (props) => {
         console.error("Sign out error:", error);
       });
   };
+
+  const handleSignOut = () => {
+    // Show confirmation dialog using Alert
+    Alert.alert("Confirm Sign out", "Are you sure you want to sign out?", [
+      {
+        text: "Yes",
+        onPress: () => {
+          signOut();
+        },
+      },
+      {
+        text: "Cancel",
+        onPress: () => console.log("Signing out cancelled"),
+        style: "cancel",
+      },
+    ]);
+  };
   const drawerOptions = [
     {
       label: "Theme Color",
@@ -102,7 +120,7 @@ const CustomDrawerContent = (props) => {
       ifNested: false,
       NestedLabels: [],
       onClick: () => {
-        signOut();
+        handleSignOut();
       },
       icon: () => {
         return <Power color={"white"} size={20} opacity={0.7} />;
