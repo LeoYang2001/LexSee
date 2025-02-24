@@ -201,18 +201,6 @@ const WordSearchScreen = ({ navigation }) => {
               >
                 {languageCodes[selectedLanguage]}
               </Text>
-              <View
-                style={{
-                  width: 0,
-                  height: 0,
-                  borderLeftWidth: 6, // Adjust for size
-                  borderRightWidth: 6, // Adjust for size
-                  borderTopWidth: 7, // Adjust for size
-                  borderLeftColor: "transparent",
-                  borderRightColor: "transparent",
-                  borderTopColor: "#C9CDD4",
-                }}
-              />
             </TouchableOpacity>
           </View>
         </View>

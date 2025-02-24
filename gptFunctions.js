@@ -70,6 +70,10 @@ export const fetchDefinition = async (openai, word, language = "English") => {
   return responseObject;
 };
 
+function tokenizeText(text) {
+  return text.match(/<[^>]+>|[\w'-]+|[.,\s]/g);
+}
+
 export const fetchStory = async (
   openai,
   selectedWords,
@@ -99,7 +103,6 @@ export const fetchStory = async (
   ~{
     "storyName": "A name for the story based on the selected words",
     "story": "Your generated passage where each selected word is wrapped in < >.",
-    "storyPieces": ["word1", " ", "word2", ",", " ", "<selectedWord>", " ", "word3", "."]
   }~
 `;
   const completion = await openai.chat.completions.create({
@@ -112,7 +115,11 @@ export const fetchStory = async (
   const responseText = completion.choices[0].message.content;
 
   // Split response by newline and remove empty lines, then set as conversation array
-  const responseObject = convertJsonToObject(responseText);
+  const responseObject = {
+    ...convertJsonToObject(responseText),
+    storyPieces: tokenizeText(convertJsonToObject(responseText).story),
+  };
+
   return responseObject;
 };
 

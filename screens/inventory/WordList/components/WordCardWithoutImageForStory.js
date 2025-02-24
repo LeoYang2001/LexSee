@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, Image, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
+import PronunciationButton from "../../../../components-shared/PronunciationButton";
 
 const WordCardWithoutImageForStory = ({ wordItem, toggleWordSelection }) => {
   if (!wordItem) return null;
@@ -21,24 +22,19 @@ const WordCardWithoutImageForStory = ({ wordItem, toggleWordSelection }) => {
         end={{ x: 1, y: 0 }}
         className="mb-4"
       >
-        <View className="w-full h-full p-4 absolute z-20  justify-between items-center flex flex-row">
-          <View className="flex flex-col  h-full">
+        <View className="flex flex-row justify-between items-center h-full px-4 py-3">
+          <View className="h-full flex flex-col justify-between">
             <Text
               style={{ opacity: 0.8, fontSize: 20 }}
               className="text-white font-semibold"
             >
               {wordItem.id}
             </Text>
-            <Text
-              className="mt-2"
-              style={{
-                fontSize: 14,
-                color: "#fff",
-                opacity: 0.7,
-              }}
-            >
-              {wordItem?.phonetics?.text}
-            </Text>
+            <PronunciationButton
+              word={wordItem.id}
+              phonetics={wordItem.phonetics.text}
+              size={14}
+            />
           </View>
           {wordItem.ifSelectedForStory ? (
             <View
