@@ -1,5 +1,5 @@
 import { View, Text, ImageBackground, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import * as Haptics from "expo-haptics";
 
@@ -14,6 +14,28 @@ const InventoryStatistic = ({ navigation }) => {
   });
 
   const savedStoryList = useSelector((state) => state.userInfo.savedStoryList);
+  console.log(savedWordsFromStore.length);
+
+  const [rank, setRank] = useState("Explorer");
+
+  useEffect(() => {
+    const savedWordCount = savedWordsFromStore?.length;
+    let newRank = "Explorer"; // Default rank
+
+    switch (true) {
+      case savedWordCount >= 80:
+        newRank = "Mastermind";
+        break;
+      case savedWordCount >= 40:
+        newRank = "Storyteller";
+        break;
+      case savedWordCount >= 20:
+        newRank = "Navigator";
+        break;
+    }
+
+    setRank(newRank);
+  }, [savedWordsFromStore]);
 
   return (
     <View
@@ -30,7 +52,7 @@ const InventoryStatistic = ({ navigation }) => {
             style={{ fontSize: 24 }}
             className="   font-semibold text-white"
           >
-            Beginner
+            {rank}
           </Text>
           <Text
             style={{
