@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import StoryFolderItem, {
   StoryFolderItemLoading,
@@ -10,7 +10,7 @@ const StoryListPage = ({ isGeneratingStory, navigation }) => {
   const savedStoryList = useSelector((state) => state.userInfo.savedStoryList);
 
   return (
-    <ScrollView className="flex-1 w-full   px-2 py-4">
+    <ScrollView className="flex-1 w-full   px-2 py-4 ">
       {isGeneratingStory && <StoryFolderItemLoading />}
       {savedStoryList.map((storyItem) => (
         <StoryFolderItem
@@ -19,6 +19,7 @@ const StoryListPage = ({ isGeneratingStory, navigation }) => {
           key={storyItem.id}
         />
       ))}
+      <View className="my-4" />
     </ScrollView>
   );
 };
