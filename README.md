@@ -41,7 +41,6 @@ LexSee aims to bridge this gap by providing **definitions without translations**
 - **Open Model: GPT-4o-mini**: Used for simulating real-life conversations and generating context-based stories to reinforce learning.
 - **Firebase**: Used as the backend for user authentication, data storage, and real-time services.
 - **Expo and React Native**: Used for building the cross-platform mobile app.
-- **api.dictionaryapi.dev**: Provides word definitions for the app's word search feature.
 - **Google Custom Search**: Supports the integration of Google Images to provide relevant visuals for each word.
 
 ---
