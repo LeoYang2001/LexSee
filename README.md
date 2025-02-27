@@ -1,106 +1,109 @@
-LexSee - Language Learning App
+# LexSee - Language Learning App
 
-LexSee is an innovative language learning app designed to help users acquire new vocabulary and enhance their language skills naturally. Unlike traditional translation-based learning methods, LexSee encourages users to think and engage directly in the target language, reinforcing comprehension through interactive features and AI-driven experiences.
+LexSee is an innovative language learning app designed to help users, particularly those learning a new language, focus on building their language structure without the need for constant translation into their native language. Our goal is to encourage learners to think and speak in their target language naturally while helping them understand the language and its cultural context.
 
-Table of Contents
+---
 
-About
+## Table of Contents
 
-Features
+- [About](#about)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
 
-Technologies Used
+---
 
-Installation
+## About
 
-Usage
+LexSee was developed by **Leo**, **Tabito**, and one additional team member, with Leo serving as the team leader. He has taken on major development responsibilities as well as project management throughout the process. 
 
-Contributing
+The idea came from seeing the challenges faced by international students at our college. Many struggle with learning a new language and use ineffective methods to memorize words or immerse themselves in the language and culture. We realized there was a gap in how language learning apps support true language immersion, and that's where LexSee comes in.
 
-License
+LexSee aims to bridge this gap by providing **definitions without translations**, supplemented with **relevant images** to enhance comprehension. We’ve also incorporated an **AI-driven conversation feature** that simulates real-life scenarios and an **AI-generated story feature** that builds contextual narratives based on words users have learned. Although LexSee is designed for multiple languages, we hope to continue expanding the app's capabilities.
 
-About
+---
 
-LexSee was developed by Leo, Tabito, and a dedicated team of developers passionate about enhancing language acquisition through technology. The inspiration for LexSee arose from observing the struggles of language learners, especially international students, who often rely on ineffective memorization techniques or struggle with immersion.
+## Features
 
-LexSee bridges this gap by eliminating direct translations and instead offering image-based word associations, AI-generated real-life conversations, and contextual storytelling to help users retain and apply newly learned words more effectively. Initially designed for English learners, LexSee aims to expand its offerings to support languages such as Spanish, French, Japanese, and more.
+- **Language word definitions** without translations to the user's native language.
+- **Image-based learning**: Relevant visuals for each word to enhance comprehension.
+- **AI-driven conversations**: Simulates dialogues to demonstrate how newly learned words can be applied.
+- **AI-generated stories**: Contextual narratives using learned words to help users remember them better.
+- **Searchable database** of words with their meanings and contextual usage.
 
-Features
+---
 
-Multilingual word definitions: Provides definitions without direct translation, promoting natural language processing.
+## Technologies Used
 
-Image-based learning: Associates relevant images with words to reinforce comprehension visually.
+- **Open Model: GPT-4o-mini**: Used for simulating real-life conversations and generating context-based stories to reinforce learning.
+- **Firebase**: Used as the backend for user authentication, data storage, and real-time services.
+- **Expo and React Native**: Used for building the cross-platform mobile app.
+- **api.dictionaryapi.dev**: Provides word definitions for the app's word search feature.
+- **Google Custom Search**: Supports the integration of Google Images to provide relevant visuals for each word.
 
-AI-driven conversations: Simulates realistic dialogues to demonstrate contextual word usage.
+---
 
-AI-generated storytelling: Creates personalized stories incorporating words users have learned, making vocabulary acquisition more engaging and memorable.
-
-Searchable word database: Enables users to look up new words, view their meanings, and explore their real-world applications.
-
-Progress tracking: Allows users to monitor their learning journey and track mastered vocabulary.
-
-Technologies Used
-
-Open Model: GPT-4o-mini - Powers AI-generated conversations and storytelling.
-
-Firebase - Manages user authentication, data storage, and real-time services.
-
-Expo and React Native - Provides a cross-platform mobile app experience.
-
-api.dictionaryapi.dev - Supplies word definitions and contextual examples.
-
-Google Custom Search - Integrates Google Images to visually reinforce word meanings.
-
-Installation
+## Installation
 
 To run LexSee locally, follow these steps:
 
-Clone the repository:
-
+```sh
+# Clone the repository
 git clone https://github.com/your-username/LexSee.git
 
-Navigate to the project directory:
-
+# Navigate to the project directory
 cd LexSee
 
-Install dependencies:
-
+# Install dependencies
 npm install
 
-Start the app:
-
+# Start the app
 expo start
+```
 
-Usage
+---
+
+## Usage
 
 Once the app is up and running, users can:
 
-Search for a word: Enter a word to view its definition and associated images, reinforcing comprehension without relying on translations.
+1. **Search for a word**: Enter any word to view its definition, accompanied by relevant images. This feature helps users better understand the word in context without relying on translations.
+2. **Engage in AI-powered conversations**: Practice applying new words in realistic conversation scenarios. The AI uses the **GPT-4o-mini** model to simulate real-life dialogues, demonstrating how the words can be used in daily life.
+3. **Read AI-generated stories**: Select words you've learned, and the AI will generate a short story using those words in context to aid memorization.
+4. **Track progress**: Learn and test new words consistently as part of a structured learning path. Users can monitor their learning journey and track which words they've mastered.
 
-Engage in AI-powered conversations: Practice applying new words in realistic, simulated dialogues generated by the GPT-4o-mini model.
+---
 
-Explore AI-generated stories: Select learned words, and let AI craft a contextual story incorporating them, making vocabulary retention more immersive.
+## Contributing
 
-Track learning progress: Monitor newly learned words and keep track of mastery over time.
+We welcome contributions to LexSee! If you'd like to contribute, here's how you can get involved:
 
-Contributing
+1. **Fork the repository**: Create a personal copy of the repository by forking it.
+2. **Create a new branch**: Before making any changes, create a new branch for your feature or bug fix.
+3. **Make your changes**: Implement your changes or improvements to the project.
+4. **Write tests**: If applicable, write tests for your changes to ensure they work as expected.
+5. **Submit a pull request**: Once you're happy with your changes, submit a pull request with a clear description of what you've done.
 
-We welcome contributions to LexSee! If you're interested in contributing, follow these steps:
+We encourage all contributions that can help make LexSee better and more effective for language learners. Please make sure to follow our code of conduct and submit clean, well-documented code.
 
-Fork the repository: Create a personal copy of the project by forking it.
+---
 
-Create a new branch: Before making changes, create a separate branch for your feature or fix.
+## License
 
-Implement changes: Code your new feature or bug fix while ensuring quality and efficiency.
+LexSee is released under the [MIT License](LICENSE). Feel free to use, modify, and distribute this project within the terms of the license.
 
-Write tests: Add tests if applicable to validate your modifications.
+---
 
-Submit a pull request: Provide a detailed description of your changes and submit a pull request for review.
+## Contact
 
-We appreciate all contributions that enhance LexSee and improve the language learning experience for users worldwide. Please adhere to our coding standards and submit well-documented code.
+For any questions or suggestions, feel free to reach out to us!
 
-License
+**Project Team:**
+- **Leo Yang** (Team Lead, Developer)
+- **Tabito Satoh** (Developer)
+- **Jacinda Fu** (UI/UX Designer)
 
-LexSee is an open-source project licensed under [Insert License Here]. Contributions and modifications are welcomed under the specified terms.
-
-LexSee is dedicated to redefining language learning through innovation. Start your journey today and unlock a more immersive, engaging way to master new languages!
-
+📧 Contact: jya261@uky.edu
