@@ -18,7 +18,7 @@ LexSee is an innovative language learning app designed to help users, particular
 
 ## About
 
-LexSee was developed by **Leo**, **Tabito**, and one additional team member, with Leo serving as the team leader. He has taken on major development responsibilities as well as project management throughout the process. 
+LexSee was developed by **Leo**, **Tabito**, and designed by **Jacinda**, with Leo serving as the team leader. He has taken on major development responsibilities as well as project management throughout the process. 
 
 The idea came from seeing the challenges faced by international students at our college. Many struggle with learning a new language and use ineffective methods to memorize words or immerse themselves in the language and culture. We realized there was a gap in how language learning apps support true language immersion, and that's where LexSee comes in.
 
