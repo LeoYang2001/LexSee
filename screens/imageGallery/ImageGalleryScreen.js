@@ -92,7 +92,12 @@ const ImageGalleryScreen = ({ navigation, route }) => {
       const data = await response.json();
       if (data.items) {
         // Append new images to the current list
-        setimagesResults((prevImages) => [...prevImages, ...data.items]);
+        setimagesResults((prevImages) => [
+          ...prevImages,
+          ...data.items.filter(
+            (item) => item.link && item.link.startsWith("http")
+          ),
+        ]);
         // Set `hasMore` to `false` if fewer items are returned than requested (indicating end of results)
         setHasMore(data.items.length === 10);
         setPage(newPage);
@@ -158,21 +163,6 @@ const ImageGalleryScreen = ({ navigation, route }) => {
             </View>
           ) : (
             <View className="flex-1 w-full ">
-              {/* <View>
-              {selectedImgs.map((imgItem, index) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    handleConfirmPop(imgItem.imgUrl);
-                  }}
-                  style={styles.imageContainer}
-                >
-                  <Image
-                    source={{ uri: imgItem.imgUrl }}
-                    style={styles.image}
-                  />
-                </TouchableOpacity>
-              ))}
-              </View> */}
               {imagesResults.length > 0 && (
                 <ImageList
                   selectedImgs={selectedImgs}

@@ -149,12 +149,13 @@ Please follow these rules:
 - Limit the conversation to a maximum of 8 lines.
 - Each line should start and end with the "~" character.
 - Do not include any additional characters before or after the "~" symbols.
-- Keep the dialogue casual and natural, and use the word "${selectedWords}" in a way that reflects the provided definition.
+- Keep the dialogue casual and natural, and use the word "${word}" in a way that reflects the provided definition.
+- Always wrap the word "<${word}>" in "<>" regardless of its tense or form.
 
 Example format (in ${language}):
-~Hey, did you see the movie last night?~
-~Yeah, I did! The plot was a bit obscure, though.~
-~Yeah, I know what you mean. The director is famous for creating obscure movies.~
+ ~Hey, did you get <briefed> for tomorrow's meeting yet?~  
+~Yeah, Sarah <briefed> me this morning. She went over all the key points.~  
+~Not yet. I have my <briefing> session later today.~  
 
 Please respond using this format exactly, with no more than 8 lines.`
       : `Create a conversation between two people in **${language}** using the word "${word}". 
@@ -165,11 +166,14 @@ Please follow these rules:
 - Each line should start and end with the "~" character.
 - Do not include any additional characters before or after the "~" symbols.
 - Keep the dialogue casual and natural, and use the word "${word}" at least once.
+- Always wrap the word "<${word}>" in "<>" regardless of its tense or form.
+
+
 
 Example format (in ${language}):
-~Hey, did you see the movie last night?~
-~Yeah, I did! The plot was a bit obscure, though.~
-~Yeah, I know what you mean. The director is famous for creating obscure movies.~
+ ~Hey, did you get <briefed> for tomorrow's meeting yet?~  
+~Yeah, Sarah <briefed> me this morning. She went over all the key points.~  
+~Not yet. I have my <briefing> session later today.~  
 
 Please respond using this format exactly, with no more than 8 lines.`;
 
@@ -188,7 +192,6 @@ Please respond using this format exactly, with no more than 8 lines.`;
     }
 
     const responseText = completion.choices[0].message.content;
-    console.log("AI Response:", responseText);
 
     // Process and format the conversation lines
     const conversationLines = responseText

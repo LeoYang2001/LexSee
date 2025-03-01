@@ -27,16 +27,19 @@ const ImageList = ({
     handleConfirmPop(imgUrl);
   };
 
-  const renderImageItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => {
-        handleImagePress(item.link);
-      }}
-      style={styles.imageContainer}
-    >
-      <Image source={{ uri: item.link }} style={styles.image} />
-    </TouchableOpacity>
-  );
+  const renderImageItem = ({ item }) => {
+    console.log(item.link);
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          handleImagePress(item.link);
+        }}
+        style={styles.imageContainer}
+      >
+        <Image source={{ uri: item.link }} style={styles.image} />
+      </TouchableOpacity>
+    );
+  };
 
   const sections = [
     {

@@ -158,6 +158,9 @@ const SignUpScreen = ({ navigation }) => {
                     className=" text-white"
                     value={email}
                     onChangeText={setEmail}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    textContentType="oneTimeCode"
                   />
                 </BlurView>
               </View>
@@ -176,6 +179,8 @@ const SignUpScreen = ({ navigation }) => {
                     className=" text-white"
                     value={password}
                     onChangeText={setPassword}
+                    autoCapitalize="none"
+                    autoCorrect={false}
                   ></TextInput>
                 </BlurView>
               </View>
@@ -194,6 +199,8 @@ const SignUpScreen = ({ navigation }) => {
                     className="text-white"
                     value={cfmPassword}
                     onChangeText={setCfmPassword}
+                    autoCapitalize="none"
+                    autoCorrect={false}
                   />
                 </BlurView>
               </View>

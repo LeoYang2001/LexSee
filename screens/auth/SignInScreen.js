@@ -162,6 +162,9 @@ const SignInScreen = ({ navigation }) => {
                     className=" text-white "
                     value={email}
                     onChangeText={setEmail}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    textContentType="oneTimeCode"
                   />
                 </BlurView>
               </View>
@@ -180,6 +183,8 @@ const SignInScreen = ({ navigation }) => {
                     className="text-white"
                     value={password}
                     onChangeText={setPassword}
+                    autoCapitalize="none"
+                    autoCorrect={false}
                   />
                 </BlurView>
               </View>

@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import OpenAI from "openai";
@@ -18,7 +19,12 @@ import { fetchConversation } from "../../../gptFunctions";
 import languageCodes from "../../../constants";
 import { useSelector } from "react-redux";
 
-const ConversationPage = ({ wordItem, ifSaved, imgPlaceHolderUrl }) => {
+const ConversationPage = ({
+  wordItem,
+  ifSaved,
+  imgPlaceHolderUrl,
+  designatedConvDef,
+}) => {
   //SelectedLanguage
   const selectedLanguage = useSelector(
     (state) => state.userInfo.profile.selectedLanguage
@@ -28,10 +34,27 @@ const ConversationPage = ({ wordItem, ifSaved, imgPlaceHolderUrl }) => {
   const [displayedConversation, setDisplayedConversation] = useState([]);
   const [displayedIndex, setDisplayedIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [ifGenerate, setIfGenerate] = useState(false);
 
   useEffect(() => {
-    createConversation();
-  }, []);
+    if (!designatedConvDef) {
+      if (ifGenerate) {
+        createConversation();
+      }
+    } else {
+      if (conversation) {
+        resetDisplayedConversation();
+      }
+      createConversation((definition = designatedConvDef));
+      setIfGenerate(true);
+    }
+  }, [designatedConvDef]);
+
+  useEffect(() => {
+    if (conversation.length === 0) {
+      createConversation((definition = designatedConvDef));
+    }
+  }, [ifGenerate]);
 
   useEffect(() => {
     if (conversation.length > 0) {
@@ -64,14 +87,39 @@ const ConversationPage = ({ wordItem, ifSaved, imgPlaceHolderUrl }) => {
   // Shared value to track the scale of the image
 
   const createConversation = async (definition = null) => {
+    if (definition) {
+      console.log("generating by definition:", definition);
+    }
+
     setIsLoading(true);
-    const conversationLines = await fetchConversation(
-      openai,
-      (word = wordItem.id),
-      (language = languageCodes[selectedLanguage])
+
+    const timeout = new Promise(
+      (_, reject) =>
+        setTimeout(() => reject("Timeout: Fetch took too long"), 10000) // 10 seconds
     );
-    setConversation(conversationLines);
-    setIsLoading(false);
+    let conversationLines = [];
+    try {
+      conversationLines = await Promise.race([
+        fetchConversation(
+          openai,
+          wordItem.id,
+          languageCodes[selectedLanguage],
+          definition
+        ),
+        timeout,
+      ]);
+    } catch (error) {
+      if (error === "Timeout: Fetch took too long") {
+        alert("Fetch failed, please check your internet connection");
+        setIfGenerate(false);
+        resetDisplayedConversation();
+      } else {
+        console.error("Error during fetch:", error);
+      }
+    } finally {
+      setIsLoading(false);
+      setConversation(conversationLines);
+    }
   };
 
   //   ******* FROM VERSION 1 ******
@@ -134,70 +182,105 @@ const ConversationPage = ({ wordItem, ifSaved, imgPlaceHolderUrl }) => {
             </TouchableOpacity>
           ))}
         </View>
-
         {/* CONVERSATION GEN  */}
-        <View className="flex-1 w-full ">
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            className="  flex-1   "
-          >
-            {isLoading ? (
-              <View
-                start={{ x: 0, y: 0.5 }}
-                end={{ x: 1, y: 0.5 }}
-                style={[
-                  {
-                    alignSelf: true ? "flex-start" : "flex-end",
-                    // backgroundColor: true ? "#E0E0E0" : "#007AFF",
-                    paddingVertical: 10,
-                    paddingHorizontal: 20,
-                    borderRadius: 15,
-                    marginVertical: 6,
-                    maxWidth: "75%",
-                    backgroundColor: true ? "#545861" : "#f65827",
-                  },
-                  true
-                    ? {
-                        borderBottomLeftRadius: 0,
-                      }
-                    : {
-                        borderBottomRightRadius: 0,
-                      },
-                ]}
+
+        {ifGenerate ? (
+          <View className="flex-1 w-full ">
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              className="  flex-1   "
+            >
+              {isLoading ? (
+                <View
+                  start={{ x: 0, y: 0.5 }}
+                  end={{ x: 1, y: 0.5 }}
+                  style={[
+                    {
+                      alignSelf: true ? "flex-start" : "flex-end",
+                      // backgroundColor: true ? "#E0E0E0" : "#007AFF",
+                      paddingVertical: 10,
+                      paddingHorizontal: 20,
+                      borderRadius: 15,
+                      marginVertical: 6,
+                      maxWidth: "75%",
+                      backgroundColor: "#545861",
+                      borderBottomLeftRadius: 0,
+                    },
+                  ]}
+                >
+                  <IniLoadingAnimation />
+                </View>
+              ) : (
+                <>
+                  {/* Display each line in the conversation array in a text-message style */}
+                  {displayedConversation.map((line, index) => (
+                    <ConversationItem
+                      pushConversation={pushConversation}
+                      key={index}
+                      line={line}
+                      index={index}
+                      highlightWord={wordItem?.id}
+                    />
+                  ))}
+                </>
+              )}
+            </ScrollView>
+            <TouchableOpacity
+              disabled={displayedConversation.length != conversation.length}
+              className="p-3 self-center mt-auto w-full flex justify-center items-center"
+              style={{
+                backgroundColor: "#FA541C",
+                borderRadius: 9,
+              }}
+              onPress={() => {
+                resetDisplayedConversation();
+                createConversation((definition = designatedConvDef));
+              }}
+            >
+              <Text
+                style={{ fontSize: 15 }}
+                className="text-white font-semibold"
               >
-                <IniLoadingAnimation />
-              </View>
-            ) : (
-              <>
-                {/* Display each line in the conversation array in a text-message style */}
-                {displayedConversation.map((line, index) => (
-                  <ConversationItem
-                    pushConversation={pushConversation}
-                    key={index}
-                    line={line}
-                    index={index}
-                  />
-                ))}
-              </>
-            )}
-          </ScrollView>
-          <TouchableOpacity
-            disabled={displayedConversation.length != conversation.length}
-            className="p-3 self-center mt-auto w-full flex justify-center items-center"
-            style={{
-              backgroundColor: "#49475E",
-              borderRadius: 9,
-            }}
-            onPress={() => {
-              createConversation();
-              setDisplayedIndex(0);
-            }}
-          >
-            <Text style={{ fontSize: 15 }} className="text-white">
-              Regenerate
+                Regenerate
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View className="w-full  flex-1 flex-col items-center justify-center">
+            <Image
+              style={{ width: 62, height: 62 }}
+              source={require("../../../assets/conGeneration.png")}
+            />
+            <Text
+              className="text-white opacity-40 font-bold"
+              style={{
+                fontSize: 18,
+              }}
+            >
+              No conversation yet
             </Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              disabled={displayedConversation.length != conversation.length}
+              className="  px-4 py-1 mt-6 flex justify-center items-center"
+              style={{
+                backgroundColor: "#FA541C",
+                borderRadius: 9,
+              }}
+              onPress={() => {
+                setIfGenerate(true);
+              }}
+            >
+              <Text
+                style={{ fontSize: 15 }}
+                className="text-white font-semibold"
+              >
+                Generate
+              </Text>
+            </TouchableOpacity>
+            {/* PADDING FIX  */}
+            <View className=" h-10 mt-18 border w-10 bg-red-50 opacity-0 " />
+          </View>
+        )}
       </View>
     </LinearGradient>
   );
