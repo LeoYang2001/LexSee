@@ -328,6 +328,7 @@ const CustomDrawerContent = (props) => {
 
 const DrawerEntryScreen = () => {
   const [isSettingUp, setIsSettingUp] = useState(true);
+  const [ifProfileSetup, setIfProfileSetup] = useState(false);
 
   const dispatch = useDispatch();
   const uid = auth.currentUser?.uid; // Get current user UID
@@ -335,6 +336,7 @@ const DrawerEntryScreen = () => {
   useEffect(() => {
     const setUpGlobalVariable = async () => {
       if (uid) {
+        await checkIfHasProfile();
         await fetchUserSavedWordList();
         await fetchSearchHistory();
         await fetchLanguageList();
@@ -344,6 +346,11 @@ const DrawerEntryScreen = () => {
     };
     setUpGlobalVariable();
   }, [uid]); // Re-run if UID changes (i.e., on login/logout)
+
+  const checkIfHasProfile = async () => {
+    const user = auth.currentUser;
+    setIfProfileSetup(user.photoURL ? true : false);
+  };
 
   const fetchLanguageList = async () => {
     const apiPoint = `https://apifree.forvo.com/key/2319e40ba1cbae8dc8a250c59df43868/format/json/action/language-list/order/name`;
@@ -497,7 +504,7 @@ const DrawerEntryScreen = () => {
           ),
         }}
       >
-        {(props) => <MainScreen {...props} />}
+        {(props) => <MainScreen {...props} ifProfileSetup={ifProfileSetup} />}
       </Drawer.Screen>
     </Drawer.Navigator>
   );
