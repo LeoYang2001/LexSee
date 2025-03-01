@@ -218,11 +218,11 @@ const WordSearchScreen = ({ navigation }) => {
             className="text-lg w-full py-2 px-4 text-white "
             value={inputText}
             onChangeText={setInputText}
-            onEndEditing={() => {
-              if (inputText.trim() && selectedLanguage !== "en") {
-                handleSearchWord(inputText.trim());
-              }
+            onSubmitEditing={() => {
+              handleSearchWord(inputText.trim());
             }}
+            autoCapitalize="none"
+            autoCorrect={false}
           />
           {inputText && (
             <Pressable

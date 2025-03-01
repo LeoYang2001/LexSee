@@ -1,10 +1,5 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
-import OpenAI from "openai";
-import { ScrollView } from "react-native-gesture-handler";
-import { RefreshCcw } from "lucide-react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import Constants from "expo-constants";
 
 export const IniLoadingAnimation = () => {
   const [colorArr, setColorArr] = useState([
@@ -92,7 +87,7 @@ const LoadingAnimation = () => {
   );
 };
 
-const ConversationItem = ({ line, index, pushConversation }) => {
+const ConversationItem = ({ line, index, pushConversation, highlightWord }) => {
   const timeFactor = 200 + line.length * 15;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -105,6 +100,22 @@ const ConversationItem = ({ line, index, pushConversation }) => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  //Highlight newly learned word
+  const getHighlightedText = (text) => {
+    const regex = /<([^>]+)>/g; // Capture words inside <>
+    const parts = text.split(regex);
+
+    return parts.map((part, i) =>
+      text.includes(`<${part}>`) ? (
+        <Text key={i} className="font-semibold" style={{ color: "#FA541C" }}>
+          {part}
+        </Text>
+      ) : (
+        part
+      )
+    );
+  };
 
   //timeout item,  once time is up, loading becomes
   // the actual conversation and we gonna the call function to
@@ -125,7 +136,7 @@ const ConversationItem = ({ line, index, pushConversation }) => {
               borderRadius: 15,
               marginVertical: 6,
               maxWidth: "75%",
-              backgroundColor: index % 2 === 0 ? "#545861" : "#f65827",
+              backgroundColor: index % 2 === 0 ? "#545861" : "#332B31",
             },
             index % 2 === 0
               ? {
@@ -152,7 +163,7 @@ const ConversationItem = ({ line, index, pushConversation }) => {
               borderRadius: 15,
               marginVertical: 6,
               maxWidth: "75%",
-              backgroundColor: index % 2 === 0 ? "#545861" : "#f65827",
+              backgroundColor: index % 2 === 0 ? "#545861" : "#332B31",
             },
             index % 2 === 0
               ? {
@@ -170,7 +181,7 @@ const ConversationItem = ({ line, index, pushConversation }) => {
               fontSize: 14,
             }}
           >
-            {line}
+            {getHighlightedText(line)}
           </Text>
         </View>
       )}

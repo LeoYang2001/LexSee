@@ -14,6 +14,7 @@ const ExpalnationPage = ({
   ifSaved,
   navigation,
   imgPlaceHolderUrl,
+  handleGenerateConvWithDef,
 }) => {
   const ifTemplatePic = imgPlaceHolderUrl === initialImgPlaceHolderUrl;
 
@@ -183,15 +184,24 @@ const ExpalnationPage = ({
                 >
                   {meaning.partOfSpeech}
                 </Text>
-                <Text
-                  style={{
-                    color: "#fff",
-                    opacity: 0.7,
+                <TouchableOpacity
+                  //generating conv by designated conv
+                  onPress={() => {
+                    handleGenerateConvWithDef(
+                      meaning?.definition || meaning?.definitions[0]?.definition
+                    );
                   }}
-                  className="mt-2"
                 >
-                  {meaning?.definition || meaning?.definitions[0]?.definition}
-                </Text>
+                  <Text
+                    style={{
+                      color: "#fff",
+                      opacity: 0.7,
+                    }}
+                    className="mt-2"
+                  >
+                    {meaning?.definition || meaning?.definitions[0]?.definition}
+                  </Text>
+                </TouchableOpacity>
               </View>
             ))}
           </View>

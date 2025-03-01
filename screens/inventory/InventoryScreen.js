@@ -212,6 +212,8 @@ const InventoryScreen = ({ navigation, route }) => {
                       setIfInputFocus(true);
                     }}
                     className=" absolute w-full h-full  mx-2  ml-3 text-white"
+                    autoCapitalize="none"
+                    autoCorrect={false}
                   />
                 )}
               </TouchableOpacity>

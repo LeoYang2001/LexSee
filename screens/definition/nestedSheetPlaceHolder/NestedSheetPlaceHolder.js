@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
@@ -20,11 +20,18 @@ const NestedSheetPlaceHolder = ({
   const firstSheetRef = useRef(null);
   const secondSheetRef = useRef(null);
 
+  const [designatedConvDef, setDesignatedConvDef] = useState(null);
+
   useEffect(() => {
     if (firstSheetRef?.current) {
       firstSheetRef.current?.present();
     }
   }, [firstSheetRef]);
+
+  handleGenerateConvWithDef = (convDef) => {
+    setDesignatedConvDef(convDef);
+    handleSwitchSheet();
+  };
 
   // callback to switch sheet
   const handleSwitchSheet = useCallback(() => {
@@ -69,6 +76,7 @@ const NestedSheetPlaceHolder = ({
               imgPlaceHolderUrl={imgPlaceHolderUrl}
               ifSaved={ifSaved}
               wordItem={wordItem}
+              handleGenerateConvWithDef={handleGenerateConvWithDef}
             />
           </BottomSheetView>
         </BottomSheetModal>
@@ -86,6 +94,7 @@ const NestedSheetPlaceHolder = ({
               imgPlaceHolderUrl={imgPlaceHolderUrl}
               ifSaved={ifSaved}
               wordItem={wordItem}
+              designatedConvDef={designatedConvDef}
             />
           </BottomSheetView>
         </BottomSheetModal>
