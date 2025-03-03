@@ -52,6 +52,44 @@ const DefinitionScreen = ({ navigation, route }) => {
 
   const uid = auth.currentUser?.uid; // Get current user UID
 
+  const fetchAudioUrl = async (languageCode, text) => {
+    const apiUrl =
+      "https://converttexttospeech-lcwrfk4hzq-uc.a.run.app/convert-text-to-speech";
+
+    // Prepare the request payload
+    const requestData = {
+      text: text,
+      languageCode: languageCode,
+    };
+
+    try {
+      // Send POST request to the API
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Set the content type to JSON
+        },
+        body: JSON.stringify(requestData), // Convert the data to JSON
+      });
+
+      // Check if the response is OK (status 200-299)
+      if (response.ok) {
+        const data = await response.json(); // Parse the response JSON
+        return data.audioUrl; // Return the audio URL
+      } else {
+        console.error(
+          "Failed to fetch audio URL:",
+          response.status,
+          response.statusText
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      return null;
+    }
+  };
+
   const pushToSearchHistory = async (uid, searchedWord) => {
     try {
       // Reference to the user's document
@@ -107,7 +145,16 @@ const DefinitionScreen = ({ navigation, route }) => {
             //if fetchedWord == null, then navigate back
             navigation.goBack();
           }
+
+          console.log("fetchedWord.phonetics:::______");
+          console.log(fetchedWord.phonetics);
+
+          const audioUrl = await fetchAudioUrl("en-US", fetchedWord.id);
+          // Set the audio URL into phonetics object
+          fetchedWord.phonetics.audioUrl = audioUrl;
+
           setWordItem(fetchedWord);
+
           pushToSearchHistory(uid, fetchedWord?.id);
         } catch (error) {
           console.error("Error fetching definition:", error);
