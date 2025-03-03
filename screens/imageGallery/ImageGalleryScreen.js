@@ -82,7 +82,7 @@ const ImageGalleryScreen = ({ navigation, route }) => {
   //IMAGE SEARCH function
   const handleSearchImage = async (urlWord, newPage = 1) => {
     try {
-      const apiKey = "AIzaSyBTVL3kl1d0u7sg0h9VjYsiQtot58DPwQ0";
+      const apiKey = "AIzaSyDLKsMGMoJOmf5xz6JzHHhRONt96GmMG80";
       const cx = "2121e0d2556664ff3";
       const response = await fetch(
         `https://www.googleapis.com/customsearch/v1?q=the+illustration+of+${urlWord}&cx=${cx}&searchType=image&key=${apiKey}&start=${
