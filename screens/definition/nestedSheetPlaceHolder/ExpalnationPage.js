@@ -37,7 +37,7 @@ const ExpalnationPage = ({
             </Text>
             <PronunciationButton
               word={wordItem.id}
-              phonetics={wordItem.phonetics.text}
+              phonetics={wordItem.phonetics}
               size={20}
             />
           </View>

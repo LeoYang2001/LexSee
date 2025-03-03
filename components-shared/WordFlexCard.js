@@ -85,7 +85,7 @@ const WordFlexCard = ({ wordItem, ifActive, setActiveCardId, navigation }) => {
           <View className="flex flex-row">
             <PronunciationButton
               word={wordItem.id}
-              phonetics={wordItem?.phonetics?.text}
+              phonetics={wordItem?.phonetics}
             />
           </View>
 

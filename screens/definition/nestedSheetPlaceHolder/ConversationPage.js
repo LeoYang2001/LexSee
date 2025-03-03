@@ -18,6 +18,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { fetchConversation } from "../../../gptFunctions";
 import languageCodes from "../../../constants";
 import { useSelector } from "react-redux";
+import PronunciationButton from "../../../components-shared/PronunciationButton";
 
 const ConversationPage = ({
   wordItem,
@@ -141,17 +142,11 @@ const ConversationPage = ({
             >
               {wordItem?.id}
             </Text>
-            <TouchableOpacity className="py-2 flex flex-row items-center">
-              <Text
-                style={{
-                  color: "#FFFFFFB3",
-                  fontSize: 18,
-                }}
-              >
-                {wordItem?.phonetics.text}
-              </Text>
-              <Volume2 className="ml-2" color={"#FFFFFFB3"} size={18} />
-            </TouchableOpacity>
+            <PronunciationButton
+              word={wordItem.id}
+              phonetics={wordItem.phonetics}
+              size={20}
+            />
           </View>
           <SaveBtn
             wordItem={wordItem}

@@ -7,6 +7,7 @@ import PronunciationButton from "../../../../components-shared/PronunciationButt
 import WordFlexCardInventory from "./WordFlexCardInventory";
 
 const WordCard = ({ wordItem, ifGraphic, navigation, activeCardId }) => {
+  console.log(wordItem.phonetics?.audioUrl);
   if (ifGraphic)
     return (
       <WordFlexCardInventory
@@ -34,7 +35,7 @@ const WordCard = ({ wordItem, ifGraphic, navigation, activeCardId }) => {
             </Text>
             <PronunciationButton
               word={wordItem.id}
-              phonetics={wordItem.phonetics.text}
+              phonetics={wordItem.phonetics}
               size={14}
             />
           </View>
