@@ -52,14 +52,13 @@ const DefinitionScreen = ({ navigation, route }) => {
 
   const uid = auth.currentUser?.uid; // Get current user UID
 
-  const fetchAudioUrl = async (languageCode, text) => {
+  const fetchAudioUrl = async (text) => {
     const apiUrl =
       "https://converttexttospeech-lcwrfk4hzq-uc.a.run.app/convert-text-to-speech";
 
     // Prepare the request payload
     const requestData = {
       text: text,
-      languageCode: languageCode,
     };
 
     try {
@@ -146,10 +145,7 @@ const DefinitionScreen = ({ navigation, route }) => {
             navigation.goBack();
           }
 
-          console.log("fetchedWord.phonetics:::______");
-          console.log(fetchedWord.phonetics);
-
-          const audioUrl = await fetchAudioUrl("en-US", fetchedWord.id);
+          const audioUrl = await fetchAudioUrl(fetchedWord.id);
           // Set the audio URL into phonetics object
           fetchedWord.phonetics.audioUrl = audioUrl;
 
