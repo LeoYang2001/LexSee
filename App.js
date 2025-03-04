@@ -23,7 +23,6 @@ import InventoryScreen from "./screens/inventory/InventoryScreen";
 import StoryScreen from "./screens/inventory/story/StoryScreen";
 import LanguageSelectionScreen from "./screens/languageSelection/LanguageSelectionScreen";
 import ImageGalleryScreen from "./screens/imageGallery/ImageGalleryScreen";
-import InventoryScreenUpdate from "./screens/inventory/InventoryScreenUpdate";
 
 //Handling App Crash Cases
 
