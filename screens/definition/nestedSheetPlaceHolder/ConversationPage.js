@@ -56,7 +56,7 @@ const ConversationPage = ({
     if (conversation.length === 0) {
       createConversation((definition = designatedConvDef));
     }
-  }, [ifGenerate]);
+  }, [setIfGenerate]); //todo: yo leo, I know this fixes the bug but idk why and it's 2am rn so Ima sleep
 
   useEffect(() => {
     if (conversation.length > 0) {
