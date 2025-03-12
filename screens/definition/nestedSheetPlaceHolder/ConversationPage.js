@@ -37,8 +37,8 @@ const ConversationPage = ({
   const [isLoading, setIsLoading] = useState(true);
   const [ifGenerate, setIfGenerate] = useState(false);
 
+  //DesignatedDef
   useEffect(() => {
-    console.log("designatedConvDef:", designatedConvDef); // todo: remove
     if (!designatedConvDef) {
       if (ifGenerate) {
         createConversation();
@@ -56,7 +56,7 @@ const ConversationPage = ({
     if (conversation.length === 0) {
       createConversation((definition = designatedConvDef));
     }
-  }, [setIfGenerate]); //todo: yo leo, I know this fixes the bug but idk why and it's 2am rn so Ima sleep
+  }, []);
 
   useEffect(() => {
     if (conversation.length > 0) {
