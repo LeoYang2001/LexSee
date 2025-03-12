@@ -224,18 +224,18 @@ const SignInScreen = ({ navigation }) => {
         </View>
 
         {/* Error Message Card */}
-        <View className=" w-full absolute z-10 bottom-10">
+        <View className="w-full absolute z-10 top-10 p-5">
           <ErrorComp
-            timeDur={300}
+            timeDur={2000}
             setErrorMessage={setErrorMessage}
             errorMessage={errorMessage}
           />
         </View>
 
         {/* Success Message Card */}
-        <View className=" w-full absolute z-10 bottom-10">
+        <View className="w-full absolute z-10 top-10 p-5">
           <SuccessComp
-            timeDur={500}
+            timeDur={2000}
             setSuccessMessage={setSuccessMessage}
             successMessage={successMessage}
           />

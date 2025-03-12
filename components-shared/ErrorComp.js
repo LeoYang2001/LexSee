@@ -4,45 +4,51 @@ import Animated, {
   useSharedValue,
   withTiming,
   Easing,
+  useAnimatedStyle,
 } from "react-native-reanimated";
 import { CircleAlert } from "lucide-react-native";
 
 const ErrorComp = ({ timeDur, errorMessage, setErrorMessage }) => {
-  const errorMessageOpacity = useSharedValue(0);
+  const translateY = useSharedValue(-200); // Adjust initial value to move further down
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: translateY.value }],
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+    };
+  });
 
   useEffect(() => {
-    if (errorMessage) {
-      // Fade in with ease-in-out easing
-      errorMessageOpacity.value = withTiming(1, {
-        duration: timeDur,
-      });
-
-      // Fade out smoothly after 2 seconds
-      // Fade out after 3 seconds
-      setTimeout(() => {
-        errorMessageOpacity.value = withTiming(0, {
-          duration: timeDur,
-        });
-        // Clear message after fade-out animation completes
-        setTimeout(() => {
-          setErrorMessage("");
-        }, timeDur); // Delay clear to match fade-out duration
-      }, timeDur * 3);
+    if (errorMessage === "") {
+      return;
     }
-  }, [errorMessage]);
+    translateY.value = withTiming(0, {
+      // Target value for showing the error
+      duration: 500,
+      easing: Easing.out(Easing.ease),
+    });
 
-  if (!errorMessage) return;
+    const timer = setTimeout(() => {
+      translateY.value = withTiming(-200, {
+        // Adjust target value for hiding the error
+        duration: 500,
+        easing: Easing.in(Easing.ease),
+      });
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 500);
+    }, timeDur); // Adjust the delay to account for the easing out duration
+
+    return () => clearTimeout(timer);
+  }, [timeDur, errorMessage, translateY]);
 
   return (
     <Animated.View
-      style={{
-        opacity: errorMessageOpacity,
-        transition: { duration: 300 },
-      }}
-      className="bg-red-200 flex w-full rounded-lg p-4 mt-4 flex-row justify-between items-center"
+      style={[animatedStyle]}
+      className="bg-black flex w-full rounded p-4 flex-row justify-between items-center"
     >
-      <CircleAlert fill={"#dc2626"} color={"#fecaca"} size={30} />
-      <Text className="text-red-700 text-lg text-center font-medium">
+      <CircleAlert fill={"black"} color={"white"} size={25} />
+      <Text className="text-white text-lg text-center font-medium">
         {errorMessage}
       </Text>
       <View className=" w-2 h-2" />

@@ -4,44 +4,51 @@ import Animated, {
   useSharedValue,
   withTiming,
   Easing,
+  useAnimatedStyle,
 } from "react-native-reanimated";
 import { TriangleAlert } from "lucide-react-native";
 
 const AlertComp = ({ timeDur, alertMessage, setAlertMessage }) => {
-  const alertMessageOpacity = useSharedValue(0);
+  const translateY = useSharedValue(-200); // Adjust initial value to move further down
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: translateY.value }],
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+    };
+  });
 
   useEffect(() => {
-    if (alertMessage) {
-      // Fade in with ease-in-out easing
-      alertMessageOpacity.value = withTiming(1, {
-        duration: timeDur,
-      });
-
-      // Fade out smoothly after 2 seconds
-      setTimeout(() => {
-        alertMessageOpacity.value = withTiming(0, {
-          duration: timeDur,
-        });
-        // Clear message after fade-out animation completes
-        setTimeout(() => {
-          setAlertMessage("");
-        }, timeDur); // Delay clear to match fade-out duration
-      }, timeDur * 3);
+    if (alertMessage === "") {
+      return;
     }
-  }, [alertMessage]);
+    translateY.value = withTiming(0, {
+      // Target value for showing the alert
+      duration: 500,
+      easing: Easing.out(Easing.ease),
+    });
 
-  if (!alertMessage) return;
+    const timer = setTimeout(() => {
+      translateY.value = withTiming(-200, {
+        // Adjust target value for hiding the alert
+        duration: 500,
+        easing: Easing.in(Easing.ease),
+      });
+      setTimeout(() => {
+        setAlertMessage("");
+      }, 500);
+    }, timeDur); // Adjust the delay to account for the easing out duration
+
+    return () => clearTimeout(timer);
+  }, [timeDur, alertMessage, translateY]);
 
   return (
     <Animated.View
-      style={{
-        opacity: alertMessageOpacity,
-        transition: { duration: 300 },
-      }}
-      className="bg-yellow-200 flex w-full rounded-lg p-4 mt-4 flex-row justify-between items-center"
+      style={[animatedStyle]}
+      className="bg-black flex w-full rounded p-4 flex-row justify-between items-center"
     >
-      <TriangleAlert fill={"#ca8a04"} color={"#fef08a"} size={30} />
-      <Text className="text-yellow-700 text-lg text-center font-medium">
+      <TriangleAlert fill={"black"} color={"white"} size={25} />
+      <Text className="text-white text-lg text-center font-medium">
         {alertMessage}
       </Text>
       <View className=" w-2 h-2" />

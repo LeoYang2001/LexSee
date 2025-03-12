@@ -37,6 +37,7 @@ const ConversationPage = ({
   const [isLoading, setIsLoading] = useState(true);
   const [ifGenerate, setIfGenerate] = useState(false);
 
+  //DesignatedDef
   useEffect(() => {
     if (!designatedConvDef) {
       if (ifGenerate) {
@@ -55,7 +56,7 @@ const ConversationPage = ({
     if (conversation.length === 0) {
       createConversation((definition = designatedConvDef));
     }
-  }, [ifGenerate]);
+  }, []);
 
   useEffect(() => {
     if (conversation.length > 0) {
