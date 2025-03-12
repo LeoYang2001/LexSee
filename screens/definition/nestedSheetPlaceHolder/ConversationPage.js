@@ -38,6 +38,7 @@ const ConversationPage = ({
   const [ifGenerate, setIfGenerate] = useState(false);
 
   useEffect(() => {
+    console.log("designatedConvDef:", designatedConvDef); // todo: remove
     if (!designatedConvDef) {
       if (ifGenerate) {
         createConversation();

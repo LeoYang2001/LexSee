@@ -4,44 +4,51 @@ import Animated, {
   useSharedValue,
   withTiming,
   Easing,
+  useAnimatedStyle,
 } from "react-native-reanimated";
 import { Info } from "lucide-react-native";
 
 const InfoComp = ({ timeDur, infoMessage, setInfoMessage }) => {
-  const infoMessageOpacity = useSharedValue(0);
+  const translateY = useSharedValue(-200); // Initial value
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: translateY.value }],
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+    };
+  });
 
   useEffect(() => {
-    if (infoMessage) {
-      // Fade in with ease-in-out easing
-      infoMessageOpacity.value = withTiming(1, {
-        duration: timeDur,
-      });
-
-      // Fade out smoothly after 2 seconds
-      setTimeout(() => {
-        infoMessageOpacity.value = withTiming(0, {
-          duration: timeDur,
-        });
-        // Clear message after fade-out animation completes
-        setTimeout(() => {
-          setInfoMessage("");
-        }, timeDur); // Delay clear to match fade-out duration
-      }, timeDur * 3);
+    if (infoMessage === "") {
+      return;
     }
-  }, [infoMessage]);
+    translateY.value = withTiming(0, {
+      // Target value for showing the info
+      duration: 500,
+      easing: Easing.out(Easing.ease),
+    });
 
-  if (!infoMessage) return;
+    const timer = setTimeout(() => {
+      translateY.value = withTiming(-200, {
+        // Target value for hiding the info
+        duration: 500,
+        easing: Easing.in(Easing.ease),
+      });
+      setTimeout(() => {
+        setInfoMessage("");
+      }, 500);
+    }, timeDur); // Adjust the delay to account for the easing out duration
+
+    return () => clearTimeout(timer);
+  }, [timeDur, infoMessage, translateY]);
 
   return (
     <Animated.View
-      style={{
-        opacity: infoMessageOpacity,
-        transition: { duration: 300 },
-      }}
-      className="bg-blue-200 flex w-full rounded-lg p-4 mt-4 flex-row justify-between items-center"
+      style={[animatedStyle]}
+      className="bg-black flex w-full rounded p-4 flex-row justify-between items-center"
     >
-      <Info fill={"#3b82f6"} color={"#bfdbfe"} size={30} />
-      <Text className="text-blue-700 text-lg text-center font-medium">
+      <Info fill={"black"} color={"white"} size={25} />
+      <Text className="text-white text-lg text-center font-medium">
         {infoMessage}
       </Text>
       <View className=" w-2 h-2" />

@@ -4,44 +4,51 @@ import Animated, {
   useSharedValue,
   withTiming,
   Easing,
+  useAnimatedStyle,
 } from "react-native-reanimated";
 import { CircleCheck } from "lucide-react-native";
 
 const SuccessComp = ({ timeDur, successMessage, setSuccessMessage }) => {
-  const successMessageOpacity = useSharedValue(0);
+  const translateY = useSharedValue(-200); // Adjust initial value to move further down
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: translateY.value }],
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+    };
+  });
 
   useEffect(() => {
-    if (successMessage) {
-      // Fade in with ease-in-out easing
-      successMessageOpacity.value = withTiming(1, {
-        duration: timeDur,
-      });
-
-      // Fade out smoothly after 2 seconds
-      setTimeout(() => {
-        successMessageOpacity.value = withTiming(0, {
-          duration: timeDur,
-        });
-        // Clear message after fade-out animation completes
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, timeDur); // Delay clear to match fade-out duration
-      }, timeDur * 3);
+    if (successMessage === "") {
+      return;
     }
-  }, [successMessage]);
+    translateY.value = withTiming(0, {
+      // Target value for showing the success
+      duration: 500,
+      easing: Easing.out(Easing.ease),
+    });
 
-  if (!successMessage) return;
+    const timer = setTimeout(() => {
+      translateY.value = withTiming(-200, {
+        // Adjust target value for hiding the success
+        duration: 500,
+        easing: Easing.in(Easing.ease),
+      });
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 500);
+    }, timeDur); // Adjust the delay to account for the easing out duration
+
+    return () => clearTimeout(timer);
+  }, [timeDur, successMessage, translateY]);
 
   return (
     <Animated.View
-      style={{
-        opacity: successMessageOpacity,
-        transition: { duration: 300 },
-      }}
-      className="bg-green-200 flex w-full rounded-lg p-4 mt-4 flex-row justify-between items-center"
+      style={[animatedStyle]}
+      className="bg-black flex w-full rounded p-4 flex-row justify-between items-center"
     >
-      <CircleCheck fill={"#22c55e"} color={"#bbf7d0"} size={30} />
-      <Text className="text-green-700 text-lg text-center font-medium">
+      <CircleCheck fill={"black"} color={"white"} size={25} />
+      <Text className="text-white text-lg text-center font-medium">
         {successMessage}
       </Text>
       <View className=" w-2 h-2" />
