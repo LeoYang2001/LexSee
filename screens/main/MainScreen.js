@@ -4,6 +4,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
+  Image,
 } from "react-native";
 import React, { useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -173,18 +174,59 @@ const MainScreen = ({ navigation, ifProfileSetup }) => {
                 All
               </Text>
             </View>
-            <ScrollView>
-              {savedWordsFromStore?.length > 0 &&
-                savedWordsFromStore?.map((word) => (
-                  <WordFlexCard
-                    navigation={navigation}
-                    ifActive={activeCardId === word.id}
-                    setActiveCardId={setActiveCardId}
-                    wordItem={word}
-                    key={word.id}
+            {savedWordsFromStore.length > 0 ? (
+              <ScrollView>
+                {savedWordsFromStore?.length > 0 &&
+                  savedWordsFromStore?.map((word) => (
+                    <WordFlexCard
+                      navigation={navigation}
+                      ifActive={activeCardId === word.id}
+                      setActiveCardId={setActiveCardId}
+                      wordItem={word}
+                      key={word.id}
+                    />
+                  ))}
+              </ScrollView>
+            ) : (
+              <View className="flex-1 w-full flex flex-col items-center">
+                <View className="flex flex-col items-center gap-2 my-14">
+                  <Image
+                    style={{
+                      width: 56,
+                      height: 56,
+                    }}
+                    source={require("../../assets/emptybox.png")}
                   />
-                ))}
-            </ScrollView>
+                  <Text
+                    className="font-semibold text-white opacity-60"
+                    style={{
+                      fontSize: 18,
+                    }}
+                  >
+                    No word collected
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate("WordSearch");
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      console.log("light feedback");
+                    }}
+                    className="  px-4 py-1 mt-6 flex justify-center items-center"
+                    style={{
+                      backgroundColor: "#FA541C",
+                      borderRadius: 9,
+                    }}
+                  >
+                    <Text
+                      style={{ fontSize: 15 }}
+                      className="text-white font-semibold"
+                    >
+                      Show me how to start
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
           </View>
         </View>
       </>

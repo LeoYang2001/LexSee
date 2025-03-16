@@ -41,7 +41,7 @@ const LoginWelcomeScreen = ({ navigation }) => {
         style={{ height: "100%" }}
         source={require("../../assets/welcomeBg.png")}
         resizeMode="cover"
-        className="flex flex-col justify-between"
+        className="flex flex-col justify-between  -translate-y-1"
       >
         <View className="opacity-0">
           <Text>demo</Text>

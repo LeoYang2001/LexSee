@@ -16,8 +16,6 @@ const initialImgPlaceHolderUrl =
 const DefinitionScreen = ({ navigation, route }) => {
   const [pageTitle, setPageTitle] = useState("Explanation");
 
-  console.log(route);
-
   const [imgPlaceHolderUrl, setImgPlaceHolderUrl] = useState(
     initialImgPlaceHolderUrl
   );
@@ -27,8 +25,6 @@ const DefinitionScreen = ({ navigation, route }) => {
     if (updatedImgPlaceHolderUrl) {
       setImgPlaceHolderUrl(updatedImgPlaceHolderUrl);
     }
-    console.log("imgPlaceHolderUrl:::");
-    console.log(imgPlaceHolderUrl);
   }, [route]);
 
   //SelectedLanguage
@@ -145,9 +141,9 @@ const DefinitionScreen = ({ navigation, route }) => {
             navigation.goBack();
           }
 
-          const audioUrl = await fetchAudioUrl(fetchedWord.id);
-          // Set the audio URL into phonetics object
-          fetchedWord.phonetics.audioUrl = audioUrl;
+          // const audioUrl = await fetchAudioUrl(fetchedWord.id);
+          // // Set the audio URL into phonetics object
+          // fetchedWord.phonetics.audioUrl = audioUrl;
 
           setWordItem(fetchedWord);
 
@@ -159,6 +155,25 @@ const DefinitionScreen = ({ navigation, route }) => {
     };
     fetchWordDefinition();
   }, []);
+
+  useEffect(() => {
+    const handleAudioFetching = async () => {
+      const audioUrl = await fetchAudioUrl(wordItem.id);
+      // Set the audio URL into phonetics object
+      const wordItemWithAudio = {
+        ...wordItem,
+        phonetics: { ...wordItem.phonetics, audioUrl },
+      };
+      console.log("wordItemWithAudio:");
+      console.log(wordItemWithAudio);
+      setWordItem(wordItemWithAudio);
+    };
+
+    if (wordItem?.phonetics && !wordItem?.phonetics?.audioUrl) {
+      //definition has been fetched, now fetch audioUrl
+      handleAudioFetching();
+    }
+  }, [wordItem]);
 
   return wordItem?.id ? (
     <View
@@ -222,7 +237,7 @@ const DefinitionScreen = ({ navigation, route }) => {
       }}
       className="w-full h-full flex justify-center items-center"
     >
-      <ActivityIndicator />
+      <ActivityIndicator color={"#FA541C"} />
     </View>
   );
 };

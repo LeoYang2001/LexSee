@@ -230,15 +230,17 @@ const CustomDrawerContent = (props) => {
                   }}
                   style={{
                     height: 40,
+                    marginBottom: 2,
                   }}
-                  className="w-full flex px-3  flex-row py-2  items-center"
+                  className="w-full mx-2 flex px-3  flex-row py-2  items-center"
                 >
                   {drawerOption.icon()}
                   <Text
                     style={{
                       fontSize: 14,
+                      marginLeft: 10,
                     }}
-                    className="text-white opacity-90 font-semibold ml-2 "
+                    className="text-white opacity-90 font-semibold"
                   >
                     {drawerOption.label}
                   </Text>

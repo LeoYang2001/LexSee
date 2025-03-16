@@ -16,7 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import StoryListPage from "./StoryList/StoryListPage";
 import WordListPage from "./WordList/WordListPage";
-import { ChevronLeft, Search } from "lucide-react-native";
+import { ChevronLeft, Search, X } from "lucide-react-native";
 import { PanGestureHandler, TextInput } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
 
@@ -103,21 +103,31 @@ const InventoryScreen = ({ navigation, route }) => {
           style={{ height: 49 }}
           className="z-20 flex flex-row   mb-2  items-center justify-between"
         >
-          <TouchableOpacity
-            style={{
-              width: 40,
-            }}
-            className=" h-full flex justify-center items-center p-2"
-            onPress={() => {
-              if (!ifSearch) {
-                navigation.goBack();
-              } else {
+          {ifSearch ? (
+            <TouchableOpacity
+              style={{
+                width: 40,
+              }}
+              className=" h-full flex justify-center items-center p-2"
+              onPress={() => {
                 resetInputSearchBar();
-              }
-            }}
-          >
-            <ChevronLeft color={"#fff"} />
-          </TouchableOpacity>
+              }}
+            >
+              <X color={"#fff"} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={{
+                width: 40,
+              }}
+              className=" h-full flex justify-center items-center p-2"
+              onPress={() => {
+                navigation.goBack();
+              }}
+            >
+              <ChevronLeft color={"#fff"} />
+            </TouchableOpacity>
+          )}
           {!ifSearch && (
             <View className="flex flex-row items-center  ">
               <Animated.View
