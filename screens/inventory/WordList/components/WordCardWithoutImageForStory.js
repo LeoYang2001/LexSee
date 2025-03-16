@@ -32,7 +32,7 @@ const WordCardWithoutImageForStory = ({ wordItem, toggleWordSelection }) => {
             </Text>
             <PronunciationButton
               word={wordItem.id}
-              phonetics={wordItem.phonetics.text}
+              phonetics={wordItem.phonetics}
               size={14}
             />
           </View>

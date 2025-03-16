@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { Bookmark } from "lucide-react-native";
+import { Ban, Bookmark, BookmarkX, WandSparkles } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 
 const countSelectedWords = (groupedWords) => {
@@ -28,10 +28,16 @@ const StoryToolBar = ({
 
   const toolBarList = [
     {
-      label: "Delete",
+      label: "Uncollect",
       icon: () => {
         return (
-          <Bookmark color={"#fff"} fill={"#fff"} size={28} opacity={0.8} />
+          <Image
+            style={{
+              width: 26,
+              height: 26,
+            }}
+            source={require("../../../assets/uncollect.png")}
+          />
         );
       },
       handleEvent: () => {
@@ -56,7 +62,14 @@ const StoryToolBar = ({
       label: "New story",
       icon: () => {
         return (
-          <Bookmark color={"#fff"} fill={"#fff"} size={28} opacity={0.8} />
+          <Image
+            style={{
+              width: 26,
+              height: 26,
+            }}
+            className="border"
+            source={require("../../../assets/storyCreation.png")}
+          />
         );
       },
       handleEvent: () => {
@@ -67,7 +80,14 @@ const StoryToolBar = ({
       label: "Cancel",
       icon: () => {
         return (
-          <Bookmark color={"#fff"} fill={"#fff"} size={28} opacity={0.8} />
+          <Image
+            style={{
+              width: 26,
+              height: 26,
+            }}
+            className="border"
+            source={require("../../../assets/cancleSelection.png")}
+          />
         );
       },
       handleEvent: () => {

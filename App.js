@@ -88,7 +88,6 @@ function App() {
               component={EmailVerificationScreen}
             />
             <Stack.Screen name="Inventory" component={InventoryScreen} />
-            {/* <Stack.Screen name="Inventory" component={InventoryScreenUpdate} /> */}
             <Stack.Screen name="Story" component={StoryScreen} />
             <Stack.Screen
               name="LanguageSelection"

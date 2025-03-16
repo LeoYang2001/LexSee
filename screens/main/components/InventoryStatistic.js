@@ -44,7 +44,7 @@ const InventoryStatistic = ({ navigation }) => {
         backgroundColor: "#F65826",
         borderRadius: 12,
       }}
-      className="w-full  relative"
+      className="w-full  relative overflow-hidden"
     >
       <View className=" h-full w-full z-20 flex flex-row justify-between items-center  px-6">
         <View className=" flex flex-col h-full gap-2   flex-1 justify-center items-start">
@@ -117,7 +117,7 @@ const InventoryStatistic = ({ navigation }) => {
       </View>
       <ImageBackground
         style={{ width: 140, height: 110 }}
-        className=" absolute right-0"
+        className=" absolute -right-2 -top-2 scale-125"
         source={require("../../../assets/statisticLogo.png")} // Path to the logo image
         resizeMode="contain" // Ensures the aspect ratio is maintained
       ></ImageBackground>

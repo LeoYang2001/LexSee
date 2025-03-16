@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, Image, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import * as Haptics from "expo-haptics";
+import PronunciationButton from "../../../../components-shared/PronunciationButton";
 
 const WordFlexCardInventoryForStory = ({ wordItem, toggleWordSelection }) => {
   if (!wordItem) return null;
@@ -43,16 +44,11 @@ const WordFlexCardInventoryForStory = ({ wordItem, toggleWordSelection }) => {
             <Text className="font-semibold text-white" style={{ fontSize: 24 }}>
               {wordItem.id}
             </Text>
-            <Text
-              className="mt-2"
-              style={{
-                fontSize: 14,
-                color: "#fff",
-                opacity: 0.7,
-              }}
-            >
-              {wordItem?.phonetics?.text}
-            </Text>
+            <PronunciationButton
+              word={wordItem.id}
+              phonetics={wordItem.phonetics}
+              size={14}
+            />
           </View>
           {wordItem.ifSelectedForStory ? (
             <View

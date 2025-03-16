@@ -256,7 +256,6 @@ const ConversationPage = ({
               No conversation yet
             </Text>
             <TouchableOpacity
-              disabled={displayedConversation.length != conversation.length}
               className="  px-4 py-1 mt-6 flex justify-center items-center"
               style={{
                 backgroundColor: "#FA541C",

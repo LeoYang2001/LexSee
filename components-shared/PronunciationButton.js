@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { Text, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Volume2 } from "lucide-react-native";
 import { Audio } from "expo-av";
@@ -12,7 +12,7 @@ const PronunciationButton = ({ word, phonetics, size = 16 }) => {
       setAudioUrl(phonetics?.audioUrl);
     } else {
     }
-  }, []);
+  }, [phonetics]);
 
   const fetchAudioUrl = async (text) => {
     const apiUrl =
@@ -107,7 +107,15 @@ const PronunciationButton = ({ word, phonetics, size = 16 }) => {
       >
         {phonetics.text}
       </Text>
-      <Volume2 className="ml-2" color={"#FFFFFFB3"} size={size} />
+      {phonetics?.audioUrl ? (
+        <Volume2 className="ml-2" color={"#FFFFFFB3"} size={size} />
+      ) : (
+        <ActivityIndicator
+          className="ml-2"
+          size={"small"}
+          color={"#FFFFFFB3"}
+        />
+      )}
     </TouchableOpacity>
   );
 };

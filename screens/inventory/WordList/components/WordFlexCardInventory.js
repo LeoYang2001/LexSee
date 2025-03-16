@@ -51,7 +51,7 @@ const WordFlexCardInventory = ({ wordItem, navigation, activeCardId }) => {
         className="w-full h-full"
       ></View>
       <View className="w-full h-full p-4 absolute z-20 flex flex-col">
-        <View className="flex flex-row justify-between">
+        <View className="flex flex-row justify-between ">
           <Text className="font-semibold text-white" style={{ fontSize: 24 }}>
             {wordItem.id}
           </Text>
@@ -62,7 +62,6 @@ const WordFlexCardInventory = ({ wordItem, navigation, activeCardId }) => {
                 ifSaved: true,
               });
             }}
-            className="p-1"
           >
             <ArrowRight color={"#fff"} />
           </TouchableOpacity>
@@ -70,7 +69,8 @@ const WordFlexCardInventory = ({ wordItem, navigation, activeCardId }) => {
         <View className="flex flex-row">
           <PronunciationButton
             word={wordItem.id}
-            phonetics={wordItem?.phonetics}
+            phonetics={wordItem.phonetics}
+            size={14}
           />
         </View>
 
