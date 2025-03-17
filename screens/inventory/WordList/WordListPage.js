@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react-native";
+import { BookType, ChevronDown, Image } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -20,6 +20,11 @@ import languageCodes from "../../../constants";
 import * as Haptics from "expo-haptics";
 import { removeMultipleWordsFromSavedList } from "../../../slices/userInfoSlice";
 import { deleteDoc, doc } from "firebase/firestore";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 // *** AI FUNCTIONS***
 const chatgptApiKey =
@@ -93,6 +98,15 @@ const WordListPage = ({
   const [ifCreatingStory, setIfCreatingStory] = useState(false);
   const [activeCardId, setActiveCardId] = useState(null);
 
+  //filter animation, toggling graphic
+  const iconOffsetX = useSharedValue(0);
+
+  const toggleStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: iconOffsetX.value }],
+    };
+  });
+
   useEffect(() => {
     if (sortMethod === "desc") {
       setSortedWordsList(groupWordsByDate(savedWordsFromStore));
@@ -102,6 +116,14 @@ const WordListPage = ({
       );
     }
   }, [savedWordsFromStore]);
+
+  useEffect(() => {
+    if (ifGraphic) {
+      iconOffsetX.value = withTiming(28);
+    } else {
+      iconOffsetX.value = withTiming(0);
+    }
+  }, [ifGraphic]);
 
   // search words function
   const filterWordsFromSortedList = (inputVal, sortedWordsList) => {
@@ -116,7 +138,6 @@ const WordListPage = ({
 
   useEffect(() => {
     const filteredWords = filterWordsFromSortedList(inputVal, sortedWordsList);
-    console.log(filteredWords);
     setFilteredWordsList(filteredWords);
   }, [inputVal, sortedWordsList]);
 
@@ -252,14 +273,12 @@ const WordListPage = ({
   };
 
   const handleActiveCardToggle = (wordItem) => {
-    console.log(wordItem);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     console.log("light feedback");
     if (activeCardId === wordItem.id) {
       setActiveCardId(null);
     } else {
       setActiveCardId(wordItem.id);
-      console.log(wordItem.id);
     }
   };
 
@@ -336,7 +355,7 @@ const WordListPage = ({
             {/*Sort*/}
             <View
               style={{ width: "100%", height: 58 }}
-              className="justify-between items-center px-4 flex flex-row"
+              className="justify-between items-center px-4 flex flex-row  py-2"
             >
               <TouchableOpacity
                 disabled={ifCreatingStory}
@@ -372,26 +391,54 @@ const WordListPage = ({
                 }}
                 className="flex flex-row flex-1 justify-center items-center"
               >
-                <Text
-                  style={{ fontSize: 14, opacity: 0.7 }}
-                  className="text-white"
-                >
-                  Graphics context
-                </Text>
                 <View
                   style={{
-                    width: 0,
-                    height: 0,
-                    borderLeftWidth: 5,
-                    borderRightWidth: 5,
-                    borderBottomWidth: 8,
-                    borderLeftColor: "transparent",
-                    borderRightColor: "transparent",
-                    borderBottomColor: "#ffffffa1",
-                    marginLeft: 5,
-                    transform: `rotate(${!ifGraphic ? 180 : 0}deg)`,
+                    height: 34,
+                    width: 62,
+                    borderRadius: 27,
+                    paddingHorizontal: 3,
+                    backgroundColor: "#262729",
                   }}
-                />
+                  className=" flex flex-row  relative items-center"
+                >
+                  <Animated.View
+                    className=" absolute   flex justify-center z-30 items-center rounded-full"
+                    style={[
+                      {
+                        width: 28,
+                        height: 28,
+                        left: 3,
+                        top: 3,
+                        backgroundColor: "#515254",
+                      },
+                      toggleStyle,
+                    ]}
+                  >
+                    {ifGraphic ? (
+                      <Image size={18} color={"#cbcbcc"} />
+                    ) : (
+                      <BookType size={18} color={"#cbcbcc"} />
+                    )}
+                  </Animated.View>
+                  <View
+                    className=" flex justify-center items-center rounded-full"
+                    style={{
+                      width: 28,
+                      height: 28,
+                    }}
+                  >
+                    <BookType size={18} color={"#38393b"} />
+                  </View>
+                  <View
+                    className=" flex justify-center items-center rounded-full"
+                    style={{
+                      width: 28,
+                      height: 28,
+                    }}
+                  >
+                    <Image size={18} color={"#38393b"} />
+                  </View>
+                </View>
               </TouchableOpacity>
             </View>
             {/*Card*/}
