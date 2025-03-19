@@ -51,7 +51,7 @@ To run LexSee locally, follow these steps:
 
 ```sh
 # Clone the repository
-git clone https://github.com/your-username/LexSee.git
+git clone https://github.com/LeoYang2001/LexSee.git
 
 # Navigate to the project directory
 cd LexSee
